@@ -15,7 +15,6 @@ After purchasing the license, the Licensee will receive access to the source cod
 The Licensee is prohibited from:
    - Distributing, publishing, selling, or leasing the Software or modified versions of it to third parties.
    - Making the source code or derivative works publicly available.
-   - Using the Software for commercial purposes outside of internal use.
 
 ### 4. Term and Renewal
 This license is valid for one year from the date of purchase and may be renewed annually for a fee. At the end of the license term, the right to use the Software will automatically expire unless a renewal is agreed upon.
@@ -66,7 +65,6 @@ Nach Kauf der Lizenz erhält der Lizenznehmer Zugriff auf den Quellcode der Soft
 Dem Lizenznehmer ist es untersagt:
    - Die Software oder modifizierte Versionen an Dritte weiterzugeben, zu veröffentlichen, zu verkaufen oder zu vermieten.
    - Den Quellcode oder abgeleitete Werke öffentlich zugänglich zu machen.
-   - Die Software für kommerzielle Zwecke außerhalb der internen Nutzung zu verwenden.
 
 ### 4. Laufzeit und Verlängerung
 Diese Lizenz ist für ein Jahr ab Kaufdatum gültig und kann gegen eine jährliche Gebühr verlängert werden. Nach Ablauf der Lizenzdauer endet das Nutzungsrecht automatisch, es sei denn, eine Verlängerung wurde vereinbart.
