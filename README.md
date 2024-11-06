@@ -6,6 +6,4 @@ To run DoRun you need to set up the DBMS Interface. To set up the Database you n
 
 
 
-
-
-[alt text](iEZ_BEcj2ZP7KYyttbwP7_UC066O6nUQSXhlgoC7rLY.webp)
+<img title="a title" alt="It was for Charity Clark" src="Images/charity.webp">
