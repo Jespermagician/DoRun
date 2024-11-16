@@ -1,0 +1,19 @@
+Customizing for your E-Mail:
+    E-Mail Account: "DoRun.NoReply@gmail.com" #Replace
+
+    You dont need your 'normal' E-Mail password!
+    If you use google you need to setup a 'App-Password' to setup such a password go to:  
+    https://support.google.com/accounts/answer/185833?hl=en
+
+    Password: "ctvv dslc gvaf frku" #Replace
+
+Customizing for your SMTP config google is the default option
+    SMTP-Server: "smtp.gmail.com" Enter the smtp Server of your E-Mail provider /google is recommended
+    SMTP-Port: "587" Enter the smtp Prot of your E-Mail provider
+
+Mail-Body configuration
+    The Mail-Body configuration is to setup an E-Mail Type like 'Verification'.
+    You can enter multiple IDs from the Mailbody.csv. These texts get copyed into the E-Mail with the given order starting from left to right.
+    1.Subject Verification:    "[1,2,3,6]" #The are the IDs from the Mailbody.csv 
+    2.Subject Donationrequest: "[1,4,6]"
+    3.Subject Donation receipt "[1,5,6]"
