@@ -4,42 +4,13 @@
  
 CREATE TABLE Roles
 (
-    "RoleID" integer NOT NULL,
-    "Role" text COLLATE pg_catalog."default" NOT NULL,
-    CONSTRAINT "Roles_pkey" PRIMARY KEY ("RoleID")
+    RoleID integer PRIMARY KEY,
+    RoleName NOT NULL
 )
  
 TABLESPACE pg_default;
  
 ALTER TABLE IF EXISTS Roles
-    OWNER to postgres;
- 
- 
- 
--- Table: public.Spendenbelege
- 
--- DROP TABLE IF EXISTS public."Spendenbelege";
-
-CREATE TABLE Spendenbelege
-(
-    "IdSpendenbeleg" integer NOT NULL,
-    "IdUser" integer NOT NULL,
-    "Name" text COLLATE pg_catalog."default" NOT NULL,
-    "LastName" text COLLATE pg_catalog."default" NOT NULL,
-    "Email" character varying(320) COLLATE pg_catalog."default" NOT NULL,
-    "Street" text COLLATE pg_catalog."default",
-    "HouseNr" text COLLATE pg_catalog."default",
-    "Postcode" text COLLATE pg_catalog."default",
-    "DonationpKm" numeric NOT NULL,
-    "FixedAmount" boolean,
-    "CreatedAt" timestamp with time zone,
-    "VerifiedDono" boolean,
-    CONSTRAINT "Spendenbelege_pkey" PRIMARY KEY ("IdSpendenbeleg")
-)
- 
-TABLESPACE pg_default;
- 
-ALTER TABLE IF EXISTS Spendenbelege
     OWNER to postgres;
  
  
@@ -49,17 +20,57 @@ ALTER TABLE IF EXISTS Spendenbelege
  
 CREATE TABLE Users
 (
-    "IdUser" integer NOT NULL,
-    "Name" text COLLATE pg_catalog."default" NOT NULL,
-    "LastName" text COLLATE pg_catalog."default" NOT NULL,
-    "Email" character varying(320) COLLATE pg_catalog."default" NOT NULL,
-    "Password_hash" bytea NOT NULL,
-    "Salt" bytea NOT NULL,
-    "CreatedAt" timestamp without time zone NOT NULL,
-    "RoleID" integer NOT NULL,
-    "VerifiedUser" boolean,
-    CONSTRAINT "User_pkey" PRIMARY KEY ("IdUser")
+    UserID integer PRIMARY KEY,
+    FirstName text NOT NULL,
+    LastName text NOT NULL,
+    Email VARCHAR(320) NOT NULL UNIQUE,
+    Password_Hash bytea NOT NULL,
+    Salt bytea NOT NULL,
+    CreatedAt timestamp without time zone DEFAULT NOW(),
+    fk_RoleID integer NOT NULL,    -- ForeignKey
+    Verified boolean default false,
+    CONSTRAINT fk_Role
+        FOREIGN KEY(fk_RoleID)
+            REFERENCES Roles(RoleID)
+                    ON UPDATE CASCADE
 )
 
 
 TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS Users
+    OWNER to postgres;
+
+
+
+-- Table: public.DonationRecord
+ 
+-- DROP TABLE IF EXISTS public.DonationRecord;
+
+CREATE TABLE DonationRecord
+(
+    DonationRecID integer PRIMARY KEY,
+    fk_UserID integer NOT NULL,
+    FirstName text NOT NULL,
+    LastName text NOT NULL,
+    Email VARCHAR(320) NOT NULL,
+    Street text,
+    HouseNr text,
+    Postcode text,
+    Donation numeric NOT NULL,
+    FixedAmount boolean default false,
+    CreatedAt timestamp without time zone DEFAULT NOW(),
+    Verified boolean default false,
+    CONSTRAINT fk_User
+        FOREIGN KEY(fk_UserID)
+            REFERENCES Users(UserID)
+                ON DELETE CASCADE
+                ON UPDATE CASCADE
+)
+ 
+TABLESPACE pg_default;
+ 
+ALTER TABLE IF EXISTS DonationRecord
+    OWNER to postgres;
+ 
+ 
