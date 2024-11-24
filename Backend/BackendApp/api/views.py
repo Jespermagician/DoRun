@@ -7,6 +7,10 @@ from rest_framework.permissions import AllowAny
 from django import forms
 from django.http import JsonResponse
 from .models import Users
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.backends import BaseBackend
+from django.contrib.auth import login, authenticate
 
 # Create ur views here
 def index(request):
@@ -61,7 +65,6 @@ def register(request):
             # Hier könntest du den Benutzer in der Datenbank speichern, z. B. mit Django-User-Modell
             # User.objects.create_user(username=email, first_name=first_name, last_name=last_name, password=password)
             NewUser = Users.RegisterUser(first_name,last_name,email,password)
-            NewUser = str(NewUser)
             
             return JsonResponse(NewUser, safe=False)
             
@@ -70,3 +73,31 @@ def register(request):
         form = RegistrationForm()
 
     return render(request, 'register.html', {'form': form})        
+
+def cust_login(request):
+    # Wenn das Formular über POST gesendet wurde
+    if request.method == 'POST':
+        # Benutzerdaten aus dem Formular erhalten
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        # Versuche den Benutzer zu authentifizieren
+        user = Users.LoginUser(username,password)
+        
+        if user is not None:
+            # Erfolgreiche Authentifizierung
+            request.session["UserIsAuth"] = True
+            messages.success(request, 'Erfolgreich eingeloggt!')
+            return redirect('home')  # Nach erfolgreichem Login weiterleiten (zu einer Seite namens "home")
+        else:
+            # Fehlgeschlagene Authentifizierung
+            request.session["UserIsAuth"] = False
+            messages.error(request, 'Benutzername oder Passwort sind falsch.')
+            return redirect('login')  # Benutzer zurück zur Login-Seite leiten
+
+    # Wenn es sich um eine GET-Anfrage handelt, das Login-Formular anzeigen
+    return render(request, 'login.html')
+
+def home(request):
+    if (request.session["UserIsAuth"] == True):
+        return render(request, 'home.html')

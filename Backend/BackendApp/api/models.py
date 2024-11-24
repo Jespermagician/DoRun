@@ -1,5 +1,8 @@
 from django.db import models
 from datetime import date
+from django.shortcuts import redirect
+from django.contrib.auth.backends import BaseBackend
+from django.contrib.auth import logout, authenticate, login
 
 # Create your models here.
 class Users(models.Model):
@@ -46,15 +49,32 @@ class Users(models.Model):
         if (UserID != None and first_name != None and last_name != None and email != None and Password_hash != None and Salt != None and CreatedAt != None and RoleID != None):
             try:
                 print("Creating new User with ID: " + str(UserID))
-                Users.objects.create(iduser=UserID, firstname=first_name,lastname=last_name,email=email,password_hash=Password_hash,salt=Salt,createdat=CreatedAt,roleid=RoleID,verifieduser=VerifiedUser)
+                NewUser = Users.objects.create(iduser=UserID, firstname=first_name,lastname=last_name,email=email,password_hash=Password_hash,salt=Salt,createdat=CreatedAt,roleid=RoleID,verifieduser=VerifiedUser)
             except:
                 print("Error, user can't be added to DB")
         else:
             print("Not all requirements are fulfilled to create a user")
         
-        return UserID
+        return NewUser
  
     # end def
+
+    def LoginUser(email,password):
+        #%s is to prevent SQL-injection
+        try:
+            LoginUser = Users.objects.raw("Select * From api_users Where email = %s", [email])
+            
+            for p in LoginUser:
+                check_password = DecryptPassword(password,p.salt)
+                
+                if (check_password == password):
+                    return redirect('home')
+        
+        except:
+            print("Error")
+            
+                    
+        
 
 def PasswordHashing(password):
     Password_Hash = bytes(1)
@@ -63,3 +83,17 @@ def PasswordHashing(password):
     return Password_Hash, Salt
 
 # end def
+
+def DecryptPassword(password,salt):
+    decryptedPassword = str(1)
+    
+    return decryptedPassword
+
+class CustomBackend(BaseBackend):
+    def get_user(self, user_id):
+        # Optional: Benutzer anhand der ID aus deiner Datenbank holen
+        return Users(id=user_id, username='benutzername')
+
+def user_logout(request):
+    logout(request)
+    return redirect('login')
