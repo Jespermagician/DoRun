@@ -1,5 +1,5 @@
 import React from 'react';
-// import './InfoField.css'; // Styles für InfoField
+import './InfoField.css'; // Styles für InfoField
 
 const InfoField = ({ message }) => {
   return (

@@ -4,6 +4,8 @@ import "./Login.css"; // CSS-Datei für das Styling und Slide-Effekt
 
 function Login() {
   const [isLogin, setIsLogin] = useState(true); // Zustand für Anzeige des Login oder Register Formulars
+  const [firstname, setFirstName] = useState("");
+  const [lastname, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -20,13 +22,37 @@ function Login() {
   };
 
   // Handler für die Anmeldung
-  const handleLogin = (e) => {
+  const handleLogin1 = (e) => {
     e.preventDefault();
     if (email === "" || password === "") {
       setError("Bitte alle Felder ausfüllen.");
       return;
     }
     alert("Anmeldung erfolgreich!");
+  };
+
+  // Beispiel für Handling mit API Backend Aufruf
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Fehler bei der Anmeldung");
+      }
+
+      // Speichere das Token (optional)
+      localStorage.setItem("token", data.token);
+
+      // Weiterleitung zum Dashboard
+      navigate("/home");
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   // Handler für die Registrierung
@@ -44,7 +70,7 @@ function Login() {
   };
 
   return (
-    <div className="container">
+    <div className={`container ${isLogin ? "login-mode" : "register-mode"}`}>
       <div className={`form-container ${isLogin ? "slide-login" : "slide-register"}`}>
         {/* Login Formular */}
         <div className="form-panel login-panel">
@@ -85,6 +111,28 @@ function Login() {
           <h2>Registrieren</h2>
           {error && <p className="error">{error}</p>}
           <form onSubmit={handleRegister}>
+            <div className="form-group">
+              <label htmlFor="register-firstName">Vorname</label>
+              <input
+                type="text"
+                id="register-firstName"
+                placeholder="Vorname eingeben"
+                value={firstname}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+                />
+            </div>
+            <div className="form-group">
+              <label htmlFor="register-lastName">Nachname</label>
+              <input
+                type="text"
+                id="register-lastName"
+                placeholder="Nachname eingeben"
+                value={lastname}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+                />
+            </div>
             <div className="form-group">
               <label htmlFor="register-email">E-Mail-Adresse</label>
               <input

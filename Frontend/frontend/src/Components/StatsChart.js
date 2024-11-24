@@ -1,4 +1,5 @@
 import React from 'react';
+import './StatsChart.css';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, CategoryScale, LinearScale, BarElement, LineElement, PointElement } from 'chart.js';
 
@@ -38,7 +39,7 @@ const StatsChart = () => {
       },
       title: {
         display: true,
-        text: 'Monatliche Umsatzentwicklung',
+        text: 'Spendenbeträge',
       },
     },
   };

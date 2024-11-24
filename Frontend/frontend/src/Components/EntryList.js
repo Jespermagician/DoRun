@@ -1,5 +1,5 @@
 import React from 'react';
-// import './EntryList.css'; // EntryList Styles
+import './EntryList.css'; // EntryList Styles
 
 const EntryList = ({ entries, openModal }) => {
   return (

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-// import './EntryFormModal.css'; // Modal Styles
+import './EntryFormModal.css'; // Modal Styles
 
 const EntryFormModal = ({ closeModal, addEntry }) => {
   const [entryData, setEntryData] = useState({
