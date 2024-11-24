@@ -16,10 +16,11 @@ import pandas as pd
 # {
 #     "sender_email":"test@test.de",
 #     "password":"password123"
-#     "smtp_Server":"smtp.gmail.com",
-#     "smtp_Port":587
+#     "smtp_server":"smtp.gmail.com",
+#     "smtp_port":587
 # }
 # the smtp_port should be an integer
+# the attributes behind _getData have to match the json!!!
 ###########################################
 # Werte ausgeben
 
@@ -31,16 +32,24 @@ import pandas as pd
 # matches = re.findall(r'"(.*?)"', line)   
 
 class getServerData:
-    sender_mail: str
+    sender_email: str
     password: str
     smtp_server: str
     smtp_port: int
     def __init__(self):
         _getData = pd.read_json('MailConfig.json', typ="series")
-        self.sender_mail = _getData.sender_mail
+        print(_getData)
+        # the attributes behind _getData have to match the json
+        self.sender_email = _getData.sender_email
         self.password = _getData.password
         self.smtp_server = _getData.smtp_server
         self.smtp_port = _getData.smtp_port 
+        print()
+        print(self)
+        print()
+        print(self.sender_email)
+        print("ServerData Load")
+
         
 # translation_table = dict.fromkeys(map(ord, '"'), None) #Dont change
 
@@ -51,20 +60,20 @@ class MailSender():
     def __init__(self):
         self.SD = getServerData()
         print(self.SD)
-        print(self.SD.sender_mail)
+        print(self.SD.sender_email)
         self.ConnectToServer()
 
     def ConnectToServer(self):
         print(self.SD.smtp_server)
-        self.Server = smtplib.SMTP(self.SD.smtp_server, self.SD.smtp_port)
+        self.Server = smtplib.SMTP(host=self.SD.smtp_server, port=self.SD.smtp_port)
         self.Server.starttls()
-        self.Server.login(self.SD.sender_email, self.SD.password)
+        self.Server.login(user=self.SD.sender_email, password=self.SD.password)
         print("Connection to Mail-Server successfuly")
 
     def SendMail(self, pReceiver: str, pSubject: str, pIsAttachement: bool, pAttachement, pMailText: str):
         msg = MIMEMultipart()
         msg['Subject'] = pSubject
-        msg['From'] = self.SD.sender_mail
+        msg['From'] = self.SD.sender_email
         msg['To'] = pReceiver
 
         #Get Messagebody
@@ -79,15 +88,15 @@ class MailSender():
 
         if pIsAttachement:
             part.set_payload(open(pAttachement, "rb").read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition', 'attachment; filename="Example_doc.pdf"')
+            msg.attach(part)
 
         print(msg.as_string())
         Waiter = input("Waiting")
-        encoders.encode_base64(part)
         
-        part.add_header('Content-Disposition', 'attachment; filename="Example_doc.pdf"')
 
 
-        msg.attach(part)
 
         try:
             self.Server.sendmail(self.SD.sender_email, pReceiver, msg.as_string())#"Subject: \n\n This is definitly not a Virus. Trust me bro: http://localhost:3000/register")
