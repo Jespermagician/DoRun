@@ -19,9 +19,16 @@ class Users(models.Model):
     def RegisterUser(first_name,last_name,email,password):
         #1. Set UserID
         #Check if email already exists
-        CheckForDoubleUser = Users.objects.raw("Select * From api_users Where email =%s" [email])
+        double = False
         try:
-            if (CheckForDoubleUser == None):
+            CheckForDoubleUser = Users.objects.raw("Select * From api_users Where email = "+ "'" + email + "'")
+            for p in CheckForDoubleUser:
+                double = True
+        except:
+            double = False
+        
+        try:
+            if (double == False):
                 #Get current highest iduser
                 query = "Select iduser From api_users Where iduser = (Select Max(iduser) From api_users)"
                 user = Users.objects.raw(query)
@@ -76,8 +83,8 @@ class Users(models.Model):
                 
                 #Check if given password = password from DB 
                 if (check_password == password):
-                    #Link user to next page
-                    return redirect('home')
+                    #Return LoginUser
+                    return p
         
         except:
             print("Error")

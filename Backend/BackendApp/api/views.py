@@ -78,12 +78,13 @@ def cust_login(request):
 
         # Versuche den Benutzer anzumelden
         user = Users.LoginUser(username,password)
+        userid = user.iduser
         
         if user is not None:
             # Erfolgreiche anmeldung
             # Setzt für die session die anmeldung auf true(Verwendung um Seiten nur für Nutzer anzuzeigen) 
             request.session["UserIsAuth"] = True
-            request.session["iduser"] = user.iduser
+            request.session["iduser"] = userid
             messages.success(request, 'Erfolgreich eingeloggt!')
             return redirect('home')  # Nach erfolgreichem Login weiterleiten (zu einer Seite namens "home")
         else:
