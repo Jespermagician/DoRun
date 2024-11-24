@@ -13,22 +13,13 @@ from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth import login, authenticate
 
 # Create ur views here
-def index(request):
-    return HttpResponse("Hello... ")
-
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
     
-#class Register(forms.Form):
-#    Name = forms.TextField(label='Your Age',null=False)
-#    LastName = forms.TextField(label='Your Lastname',null=False)
-#    Email = forms.EmailField(label='E-Mail',unique=False, null=False)
-#    Password = forms.BinaryField(label='Passwort',null=False)  # Manuelles Hashing erforderlich
-#    Repeat_Password = forms.BinaryField(label='Repeat Passwort',null=False)
-    
 class RegistrationForm(forms.Form):
+    #Input fields for registration
     first_name = forms.CharField(label='Your First Name', max_length=100, required=True)
     last_name = forms.CharField(label='Your Last Name', max_length=100, required=True)
     email = forms.EmailField(label='E-Mail', required=True)
@@ -51,7 +42,8 @@ class RegistrationForm(forms.Form):
 
         if password and repeat_password and password != repeat_password:
             raise forms.ValidationError("Passwords do not match!")
-        
+
+#Handels the registration page
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -60,11 +52,13 @@ def register(request):
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             email = form.cleaned_data['email']
-            password = form.cleaned_data['password']  # Hinweis: Passwörter sollten gehasht werden!
+            password = form.cleaned_data['password']
 
-            # Hier könntest du den Benutzer in der Datenbank speichern, z. B. mit Django-User-Modell
-            # User.objects.create_user(username=email, first_name=first_name, last_name=last_name, password=password)
+            #Erstelle neuen Benutzer auf der Datenbank
             NewUser = Users.RegisterUser(first_name,last_name,email,password)
+            
+            #Nur für Ausgabe der UserID später ersetzen!
+            NewUser = int(NewUser.iduser)
             
             return JsonResponse(NewUser, safe=False)
             
@@ -74,6 +68,7 @@ def register(request):
 
     return render(request, 'register.html', {'form': form})        
 
+#Login user
 def cust_login(request):
     # Wenn das Formular über POST gesendet wurde
     if request.method == 'POST':
@@ -81,16 +76,19 @@ def cust_login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        # Versuche den Benutzer zu authentifizieren
+        # Versuche den Benutzer anzumelden
         user = Users.LoginUser(username,password)
         
         if user is not None:
-            # Erfolgreiche Authentifizierung
+            # Erfolgreiche anmeldung
+            # Setzt für die session die anmeldung auf true(Verwendung um Seiten nur für Nutzer anzuzeigen) 
             request.session["UserIsAuth"] = True
+            request.session["iduser"] = user.iduser
             messages.success(request, 'Erfolgreich eingeloggt!')
             return redirect('home')  # Nach erfolgreichem Login weiterleiten (zu einer Seite namens "home")
         else:
-            # Fehlgeschlagene Authentifizierung
+            # Fehlgeschlagene anmeldung
+            # Setzt für die session die anmeldung auf false(Verwendung um Seiten für nicht Nutzer zu blockieren)
             request.session["UserIsAuth"] = False
             messages.error(request, 'Benutzername oder Passwort sind falsch.')
             return redirect('login')  # Benutzer zurück zur Login-Seite leiten
@@ -99,5 +97,6 @@ def cust_login(request):
     return render(request, 'login.html')
 
 def home(request):
+# Prüft ob ein Benutzer angemeldet ist    
     if (request.session["UserIsAuth"] == True):
         return render(request, 'home.html')
