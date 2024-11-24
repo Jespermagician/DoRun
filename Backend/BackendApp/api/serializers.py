@@ -1,8 +1,6 @@
 
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Note
-
 
 # Serializer für das User-Modell
 class UserSerializer(serializers.ModelSerializer):
@@ -17,13 +15,4 @@ class UserSerializer(serializers.ModelSerializer):
         print(validated_data)  #
         # Erstellt einen neuen Benutzer mit der create_user-Methode (inkl. Passwort-Hashing)
         user = User.objects.create_user(**validated_data)
-        return user  
-
-
-# Serializer für das Note-Modell
-class NoteSerializer(serializers.ModelSerializer):
-    # Metadaten für den Serializer
-    class Meta:
-        model = Note  # Verknüpft den Serializer mit dem Note-Modell
-        fields = ["id", "title", "content", "created_at", "author"]  # Zu serialisierende Felder
-        extra_kwargs = {"author": {"read_only": True}}  # Das author-Feld ist schreibgeschützt
+        return user
