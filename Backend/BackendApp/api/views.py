@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth import login, authenticate
+import json
 
 # Create ur views here
 class CreateUserView(generics.CreateAPIView):
@@ -49,10 +50,11 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             # Daten auslesen
-            first_name = form.cleaned_data['first_name']
-            last_name = form.cleaned_data['last_name']
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
+            data = json.loads(request.body)
+            first_name = data.get("first_name")#form.cleaned_data['first_name']
+            last_name = data.get("last_name")#form.cleaned_data['last_name']
+            email = data.get("email")#form.cleaned_data['email']
+            password = data.get("password")#form.cleaned_data['password']
 
             #Erstelle neuen Benutzer auf der Datenbank
             NewUser = Users.RegisterUser(first_name,last_name,email,password)
@@ -63,9 +65,7 @@ def register(request):
             return JsonResponse(NewUser, safe=False)
             
             #return redirect('success')  # Weiterleitung auf eine Erfolgsseite
-    else:
-        form = RegistrationForm()
-
+            
     return render(request, 'register.html', {'form': form})        
 
 #Login user
@@ -73,8 +73,9 @@ def cust_login(request):
     # Wenn das Formular über POST gesendet wurde
     if request.method == 'POST':
         # Benutzerdaten aus dem Formular erhalten
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        data = json.loads(request.body)
+        username = data.get('email')
+        password = data.get('password')
 
         # Versuche den Benutzer anzumelden
         user = Users.LoginUser(username,password)
@@ -93,9 +94,6 @@ def cust_login(request):
             request.session["UserIsAuth"] = False
             messages.error(request, 'Benutzername oder Passwort sind falsch.')
             return redirect('login')  # Benutzer zurück zur Login-Seite leiten
-
-    # Wenn es sich um eine GET-Anfrage handelt, das Login-Formular anzeigen
-    return render(request, 'login.html')
 
 def home(request):
 # Prüft ob ein Benutzer angemeldet ist    
