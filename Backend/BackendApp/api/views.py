@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth import login, authenticate
+from django.views.decorators.csrf import csrf_exempt
 import json
 
 # Create ur views here
@@ -45,32 +46,38 @@ class RegistrationForm(forms.Form):
             raise forms.ValidationError("Passwords do not match!")
 
 #Handels the registration page
+@csrf_exempt
 def register(request):
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
+        # form = RegistrationForm(request.POST)
+        # if form.is_valid():
             # Daten auslesen
             data = json.loads(request.body)
-            first_name = data.get("first_name")#form.cleaned_data['first_name']
-            last_name = data.get("last_name")#form.cleaned_data['last_name']
+            first_name = data.get("firstname")#form.cleaned_data['first_name']
+            last_name = data.get("lastname")#form.cleaned_data['last_name']
             email = data.get("email")#form.cleaned_data['email']
             password = data.get("password")#form.cleaned_data['password']
 
+            try :
             #Erstelle neuen Benutzer auf der Datenbank
-            NewUser = Users.RegisterUser(first_name,last_name,email,password)
-            
+                print(first_name,last_name,email,password)
+                NewUser = Users.RegisterUser(first_name,last_name,email,password)
+
+            except : return JsonResponse({'message': 'Registrierung nicht erfolgreich' + str(NewUser)}, status=401)
             #Nur für Ausgabe der UserID später ersetzen!
             NewUser = int(NewUser.iduser)
             
-            return JsonResponse(NewUser, safe=False)
+            return JsonResponse({'message': 'Registrierung erfolgreich' + str(NewUser)}, status=200)
             
             #return redirect('success')  # Weiterleitung auf eine Erfolgsseite
             
-    return render(request, 'register.html', {'form': form})        
+    # return render(request, 'register.html', {'form': form})        
 
 #Login user
+@csrf_exempt
 def cust_login(request):
     # Wenn das Formular über POST gesendet wurde
+    # return JsonResponse({'message': 'Login erfolgreich'}, status=200)
     if request.method == 'POST':
         # Benutzerdaten aus dem Formular erhalten
         data = json.loads(request.body)
@@ -87,13 +94,13 @@ def cust_login(request):
             request.session["UserIsAuth"] = True
             request.session["iduser"] = userid
             messages.success(request, 'Erfolgreich eingeloggt!')
-            return redirect('home')  # Nach erfolgreichem Login weiterleiten (zu einer Seite namens "home")
+            return JsonResponse({'message': 'Login erfolgreich'}, status=200)   # Nach erfolgreichem Login weiterleiten (zu einer Seite namens "home")
         else:
             # Fehlgeschlagene anmeldung
             # Setzt für die session die anmeldung auf false(Verwendung um Seiten für nicht Nutzer zu blockieren)
             request.session["UserIsAuth"] = False
             messages.error(request, 'Benutzername oder Passwort sind falsch.')
-            return redirect('login')  # Benutzer zurück zur Login-Seite leiten
+            return JsonResponse({'message': 'Login nicht erfolgreich'}, status=401)  # Benutzer zurück zur Login-Seite leiten
 
 def home(request):
 # Prüft ob ein Benutzer angemeldet ist    

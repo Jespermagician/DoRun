@@ -34,19 +34,24 @@ function Login() {
   // Beispiel für Handling mit API Backend Aufruf
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (email === "" || password === "") {
+      setError("Bitte alle Felder ausfüllen.");
+      return;
+    }
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
+      const response = await fetch("http://127.0.0.1:8000/api/login/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data = await response.json();
+      const data = await response.text();
       if (!response.ok) {
-        throw new Error(data.message || "Fehler bei der Anmeldung");
+        // throw new Error(data.message || "Fehler bei der Anmeldung");
+        throw new Error(data.message);
       }
 
       // Speichere das Token (optional)
-      localStorage.setItem("token", data.token);
+      // localStorage.setItem("token", data.token);
 
       // Weiterleitung zum Dashboard
       navigate("/home");
@@ -56,7 +61,7 @@ function Login() {
   };
 
   // Handler für die Registrierung
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     if (email === "" || password === "" || confirmPassword === "") {
       setError("Bitte alle Felder ausfüllen.");
@@ -66,7 +71,27 @@ function Login() {
       setError("Die Passwörter stimmen nicht überein.");
       return;
     }
-    alert("Registrierung erfolgreich!");
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/register/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firstname, lastname, email, password }),
+      });
+      const data = await response.text();
+      if (!response.ok) {
+        // throw new Error(data.message || "Fehler bei der Anmeldung");
+        throw new Error(data.message);
+      }
+
+      // Speichere das Token (optional)
+      // localStorage.setItem("token", data.token);
+
+      // Weiterleitung zum Dashboard
+      navigate("/home");
+    } catch (error) {
+      setError(error.message);
+    }
+    // alert("Registrierung erfolgreich!");
   };
 
   return (
