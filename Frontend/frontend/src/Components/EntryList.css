@@ -1,0 +1,54 @@
+.entry-list-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  
+  .entry-list-container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .add-entry-button {
+    background-color: #3498db;
+    color: white;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    display: inline-block;
+  }
+  
+  .add-entry-button:hover {
+    background-color: #2980b9;
+  }
+  
+  .entry-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .entry-item {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .entry-item span {
+    font-size: 18px;
+  }
+  
+  .no-entries {
+    font-style: italic;
+    color: #7f8c8d;
+    text-align: center;
+    margin-top: 20px;
+  }

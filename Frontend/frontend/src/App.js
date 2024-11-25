@@ -1,18 +1,18 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import './App.css';
-import './Login.css';
-import Login from './Login';
+import './Pages/Login.css';
+import './Pages/Dashboard.css'
+import Login from './Pages/Login';
+import Dashboard from './Pages/Dashboard';
 
 function App() {
   return (
-    <div className='App'>
-      <h1>DoRun Spendenlaufverwaltung</h1>
       <Router>
         <Routes>
           <Route path="/" element={<Login />}/>
+          <Route path="/home" element={<Dashboard />}/>
         </Routes>
       </Router>
-    </div>
   );
 }
 
