@@ -11,6 +11,7 @@ Mailbody_File = "D:\Coding\Python\DoRun\E-Mail Texts\Mailbody.csv"
 attachement = "D:\Coding\Python\DoRun\E-Mail Texts\Example_doc.pdf"
 customizing_file = "D:\Coding\Python\DoRun\E-Mail Texts\Customizing.txt"
 
+
 rec_email = "weiershausenf@gmail.com"
 
 #Read from customizing
@@ -87,11 +88,7 @@ if __name__ == "__main__":
                                 cleaned_item = item.replace('[', '').replace(']', '')
                                 MailTexts.extend([int(x) for x in cleaned_item.split(',')])                        
     
-    #Start Mail processing
-    server = smtplib.SMTP(smtp_server, smtp_port)
-    server.starttls()
-    server.login(sender_email, password)
-    print("Login success")
+    #  ab hier besteht der port zu google
 
     msg = MIMEMultipart()
     msg['Subject'] = GetText(SType, Subject_File)
@@ -107,6 +104,8 @@ if __name__ == "__main__":
     msg.attach(MIMEText(Mailbody, 'html', 'utf-8'))
     
     part = MIMEBase('application', "octet-stream")
+
+
     part.set_payload(open(attachement, "rb").read())
     print(msg.as_string())
     Waiter = input("Waiting")
@@ -114,7 +113,14 @@ if __name__ == "__main__":
     
     part.add_header('Content-Disposition', 'attachment; filename="Example_doc.pdf"')
 
+
     msg.attach(part)
+    
+    #Start Mail processing
+    server = smtplib.SMTP(smtp_server, smtp_port)
+    server.starttls()
+    server.login(sender_email, password)
+    print("Login success")
     
     try:
         server.sendmail(sender_email, rec_email, msg.as_string())#"Subject: \n\n This is definitly not a Virus. Trust me bro: http://localhost:3000/register")

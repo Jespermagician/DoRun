@@ -5,6 +5,10 @@ settings.json
 .venv
 venv/
 
+
+# Inteface Credentials for Mail#
+MailConfig.json
+
 # Django #
 *.log
 *.pot
