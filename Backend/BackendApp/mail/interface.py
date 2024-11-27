@@ -8,7 +8,7 @@ from email import encoders
 import json
 import pandas as pd
 from . import views
-
+from django.http import HttpResponse
 
 
 
@@ -39,7 +39,7 @@ class getServerData:
     smtp_server: str
     smtp_port: int
     def __init__(self):
-        _getData = pd.read_json('MailConfig.json', typ="series")
+        _getData = pd.read_json(f"{views.BASE_DIR}\Backend\CustomData\MailConfig.json", typ="series")
         print(_getData)
         # the attributes behind _getData have to match the json
         self.sender_email = _getData.sender_email
@@ -128,13 +128,15 @@ def do(request):
     print(_getData)
 
 
-    print("test")
-    print(views.UserAuth("Jesper Herling"))
+    # print("test")
+    # print(views.UserAuth(request, "Jesper Herling"))
     # test = input("i")clea
 
     mail = MailSender()
     mail.SendMail(
         pReceiver="jesper@herlings.de", 
         pSubject="tset", pIsAttachement=False, 
-        pMailText=views.UserAuth(name="Jesper Herling"), 
+        pMailText=views.UserAuth(request=request, name="Jesper Herling"), 
         pAttachement="")
+
+    return HttpResponse("Mail send to Username")

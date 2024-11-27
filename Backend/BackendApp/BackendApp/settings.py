@@ -18,7 +18,8 @@ import os
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+print("BASE_DIR")
 print(BASE_DIR)
 
 # Quick-start development settings - unsuitable for production
@@ -75,11 +76,13 @@ MIDDLEWARE = [
 # hier caps rein gehauen
 ROOT_URLCONF = "BackendApp.urls"
 
+print("suub dir")
+print(os.path.join(BASE_DIR, 'CustomData'))
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            os.path.join(BASE_DIR, "Backend", "CustomData"),  # Template-Verzeichnis hinzufügen
+            os.path.join(BASE_DIR,'CustomData'),  # Template-Verzeichnis hinzufügen
         ],
         "APP_DIRS": True,
         "OPTIONS": {
