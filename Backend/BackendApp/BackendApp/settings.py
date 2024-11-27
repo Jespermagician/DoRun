@@ -19,7 +19,7 @@ load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+print(BASE_DIR)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "api",
+    "mail",
     'rest_framework',
     "corsheaders",
 ]
@@ -77,7 +78,9 @@ ROOT_URLCONF = "BackendApp.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            os.path.join(BASE_DIR, "Backend", "CustomData"),  # Template-Verzeichnis hinzufügen
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [

@@ -7,6 +7,8 @@ from email.mime.text import MIMEText
 from email import encoders
 import json
 import pandas as pd
+from . import views
+
 
 
 
@@ -52,6 +54,8 @@ class getServerData:
 
         
 # translation_table = dict.fromkeys(map(ord, '"'), None) #Dont change
+
+
 
 class MailSender():
     Server = None
@@ -110,5 +114,27 @@ class MailSender():
     
 
 
-mail = MailSender()
-mail.SendMail(pReceiver="jesper@herlings.de", pSubject="tset", pIsAttachement=False, pMailText="Hello", pAttachement="")
+
+
+# decoded_html: str
+# with urlopen(example_view()) as response:
+#   html_response = response.read()
+#   encoding = response.headers.get_content_charset('utf-8')
+#   decoded_html = html_response.decode(encoding)
+def do(request):
+
+    print(views.BASE_DIR)
+    _getData = pd.read_json(f"{views.BASE_DIR}\Backend\CustomData\MailConfig.json", typ="series")
+    print(_getData)
+
+
+    print("test")
+    print(views.UserAuth("Jesper Herling"))
+    # test = input("i")clea
+
+    mail = MailSender()
+    mail.SendMail(
+        pReceiver="jesper@herlings.de", 
+        pSubject="tset", pIsAttachement=False, 
+        pMailText=views.UserAuth(name="Jesper Herling"), 
+        pAttachement="")
