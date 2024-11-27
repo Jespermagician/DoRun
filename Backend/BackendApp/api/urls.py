@@ -6,9 +6,7 @@ from . import views
 
 
 urlpatterns = [
-    path("hello/", views.index, name="index"),
-    path("notes/", views.NoteListCreate.as_view(), name="note-list"),
-    path("notes/delete/<int:pk>/", views.NoteDelete.as_view(), name="delete-note"),   
-
-    
+    path('register/', views.register, name='register'),
+    path('login/', views.cust_login, name='login'),
+    path('home',views.home,name='home'),
 ]
