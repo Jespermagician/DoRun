@@ -77,6 +77,12 @@ body {
     margin-bottom: 5px;
     color: #555;
   }
+
+  .label-register {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+  }
   
   input {
     width: 100%;

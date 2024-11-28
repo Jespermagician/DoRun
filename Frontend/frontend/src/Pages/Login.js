@@ -3,23 +3,10 @@ import { useNavigate } from "react-router-dom";
 import "./Login.css"; // CSS-Datei für das Styling und Slide-Effekt
 
 function Login() {
-  const [isLogin, setIsLogin] = useState(true); // Zustand für Anzeige des Login oder Register Formulars
-  const [firstname, setFirstName] = useState("");
-  const [lastname, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
-  // Handler für die Umschaltung zwischen Login und Register Formular
-  const toggleForm = () => {
-    setIsLogin(!isLogin);
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
-    setError("");
-  };
 
   // Beispiel für Handling mit API Backend Aufruf
   const handleLogin = async (e) => {
@@ -64,8 +51,9 @@ function Login() {
           {error && <p className="error">{error}</p>}
           <form onSubmit={handleLogin}>
             <div className="form-group">
-              <label htmlFor="login-email">E-Mail-Adresse</label>
+              <label className="login-label" htmlFor="login-email">E-Mail-Adresse</label>
               <input
+                className="login-input"
                 type="email"
                 id="login-email"
                 placeholder="E-Mail eingeben"
@@ -75,8 +63,9 @@ function Login() {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="login-password">Passwort</label>
-              <input
+              <label className="login-label" htmlFor="login-password">Passwort</label>
+              <input 
+                className="login-input"
                 type="password"
                 id="login-password"
                 placeholder="Passwort eingeben"
@@ -85,7 +74,7 @@ function Login() {
                 required
               />
             </div>
-            <button type="submit">Anmelden</button>
+            <button className="login-button" type="submit">Anmelden</button>
             <p className="switch-text">
               Noch kein Konto? <span onClick={handleRegister}>Registrieren</span>
             </p>

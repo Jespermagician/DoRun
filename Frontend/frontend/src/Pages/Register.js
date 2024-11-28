@@ -59,8 +59,9 @@ function Register() {
           {error && <p className="error">{error}</p>}
           <form onSubmit={handleRegister}>
             <div className="form-group">
-              <label htmlFor="register-firstName">Vorname</label>
+              <label className="login-label" htmlFor="register-firstName">Vorname</label>
               <input
+                className="login-input"
                 type="text"
                 id="register-firstName"
                 placeholder="Vorname eingeben"
@@ -70,8 +71,9 @@ function Register() {
                 />
             </div>
             <div className="form-group">
-              <label htmlFor="register-lastName">Nachname</label>
+              <label className="login-label" htmlFor="register-lastName">Nachname</label>
               <input
+                className="login-input"
                 type="text"
                 id="register-lastName"
                 placeholder="Nachname eingeben"
@@ -81,8 +83,9 @@ function Register() {
                 />
             </div>
             <div className="form-group">
-              <label htmlFor="register-email">E-Mail-Adresse</label>
+              <label className="login-label" htmlFor="register-email">E-Mail-Adresse</label>
               <input
+                className="login-input"
                 type="email"
                 id="register-email"
                 placeholder="E-Mail eingeben"
@@ -92,8 +95,9 @@ function Register() {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="register-password">Passwort</label>
+              <label className="login-label" htmlFor="register-password">Passwort</label>
               <input
+                className="login-input"
                 type="password"
                 id="register-password"
                 placeholder="Passwort eingeben"
@@ -103,8 +107,9 @@ function Register() {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="confirm-password">Passwort bestätigen</label>
+              <label className="login-label" htmlFor="confirm-password">Passwort bestätigen</label>
               <input
+                className="login-input"
                 type="password"
                 id="confirm-password"
                 placeholder="Passwort bestätigen"

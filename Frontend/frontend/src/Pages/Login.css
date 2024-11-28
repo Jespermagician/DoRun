@@ -65,6 +65,7 @@ body {
     color: #333;
     font-size: 24px;
     margin-bottom: 20px;
+    text-align: center;
   }
   
   .form-group {
@@ -77,8 +78,24 @@ body {
     margin-bottom: 5px;
     color: #555;
   }
+
+  .login-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+  }
   
   input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    transition: border-color 0.3s;
+  }
+
+  .login-input {
     width: 100%;
     padding: 10px;
     font-size: 16px;
@@ -112,6 +129,20 @@ body {
     cursor: pointer;
     transition: background-color 0.3s;
   }
+
+  .login-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #4CAF50;
+    background-color: cornflowerblue;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
   
   .button:hover {
     background-color: #45a049;
@@ -121,6 +152,7 @@ body {
     margin-top: 10px;
     font-size: 0.9em;
     color: #555;
+    text-align: center;
   }
   
   .switch-text span {
