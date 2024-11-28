@@ -113,7 +113,7 @@ body {
     transition: background-color 0.3s;
   }
   
-  .button:hover {
+  button:hover {
     background-color: #45a049;
   }
   

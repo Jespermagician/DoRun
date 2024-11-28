@@ -1,54 +1,85 @@
 .entry-list-container {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-  }
-  
-  .entry-list-container h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-  
-  .add-entry-button {
-    background-color: #3498db;
-    color: white;
-    padding: 10px 15px;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 20px;
-    display: inline-block;
-  }
-  
-  .add-entry-button:hover {
-    background-color: #2980b9;
-  }
-  
-  .entry-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .entry-item {
-    background-color: #f9f9f9;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
-  .entry-item span {
-    font-size: 18px;
-  }
-  
-  .no-entries {
-    font-style: italic;
-    color: #7f8c8d;
-    text-align: center;
-    margin-top: 20px;
-  }
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  /* max-height: 400px;  */
+  /* Maximale Höhe für die Scrollbar */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: black;
+  float: right; margin-top: -625px;
+  width: 965px;
+  height: 580px;
+}
+
+.entry-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto; /* Scrollbar bei langen Listen */
+  color: black;
+}
+
+.no-entries {
+  text-align: center;
+}
+
+.entry-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.entry-details span {
+  margin-right: 16px;
+  font-size: 14px;
+}
+
+.entry-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn,
+.delete-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.3s ease;
+  margin-right: 20px;
+}
+
+.edit-btn:hover {
+  color: #4caf50;
+}
+
+.delete-btn:hover {
+  color: #f44336;
+}
+
+.add-entry-btn {
+  display: block;
+  margin: auto; /* Zentriert den Button */
+  padding: 10px 16px;
+  font-size: 14px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-entry-btn:hover {
+  background-color: #45a049;
+}
+
+.span-indent {
+  margin-left: 10px;
+}

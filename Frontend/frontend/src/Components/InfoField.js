@@ -1,10 +1,16 @@
-import React from 'react';
-import './InfoField.css'; // Styles für InfoField
+import React from "react";
+import "./InfoField.css";
 
-const InfoField = ({ message }) => {
+const InfoField = ({ user }) => {
   return (
     <div className="info-field">
-      <p>{message}</p>
+      <h3>Benutzerinformationen</h3>
+      <p>
+        <strong>Name:</strong> {user.name}
+      </p>
+      <p>
+        <strong>Email:</strong> {user.email}
+      </p>
     </div>
   );
 };
