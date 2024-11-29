@@ -1,6 +1,9 @@
 from django.shortcuts import render
+
 from django.http import JsonResponse, HttpResponse
 from .models import Users
+from django.http import JsonResponse
+from .models import Users, donationrecords
 from rest_framework import generics
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
@@ -53,7 +56,10 @@ def cust_login(request):
 
         # Versuche den Benutzer anzumelden
         user = Users.LoginUser(username,password)
-        userid = user.iduser
+        try:
+            userid = user.iduser
+        except:
+            return JsonResponse({'message': 'Login nicht erfolgreich'}, status=401)
         
         if user is not None:
             # Erfolgreiche anmeldung
@@ -69,7 +75,15 @@ def cust_login(request):
             messages.error(request, 'Benutzername oder Passwort sind falsch.')
             return JsonResponse({'message': 'Login nicht erfolgreich'}, status=401)  # Benutzer zurück zur Login-Seite leiten
 
+@csrf_exempt
 def home(request):
 # Prüft ob ein Benutzer angemeldet ist    
-    if (request.session["UserIsAuth"] == True):
-        return render(request, 'home.html')
+    if (request.session["UserIsAuth"] == True and request.method == 'POST'):
+        
+        UserID = request.session["iduser"]
+        
+        Data = donationrecords.GetUserStats(UserID)
+        
+        return JsonResponse(Data)
+    else:
+        return JsonResponse({'message': 'User ist nicht Authorisiert!'}, status=401)

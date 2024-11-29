@@ -1,53 +1,74 @@
+/* Grundlegendes Layout für das Dashboard */
 .dashboard-container {
-    padding: 20px;
+  padding: 20px;
+  background-color: #f4f4f4;
+  height: 800px;
+  width: 1700px;
+  border-radius: 10px;
+}
+
+/* Flexbox für das Hauptlayout des Dashboards */
+.dashboard-wrapper {
+  display: flex;
+  gap: 20px;  /* Abstand zwischen den Bereichen */
+  flex-wrap: wrap;  /* Flexbox wird umschlagen, wenn Platz benötigt wird */
+  justify-content: space-between;
+}
+
+/* Die "Gesamtspenden"-Box */
+.total-donations {
+  flex: 1 1 60%;  /* Flexibilität für größere und kleinere Bildschirme */
+  min-width: 200px;  /* Verhindert, dass das Element zu schmal wird */
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+/* Box für die Eintragsliste */
+.entry-list {
+  flex: 1 1 35%;  /* Flexibilität für größere und kleinere Bildschirme */
+  min-width: 300px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Zusätzliche Stile für die Eintragsliste, falls keine Einträge vorhanden sind */
+.entry-list-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  font-style: italic;
+}
+
+.logout-btn {
+  padding: 2px;
+  margin-bottom: 10px;
+  padding: 6px;
+  width: fit-content;
+  background-color: #ffffff;
+  color: black;
+}
+
+/* Anpassen des Layouts bei kleinen Bildschirmen */
+@media (max-width: 768px) {
+  .dashboard-wrapper {
+    flex-direction: column; /* Auf kleineren Bildschirmen werden die Boxen untereinander gestapelt */
   }
-  
-  .dashboard-body {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-  }
-  
-  .left-side {
-    flex: 0.6;
-  }
-  
-  .right-side {
-    flex: 0.4;
-  }
-  
+
+  .total-donations,
   .entry-list {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    min-width: auto; /* Keine feste Mindestbreite mehr erforderlich */
+    flex: 1 1 100%;  /* Beide Sektionen nehmen den gesamten Platz ein */
   }
-  
-  .entry-list h3 {
-    margin-top: 0;
-  }
-  
-  .entry-list ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .entry-list li {
-    background-color: #ecf0f1;
-    margin: 5px 0;
-    padding: 10px;
-    border-radius: 4px;
-  }
-  
-  .add-entry-button {
-    background-color: #2ecc71;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .add-entry-button:hover {
-    background-color: #27ae60;
-  }
+}

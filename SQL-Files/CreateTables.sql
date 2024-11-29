@@ -4,14 +4,15 @@
  
 CREATE TABLE api_roles
 (
-    roleid integer PRIMARY KEY,
-    rolename NOT NULL
+    RoleID integer NOT NULL,
+    RoleName text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT Roles_pkey PRIMARY KEY (RoleID)
 )
- 
+
 TABLESPACE pg_default;
- 
-ALTER TABLE IF EXISTS Roles
-    OWNER to postgres;
+
+ALTER TABLE IF EXISTS api_roles
+    OWNER to "Hackerman";
  
  
 -- Table: public.User
@@ -20,7 +21,7 @@ ALTER TABLE IF EXISTS Roles
  
 CREATE TABLE api_users
 (
-    userid integer PRIMARY KEY,
+    iduser integer PRIMARY KEY,
     firstname text NOT NULL,
     lastname text NOT NULL,
     email VARCHAR(320) NOT NULL UNIQUE,
@@ -31,15 +32,15 @@ CREATE TABLE api_users
     verified boolean default false,
     CONSTRAINT fk_Role
         FOREIGN KEY(roleid)
-            REFERENCES Roles(RoleID)
+            REFERENCES api_roles(RoleID)
                     ON UPDATE CASCADE
 )
 
 
 TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS Users
-    OWNER to postgres;
+ALTER TABLE IF EXISTS api_users
+    OWNER to "Hackerman";
 
 
 
@@ -50,7 +51,7 @@ ALTER TABLE IF EXISTS Users
 CREATE TABLE api_donationrecord
 (
     donationrecid integer PRIMARY KEY,
-    userid integer NOT NULL,
+    iduser integer NOT NULL,
     firstname text NOT NULL,
     lastname text NOT NULL,
     email VARCHAR(320) NOT NULL,
@@ -62,15 +63,13 @@ CREATE TABLE api_donationrecord
     createdat timestamp without time zone DEFAULT NOW(),
     verified boolean default false,
     CONSTRAINT fk_User
-        FOREIGN KEY(userid)
-            REFERENCES Users(UserID)
+        FOREIGN KEY(iduser)
+            REFERENCES api_users(IDUser)
                 ON DELETE CASCADE
                 ON UPDATE CASCADE
 )
  
 TABLESPACE pg_default;
  
-ALTER TABLE IF EXISTS DonationRecord
-    OWNER to postgres;
- 
- 
+ALTER TABLE IF EXISTS api_DonationRecord
+    OWNER to "Hackerman";
