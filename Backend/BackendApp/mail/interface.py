@@ -9,6 +9,7 @@ import json
 import pandas as pd
 from . import views
 from django.http import HttpResponse
+from api.models import Users
 
 
 
@@ -24,14 +25,7 @@ from django.http import HttpResponse
 # the smtp_port should be an integer
 # the attributes behind _getData have to match the json!!!
 ###########################################
-# Werte ausgeben
 
-#Read from customizing
-# global ServerData
-# _ServerData = pd.read_json('MailConfig.json', typ="series")
-
-# print(_ServerData)
-# matches = re.findall(r'"(.*?)"', line)   
 
 class getServerData:
     sender_email: str
@@ -121,12 +115,18 @@ class MailSender():
 #   html_response = response.read()
 #   encoding = response.headers.get_content_charset('utf-8')
 #   decoded_html = html_response.decode(encoding)
-def do(request):
+def do(request, UserID):
 
     print(views.BASE_DIR)
+    print(UserID)
     _getData = pd.read_json(f"{views.BASE_DIR}\Backend\CustomData\MailConfig.json", typ="series")
     print(_getData)
 
+    UserModel = Users.objects.raw("Select * From api_users Where iduser = %s", [UserID])
+    print(UserModel)
+    mail: str
+    for val in UserModel:
+        mail = val.mail
 
     # print("test")
     # print(views.UserAuth(request, "Jesper Herling"))
@@ -134,9 +134,9 @@ def do(request):
 
     mail = MailSender()
     mail.SendMail(
-        pReceiver="jesper@herlings.de", 
-        pSubject="tset", pIsAttachement=False, 
-        pMailText=views.UserAuth(request=request, name="Jesper Herling"), 
+        pReceiver=mail, 
+        pSubject="Anmeldung Spendenlauf", pIsAttachement=False, 
+        pMailText=views.UserAuth(request=request, UserID=UserID), 
         pAttachement="")
 
     return HttpResponse("Mail send to Username")

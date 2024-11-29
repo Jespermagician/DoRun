@@ -18,17 +18,12 @@ def indexMail(request):
     return HttpResponse("Hello... ")
 
 
-def generateToken():
-    testmail = "test@test.de"
-    testsalt = sha256("ghjsdflqkjsgbfjkds".encode('utf-8')).hexdigest()
-    print("testsalt")
-    print(testsalt)
-    token = sha256((testmail + testsalt).encode('utf-8')).hexdigest()
-    print("token")
-    print(token)
+def generateToken(pSalt, pMail):
+    token = sha256((pMail+ pSalt).encode('utf-8')).hexdigest()
+    print("token: ", token)
     return token
 
-def UserAuth(request, name: str):
+def UserAuth(request, UserID: int):
     # Funktion zur Generierung einer eindeutigen ID
     def id_generator(size=10, chars=string.ascii_uppercase + string.digits):
         return ''.join(random.choice(chars) for _ in range(size))
@@ -37,16 +32,25 @@ def UserAuth(request, name: str):
     template_name = "UserAuth.html"
     # template_name = os.path.join(BASE_DIR, "Backend", "CustomData", "UserAuth.html")
 
+    UserModel = Users.objects.raw("Select * From api_users Where iduser = %s", [UserID])
+    mail: str
+    name: str
+    salt
+
+    for val in UserModel:
+        mail = val.mail
+        salt = val.salt
+        name = f"{val.firstname} {val.lastname}"
+
 
     # print("request.get_full_path()")
     # print(request.get_full_path())
-    testUserID = 123423
-    token = generateToken()
+    token = generateToken(mail, salt)
     print("request.build_absolute_uri ")
     print(request.build_absolute_uri())
     
     # target_link = f"{request.build_absolute_uri()}auth/{token}"
-    target_link = f"{request.build_absolute_uri()}auth/{testUserID}/{token}"
+    target_link = f"{request.build_absolute_uri()}auth/{UserID}/{token}"
 
     print(target_link)
 
