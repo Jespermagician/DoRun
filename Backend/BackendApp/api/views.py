@@ -37,7 +37,7 @@ def register(request):
 
         except: 
         #Bei Fehler return error an Frontend
-            return JsonResponse({"userid": None, "UserIsAuth": False,'message': 'Registrierung nicht erfolgreich'}, status=401)
+            return JsonResponse(data={"userid": None, "UserIsAuth": False,'message': 'Registrierung nicht erfolgreich'}, status=401)
         
         #Convert Userid
         NewUserID = int(NewUser.iduser)
@@ -69,7 +69,12 @@ def cust_login(request):
         try:
             userid = user.iduser
         except:
-            return JsonResponse(status=401, data=[{"userid": None,"UserIsAuth": False, 'message': 'Login nicht erfolgreich'}])
+            User_Data = {
+                "userid": None,
+                "UserIsAuth": False,
+                "message": 'Login nicht erfolgreich'
+            }
+            return JsonResponse(status=401, data={"userid": None,"UserIsAuth": False, 'message': 'Login nicht erfolgreich'})
         
         if user is not None:
             # Erfolgreiche anmeldung
