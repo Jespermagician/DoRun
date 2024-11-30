@@ -37,15 +37,21 @@ def register(request):
 
         except: 
         #Bei Fehler return error an Frontend
-            return JsonResponse({'message': 'Registrierung nicht erfolgreich'}, status=401)
+            return JsonResponse({"userid": None, "UserIsAuth": False,'message': 'Registrierung nicht erfolgreich'}, status=401)
         
         #Convert Userid
         NewUserID = int(NewUser.iduser)
 
         # Send Verification Mail
         interface.sendUserVerifyMail(request=request, UserID=NewUserID)
+        
+        User_Data = {
+             "userid": NewUserID,
+             "UserIsAuth": False,
+             "message": 'Registrierung erfolgreich' + str(NewUserID)
+            }
             
-        return JsonResponse({'message': 'Registrierung erfolgreich' + str(NewUserID)}, status=200)
+        return JsonResponse(data=User_Data, status=200)
 
 #Login user
 @csrf_exempt
@@ -63,15 +69,18 @@ def cust_login(request):
         try:
             userid = user.iduser
         except:
-            return JsonResponse({'message': 'Login nicht erfolgreich'}, status=401)
+            return JsonResponse(status=401, data=[{"userid": None,"UserIsAuth": False, 'message': 'Login nicht erfolgreich'}])
         
         if user is not None:
             # Erfolgreiche anmeldung
             # Setzt für die session die anmeldung auf true(Verwendung um Seiten nur für Nutzer anzuzeigen) 
-            request.session["UserIsAuth"] = True
-            request.session["iduser"] = userid
+            User_Data = {
+                "userid": userid,
+                "UserIsAuth": True,
+                "message": 'Login erfolgreich'
+            }
             messages.success(request, 'Erfolgreich eingeloggt!')
-            return JsonResponse({'message': 'Login erfolgreich'}, status=200)   # Nach erfolgreichem Login weiterleiten (zu einer Seite namens "home")
+            return JsonResponse(data=User_Data, status=200)   # Nach erfolgreichem Login weiterleiten (zu einer Seite namens "home")
         else:
             # Fehlgeschlagene anmeldung
             # Setzt für die session die anmeldung auf false(Verwendung um Seiten für nicht Nutzer zu blockieren)
