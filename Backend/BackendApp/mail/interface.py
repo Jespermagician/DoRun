@@ -1,15 +1,13 @@
 import smtplib
-import csv
-import re
+from django.shortcuts import get_object_or_404
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email import encoders
-import json
 import pandas as pd
 from . import views
 from django.http import HttpResponse
-from api.models import Users
+from api.models import Users, donationrecord
 
 
 
@@ -115,28 +113,45 @@ class MailSender():
 #   html_response = response.read()
 #   encoding = response.headers.get_content_charset('utf-8')
 #   decoded_html = html_response.decode(encoding)
-def do(request, UserID):
+def sendUserVerifyMail(request, UserID):
 
     print(views.BASE_DIR)
     print(UserID)
     _getData = pd.read_json(f"{views.BASE_DIR}\Backend\CustomData\MailConfig.json", typ="series")
     print(_getData)
 
-    UserModel = Users.objects.raw("Select * From api_users Where iduser = %s", [UserID])
-    print(UserModel)
-    mail: str
-    for val in UserModel:
-        mail = val.mail
-
-    # print("test")
-    # print(views.UserAuth(request, "Jesper Herling"))
-    # test = input("i")clea
+    # Fetch the user object from the database or raise a 404 error if not found
+    user = get_object_or_404(Users, iduser=UserID)
 
     mail = MailSender()
     mail.SendMail(
-        pReceiver=mail, 
-        pSubject="Anmeldung Spendenlauf", pIsAttachement=False, 
-        pMailText=views.UserAuth(request=request, UserID=UserID), 
+        pReceiver=user.email, 
+        pSubject="Anmeldung Spendenlauf", 
+        pIsAttachement=False, 
+        pMailText=views.UserAuth(request=request, UserID=UserID, user=user), 
         pAttachement="")
 
-    return HttpResponse("Mail send to Username")
+    return HttpResponse(f"Mail send to {user.lastname}, {user.firstname}")
+
+
+def sendDonationVerifyMail(request, UserID, DonationId):
+
+    print(views.BASE_DIR)
+    print(UserID)
+    _getData = pd.read_json(f"{views.BASE_DIR}\Backend\CustomData\MailConfig.json", typ="series")
+    print(_getData)
+
+    # Fetch the user object from the database or raise a 404 error if not found
+    user = get_object_or_404(Users, iduser=UserID)
+    donRec = get_object_or_404(donationrecord, donationrecid=DonationId)
+
+    mail = MailSender()
+    mail.SendMail(
+        pReceiver=donRec.email, 
+        pSubject=f"Sponsoranmeldung für {user.lastname}, {user.firstname}", 
+        pIsAttachement=False, 
+        pMailText=views.DonRecAuth(request=request, UserID=UserID, user=user, DonRecID=DonationId,DonRec=donRec), 
+        pAttachement="")
+
+    return HttpResponse(f"Mail send to {user.lastname}, {user.firstname}")
+

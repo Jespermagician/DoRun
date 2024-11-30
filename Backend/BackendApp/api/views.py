@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse
 from .models import Users
 from django.http import JsonResponse
-from .models import Users, donationrecords
+from .models import Users, donationrecord
 from rest_framework import generics
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
@@ -11,6 +11,7 @@ from rest_framework.permissions import AllowAny
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 import json
+from mail import interface
 
 # Create ur views here
 class CreateUserView(generics.CreateAPIView):
@@ -39,9 +40,12 @@ def register(request):
             return JsonResponse({'message': 'Registrierung nicht erfolgreich'}, status=401)
         
         #Convert Userid
-        NewUser = int(NewUser.iduser)
+        NewUserID = int(NewUser.iduser)
+
+        # Send Verification Mail
+        interface.sendUserVerifyMail(request=request, UserID=NewUserID)
             
-        return JsonResponse({'message': 'Registrierung erfolgreich' + str(NewUser)}, status=200)
+        return JsonResponse({'message': 'Registrierung erfolgreich' + str(NewUserID)}, status=200)
 
 #Login user
 @csrf_exempt
@@ -82,7 +86,7 @@ def home(request):
         
         UserID = request.session["iduser"]
         
-        Data = donationrecords.GetUserStats(UserID)
+        Data = donationrecord.GetUserStats(UserID)
         
         return JsonResponse(Data)
     else:

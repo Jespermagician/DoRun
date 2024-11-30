@@ -28,7 +28,7 @@
         .button {
             display: inline-block;
             padding: 10px 20px;
-            background-color: #4caf50; /* Zufällige Button-Farbe (Grün) */
+            background-color: #4caf50; /*Hintergrund farbe button */
             color: white;
             text-decoration: none;
             border-radius: 5px;
@@ -38,14 +38,42 @@
         .button:hover {
             background-color: #45a049; /* Button-Farbe beim Hover */
         }
+        tr{
+            text-align: left;
+            border-color: black;
+            border-radius: 5px;
+            td{
+                margin: 5%;   
+            }
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        {% comment %} Begrüßung {% endcomment %}
-        <h2>Vielen Dank für die Anmeldung {{ name }}</h2> 
-        {% comment %} Aufforderung {% endcomment %}
-        <p>Bitte verifizieren Sie ihre Anmeldung.</p>
+        <!-- Begrüßung  -->
+        <h2>Hallo, {{ name }}</h2> 
+        <h3>Vielen Dank, dass sie sich als Spender bereit erklären!</h3>
+        <table>
+            <tr>
+                <td>Läufer: </td>
+                <td>{{ RunnerName }}</td>
+            </tr>
+            
+            <tr>
+                {% if FixesDonation %}
+                    <td>FesteSpende von :</td>
+                    <td>{{ Donation }} €</td>
+                {% else %}  
+                    <td>Spende pro Kilometer: </td>
+                    <td>{{ Donation }}</td>
+                {% endif %}
+            </tr>
+        </table>
+        
+
+        <!-- Aufforderung  -->
+        <h3>Bitte verifizieren Sie, über den Knopf, ihre Spendenbereitschaft</h3>
+        <p>Sollten Sie nicht Spenden wollen oder sollte es sich um ein Missverständinis Handeln, ignorrieren sie bitte die Mail!</p>
         <a href="{{ link_url }}" class="button">Verifizieren</a>
     </div>
 </body>

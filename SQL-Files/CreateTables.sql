@@ -1,6 +1,6 @@
--- Table: public.Roles
+-- Table: public.api_roles
  
--- DROP TABLE IF EXISTS public."Roles";
+-- DROP TABLE IF EXISTS public."api_roles";
  
 CREATE TABLE api_roles
 (
@@ -15,9 +15,9 @@ ALTER TABLE IF EXISTS api_roles
     OWNER to "Hackerman";
  
  
--- Table: public.User
+-- Table: public.api_users
  
--- DROP TABLE IF EXISTS Users;
+-- DROP TABLE IF EXISTS api_users;
  
 CREATE TABLE api_users
 (
@@ -27,6 +27,7 @@ CREATE TABLE api_users
     email VARCHAR(320) NOT NULL UNIQUE,
     password_hash bytea NOT NULL,
     salt bytea NOT NULL,
+    Kilometers integer default 0,
     createdat timestamp without time zone DEFAULT NOW(),
     roleid integer NOT NULL,    -- ForeignKey
     verified boolean default false,
@@ -44,9 +45,9 @@ ALTER TABLE IF EXISTS api_users
 
 
 
--- Table: public.DonationRecord
+-- Table: public.api_donationrecord
  
--- DROP TABLE IF EXISTS public.DonationRecord;
+-- DROP TABLE IF EXISTS public.api_donationrecord;
 
 CREATE TABLE api_donationrecord
 (

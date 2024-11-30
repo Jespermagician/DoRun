@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth import logout
 from django.http import JsonResponse
-import json
+import array
 from hashlib import sha256
 import random
 import string
@@ -20,7 +20,7 @@ class Users(models.Model):
     createdat = models.DateTimeField(auto_now_add=True, null=False)
     roleid = models.IntegerField(null=False)
     kilometers = models.IntegerField(null=False)
-    verifieduser = models.BooleanField()
+    verified = models.BooleanField()
     
     def RegisterUser(first_name,last_name,email,password):
         #1. Set UserID
@@ -62,13 +62,14 @@ class Users(models.Model):
         
         #
         #5. Set user-validation validation set by Link to true
+        Kilometers = 0
         VerifiedUser = False
         
         #Creat new DB entry if values are filled    
         if (UserID != None and first_name != None and last_name != None and email != None and Password_hash != None and Salt != None and CreatedAt != None and RoleID != None):
             try:
                 print("Creating new User with ID: " + str(UserID))
-                NewUser = Users.objects.create(iduser=UserID, firstname=first_name,lastname=last_name,email=email,password_hash=Password_hash,salt=Salt,createdat=CreatedAt,roleid=RoleID,verifieduser=VerifiedUser)
+                NewUser = Users.objects.create(iduser=UserID, firstname=first_name,lastname=last_name,email=email,password_hash=Password_hash,salt=Salt,createdat=CreatedAt,roleid=RoleID,verified=VerifiedUser, kilometers=Kilometers)
             except:
                 print("Error, user can't be added to DB")
         else:
@@ -93,7 +94,7 @@ class Users(models.Model):
         except:
             print("Error")
             
-class donationrecords():
+class donationrecord(models.Model):
     donationrecid = models.IntegerField(primary_key=True, null=False)
     iduser = models.TextField(null=False)
     firstname = models.TextField(null=False)
@@ -117,12 +118,12 @@ class donationrecords():
             UserLastname = row.lastname
             UserEmail = row.email
         
-        #Get donationrecords for the loggedin user
-        UserEntrys = donationrecords.objects.raw("Select * From api_donationrecords Where iduser = %s", [Userid])
+        #Get donationrecord for the loggedin user
+        UserEntrys = donationrecord.objects.raw("Select * From api_donationrecord Where iduser = %s", [Userid])
         
         TotalDonations = 0
         TotalKilometers = 0
-        #Get Total amount for Donations and Total Kilometers 
+        #Get Total amount for Donations and Total Kilomers 
         for row in UserEntrys:
             #Calculate total Donations 
             if (row.fixedamount == True):
@@ -142,7 +143,7 @@ class donationrecords():
              "housenr": obj.housenr,"postcode": obj.postcode, 
              "donation": obj.donation, "fixedamount": obj.fixedamount, 
              "createdat": obj.createdat, "verified": obj.verified, 
-             "Kilometers": obj.kilometers, 
+             "Kilometers": obj.kilometers,  
              "TotalDonations": TotalDonations,"TotalKilometers": TotalKilometers}  # Felder anpassen
             for obj in UserEntrys
         ]
@@ -159,11 +160,14 @@ def RandChars(size=30, chars=string.ascii_uppercase + string.digits):
 
 
 def PasswordHashing(password):
-    SaltText = RandChars # Generate string as salt
+    print("password", password)
+    SaltText = RandChars() # Generate string as salt
     Salt = sha256(str(SaltText).encode('utf-8')).hexdigest() # Hash salt
     Password_Hash = sha256(''.join(password + Salt).encode('utf-8')).hexdigest() # hash salt hash and paswword
-
-    return Password_Hash, Salt
+    print("SaltText: ", SaltText)
+    print("salt: ", Salt)
+    print("passowr: ", Password_Hash)
+    return bytes.fromhex(Password_Hash), bytes.fromhex(Salt)
 
 # e
 def CheckPassword(EnteredPwd, password,salt):
