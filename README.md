@@ -7,3 +7,11 @@ To run DoRun you need to set up the DBMS Interface. To set up the Database you n
 
 
 <img title="a title" alt="It was for Charity Clark" src="Images/charity.webp">
+
+
+
+# Setup
+
+- Mail: 
+    - create the file `...\DoRun\Backend\BackendApp\mail\MailConfig.json`
+    - how? read: `...\DoRun\Backend\BackendApp\mail\interface.py`

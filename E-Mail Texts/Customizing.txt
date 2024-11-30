@@ -7,6 +7,8 @@ Customizing for your E-Mail:
 
     Password: "ctvv dslc gvaf frku" #Replace
 
+
+Now in JOSN
 Customizing for your SMTP config google is the default option
     SMTP-Server: "smtp.gmail.com" Enter the smtp Server of your E-Mail provider /google is recommended
     SMTP-Port: "587" Enter the smtp Prot of your E-Mail provider

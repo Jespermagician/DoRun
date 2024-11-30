@@ -4,7 +4,10 @@ from django.shortcuts import redirect
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth import logout
 from django.http import JsonResponse
-import json
+import array
+from hashlib import sha256
+import random
+import string
 
 # Create your models here.
 class Users(models.Model):
@@ -17,7 +20,7 @@ class Users(models.Model):
     createdat = models.DateTimeField(auto_now_add=True, null=False)
     roleid = models.IntegerField(null=False)
     kilometers = models.IntegerField(null=False)
-    verifieduser = models.BooleanField()
+    verified = models.BooleanField()
     
     def RegisterUser(first_name,last_name,email,password):
         #1. Set UserID
@@ -59,13 +62,14 @@ class Users(models.Model):
         
         #
         #5. Set user-validation validation set by Link to true
+        Kilometers = 0
         VerifiedUser = False
         
         #Creat new DB entry if values are filled    
         if (UserID != None and first_name != None and last_name != None and email != None and Password_hash != None and Salt != None and CreatedAt != None and RoleID != None):
             try:
                 print("Creating new User with ID: " + str(UserID))
-                NewUser = Users.objects.create(iduser=UserID, firstname=first_name,lastname=last_name,email=email,password_hash=Password_hash,salt=Salt,createdat=CreatedAt,roleid=RoleID,verifieduser=VerifiedUser)
+                NewUser = Users.objects.create(iduser=UserID, firstname=first_name,lastname=last_name,email=email,password_hash=Password_hash,salt=Salt,createdat=CreatedAt,roleid=RoleID,verified=VerifiedUser, kilometers=Kilometers)
             except:
                 print("Error, user can't be added to DB")
         else:
@@ -82,17 +86,15 @@ class Users(models.Model):
             LoginUser = Users.objects.raw("Select * From api_users Where email = %s", [email])
             
             for p in LoginUser:
-                check_password = DecryptPassword(password,p.salt)
-                
-                #Check if given password = password from DB 
-                if (check_password == password):
+                # Enter the entered password encrypt it with the salt and compare it with the pwhash from the db
+                if (CheckPassword(password, p.password_hash, p.salt) ):
                     #Return LoginUser
                     return p
         
         except:
             print("Error")
             
-class donationrecords():
+class donationrecord(models.Model):
     donationrecid = models.IntegerField(primary_key=True, null=False)
     iduser = models.TextField(null=False)
     firstname = models.TextField(null=False)
@@ -116,12 +118,12 @@ class donationrecords():
             UserLastname = row.lastname
             UserEmail = row.email
         
-        #Get donationrecords for the loggedin user
-        UserEntrys = donationrecords.objects.raw("Select * From api_donationrecords Where iduser = %s", [Userid])
+        #Get donationrecord for the loggedin user
+        UserEntrys = donationrecord.objects.raw("Select * From api_donationrecord Where iduser = %s", [Userid])
         
         TotalDonations = 0
         TotalKilometers = 0
-        #Get Total amount for Donations and Total Kilometers 
+        #Get Total amount for Donations and Total Kilomers 
         for row in UserEntrys:
             #Calculate total Donations 
             if (row.fixedamount == True):
@@ -141,7 +143,7 @@ class donationrecords():
              "housenr": obj.housenr,"postcode": obj.postcode, 
              "donation": obj.donation, "fixedamount": obj.fixedamount, 
              "createdat": obj.createdat, "verified": obj.verified, 
-             "Kilometers": obj.kilometers, 
+             "Kilometers": obj.kilometers,  
              "TotalDonations": TotalDonations,"TotalKilometers": TotalKilometers}  # Felder anpassen
             for obj in UserEntrys
         ]
@@ -152,18 +154,25 @@ def roles():
     roleid = models.IntegerField(primary_key=True,null=False)
     rolename = models.TextField(null=False)
 
+# Method to create string of random chars
+def RandChars(size=30, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
 def PasswordHashing(password):
-    Password_Hash = bytes(1)
-    Salt = bytes(2)
+    print("password", password)
+    SaltText = RandChars() # Generate string as salt
+    Salt = sha256(str(SaltText).encode('utf-8')).hexdigest() # Hash salt
+    Password_Hash = sha256(''.join(password + Salt).encode('utf-8')).hexdigest() # hash salt hash and paswword
+    print("SaltText: ", SaltText)
+    print("salt: ", Salt)
+    print("passowr: ", Password_Hash)
+    return bytes.fromhex(Password_Hash), bytes.fromhex(Salt)
 
-    return Password_Hash, Salt
-
-# end def
-
-def DecryptPassword(password,salt):
-    decryptedPassword = str(1)
-    
-    return decryptedPassword
+# e
+def CheckPassword(EnteredPwd, password,salt):
+    EnteredPwdHashes = sha256(''.join(EnteredPwd + salt).encode('utf-8')).hexdigest()
+    return EnteredPwdHashes == password
 
 class CustomBackend(BaseBackend):
     def get_user(self, user_id):

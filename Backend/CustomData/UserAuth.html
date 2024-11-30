@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Daten Beispiel</title>
+    <style>
+        body {
+            background-color: #f0e68c; /*Hintergrund farbe*/
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+        }
+        h2 {
+            color: #333;
+        }
+        p {
+            color: #555;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4caf50; /* Zufällige Button-Farbe (Grün) */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #45a049; /* Button-Farbe beim Hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% comment %} Begrüßung {% endcomment %}
+        <h2>Vielen Dank für die Anmeldung {{ name }}</h2> 
+        {% comment %} Aufforderung {% endcomment %}
+        <p>Bitte verifizieren Sie ihre Anmeldung.</p>
+        <a href="{{ link_url }}" class="button">Verifizieren</a>
+    </div>
+</body>
+</html>
