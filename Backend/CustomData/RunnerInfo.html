@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Daten Beispiel</title>
+    <style>
+        body {
+            background-color: #f0e68c; /*Hintergrund farbe*/
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 600px;
+        }
+        h2 {
+            color: #333;
+        }
+        p {
+            color: #555;
+            margin: 20px 0;
+        }
+        tr {
+            text-align: left;
+            border-color: black;
+            border-radius: 5px;
+        }
+        th {
+            padding-right: 15px;
+        }
+        td {
+            margin: 5%;   
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4caf50; /*Hintergrund farbe button */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #45a049; /* Button-Farbe beim Hover */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Begrüßung  -->
+        <h2>Hallo, {{ name }}</h2> 
+        <h3>Der Spendenlauf ist zu ende!</h3> 
+        <p>Wir sind Ihnen sehr dankbar, für Ihre Teilnahme!</p>
+        <p>Insgesamt sind  {{ RunnerAmount }} Läufe*innen  {{ EventKilometers }} gelaufen und haben {{ EventTotal }} € erlaufen!</p>
+
+        <p>Sie selbst sind {{ RunnerKilometers }} gelaufen</p> 
+        <p>Und haben {{ RunnerTotal }} € gesammelt</p> 
+
+        <p>Ihre {{ Amount }} Sponsor*innen:</p> 
+
+        {% for value in data %}
+            <table>
+                <tr>
+                    <th>Vorname: </th>
+                    <td>{{ value.Fistname }}</td>
+                </tr>
+                <tr>
+                    <th>Nachname: </th>
+                    <td>{{ value.Lastname: }}</td>
+                </tr>
+                {% if FixedDonation %}
+                    <tr>
+                        <th>Spende pro Kilometer: </th>
+                        <td>{{ value.RecMoney }} €</td>
+                    </tr>
+                {%  else %}
+                    <tr>
+                        <th>Feste Spende: </th>
+                        <td>{{ value.RecMoney }} €</td>
+                    </tr>
+                {%  endif %}
+                <tr>
+                    <th>Betrag: </th>
+                    <td>{{ value.Record }} €</td>
+                </tr>
+            </table>
+        {% endfor %}
+
+        <h4>Insgesamt: {{ Total }} €</h4>
+
+        <hr>
+        <!-- Aufforderung  -->
+        <h3>Spendenanschrift:</h3>
+        <table>
+            <tr>
+                <th>IBAN: </th>
+                <td>DE02100500000054540402</td>
+            </tr>
+            <tr>
+                <th>Bank: </th>
+                <td>LANDESBANK BERLIN</td>
+            </tr>
+            <tr>
+                <th>BIC: </th>
+                <td>BELADEBE</td>
+            </tr>
+        </table>
+
+        <p>Spenden Sie bitte bis zum <i>01.01.9999</i></p>
+        <div>
+            <p>Sollten Sie nicht Spenden können oder die Frist verfehlen melden Sie sich unter: </p>
+            <p><i>example@mail.de</i> oder bei den Spendenlauf verantworlichen</p>
+        </div>
+            
+
+        <a href="https://youtu.be/dQw4w9WgXcQ?si=PatBcehocbhGib2A" class="button">Mehr Informationen</a>
+    </div>
+</body>
+</html>

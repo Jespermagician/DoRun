@@ -155,3 +155,24 @@ def sendDonationVerifyMail(request, UserID, DonationId):
 
     return HttpResponse(f"Mail send to {user.lastname}, {user.firstname}")
 
+
+
+
+def sendSponsorInfo(request, DonRecEmail):
+    # user = get_object_or_404(Users, iduser=UserID)
+    # donRec = get_object_or_404(donationrecord, email=DonRecEmail)
+    donRec = donationrecord.objects.filter(email=DonRecEmail)
+
+    print(donRec)
+    mail = None
+    for val in donRec:
+        print("-------------")
+        # print(f"donRec=")
+        print(val)
+        print(val.email)
+        print(val.firstname)
+        print(val.lastname)
+        # mail = val.email
+    print("test")
+    print(donRec[0].firstname)
+    return HttpResponse(f"test")
