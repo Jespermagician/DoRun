@@ -28,18 +28,24 @@ function Login() {
         // throw new Error(data.message || "Fehler bei der Anmeldung");
         throw new Error(data.message);
       }
-      else {
+      else if (data.UserIsAuth===true) {
         setUserid(data.userid)
         localStorage.setItem("userid", userid);
         setIsAuth(data.UserIsAuth)
         localStorage.setItem("token", data.userIsAuth);
-        setError(data.message)
+        // setError(data.message)
+        navigate("/home");
       }
+      else {
+        // setError(data.message)
+      }
+
+      setError(data.message)
 
       // Speichere das Token (optional)
       // localStorage.setItem("token", data.token);
 
-      navigate("/home");
+      
     } catch (error) {
       setError(error.message);
     }
