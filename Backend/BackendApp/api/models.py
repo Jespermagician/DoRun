@@ -53,7 +53,7 @@ class Users(models.Model):
         #2. Password hashing
         if (password != None):
             Password_hash, Salt = PasswordHashing(password)
-        
+            
         #3. Set current date 
         CreatedAt = date.today()
         
@@ -68,7 +68,7 @@ class Users(models.Model):
         if (UserID != None and first_name != None and last_name != None and email != None and Password_hash != None and Salt != None and CreatedAt != None and RoleID != None):
             try:
                 print("Creating new User with ID: " + str(UserID))
-                NewUser = Users.objects.create(iduser=UserID, firstname=first_name,lastname=last_name,email=email,password_hash=Password_hash,salt=Salt,createdat=CreatedAt,roleid=RoleID,verified=VerifiedUser, kilometers=Kilometers)
+                NewUser = Users.objects.create(iduser=UserID, firstname=first_name,lastname=last_name,email=email,password_hash=bytearray.fromhex(Password_hash),salt=bytearray.fromhex(Salt),createdat=CreatedAt,roleid=RoleID,verified=VerifiedUser, kilometers=Kilometers)
             except:
                 print("Error, user can't be added to DB")
         else:
@@ -179,9 +179,10 @@ def RandChars(size=30, chars=string.ascii_uppercase + string.digits):
 
 def PasswordHashing(password):
     SaltText = RandChars()  # Generate string as salt
-    Salt = sha256(SaltText.encode('utf-8')).digest()  # Generate binary salt
-    Password_Hash = sha256((password + Salt.hex()).encode('utf-8')).digest()  # Hash password + salt
-    return Password_Hash, Salt
+    Salt = sha256(SaltText.encode('utf-8')).digest().hex()  # Generate binary salt
+    Password_Hash = sha256((password + Salt).encode('utf-8')).digest()  # Hash password + salt
+    
+    return Password_Hash.hex(), Salt
 
 def CheckPassword(EnteredPwd, password, salt):
     # Recalculate hash for the entered password

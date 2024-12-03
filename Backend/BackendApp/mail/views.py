@@ -26,6 +26,8 @@ def RenderMailText(context, template_name, request):
         rendered_html = render_to_string(template_name=template_name, context=context, request=request)
 
         # Return the rendered HTML content
+        print("rendered_html")
+        print(rendered_html)
         return rendered_html
 
     except FileNotFoundError:
