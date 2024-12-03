@@ -69,12 +69,15 @@ def cust_login(request):
         user = Users.LoginUser(username,password)
         
         #Controlls messages
-        if (user.verified == False):
-            message = "Der User ist noch nicht verifiziert!"
-        elif (user.verified == True):
-            message = "Login erfolgreich"
-        else:
-            message = "Login nicht erfolgreich"
+        try:
+            if (user.verified == False):
+                message = "Der User ist noch nicht verifiziert!"
+            elif (user.verified == True):
+                message = "Login erfolgreich"
+            else:
+                message = "Login nicht erfolgreich"
+        except:
+            message = "Unbekannter User"
         
         # Get Userid
         try:
