@@ -65,24 +65,38 @@ def cust_login(request):
         password = data.get('password')
 
         # Versuche den Benutzer anzumelden
+        print(username,password)
         user = Users.LoginUser(username,password)
+        
+        #Controlls messages
+        if (user.verified == False):
+            message = "Der User ist noch nicht verifiziert!"
+        elif (user.verified == True):
+            message = "Login erfolgreich"
+        else:
+            message = "Login nicht erfolgreich"
+        
+        # Get Userid
         try:
             userid = user.iduser
         except:
             User_Data = {
                 "userid": None,
                 "UserIsAuth": False,
-                "message": 'Login nicht erfolgreich'
+                "message": message,
+                "Role": False,
             }
-            return JsonResponse(status=401, data={"userid": None,"UserIsAuth": False, 'message': 'Login nicht erfolgreich'})
+            return JsonResponse(status=401, data={"userid": None,"UserIsAuth": False, 'message': 'Login nicht erfolgreich', "Role": False})
         
         if user is not None:
             # Erfolgreiche anmeldung
             # Setzt für die session die anmeldung auf true(Verwendung um Seiten nur für Nutzer anzuzeigen) 
+            
             User_Data = {
                 "userid": userid,
-                "UserIsAuth": True,
-                "message": 'Login erfolgreich'
+                "UserIsAuth": user.verified,
+                "message": message,
+                "Role": user.roleid,
             }
             messages.success(request, 'Erfolgreich eingeloggt!')
             return JsonResponse(data=User_Data, status=200)   # Nach erfolgreichem Login weiterleiten (zu einer Seite namens "home")
@@ -91,7 +105,7 @@ def cust_login(request):
             # Setzt für die session die anmeldung auf false(Verwendung um Seiten für nicht Nutzer zu blockieren)
             request.session["UserIsAuth"] = False
             messages.error(request, 'Benutzername oder Passwort sind falsch.')
-            return JsonResponse({'message': 'Login nicht erfolgreich'}, status=401)  # Benutzer zurück zur Login-Seite leiten
+            return JsonResponse({'message': message}, status=401)  # Benutzer zurück zur Login-Seite leiten
 
 @csrf_exempt
 def home(request):

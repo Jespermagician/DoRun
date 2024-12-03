@@ -53,14 +53,13 @@ class Users(models.Model):
         #2. Password hashing
         if (password != None):
             Password_hash, Salt = PasswordHashing(password)
-            
+        
         #3. Set current date 
         CreatedAt = date.today()
         
         #4. Set RoleID = 3 aka User
         RoleID = 3 
         
-        #
         #5. Set user-validation validation set by Link to true
         Kilometers = 0
         VerifiedUser = False
@@ -84,13 +83,11 @@ class Users(models.Model):
         try:
             #Get data to the provided email
             LoginUser = Users.objects.raw("Select * From api_users Where email = %s", [email])
-            
             for p in LoginUser:
                 # Enter the entered password encrypt it with the salt and compare it with the pwhash from the db
                 if (CheckPassword(password, p.password_hash, p.salt) ):
                     #Return LoginUser
                     return p
-        
         except:
             print("Error")
             
@@ -149,6 +146,27 @@ class donationrecord(models.Model):
         ]
 
         return JsonResponse(status=200, data={data})
+    
+    def Create_donationrecord():
+        """
+        Purpose: Creates a new donationrecord with recived data
+        """
+        donorec = "Test"
+        iduser = "Test"
+        f_name = "Test"
+        l_name = "Test"
+        email = "Test"
+        street = "Test"
+        housenr = "Test"
+        postcode = "Test"
+        donation = "Test"
+        fixedamount = False
+        createdat = date.today()
+        verified = False
+        
+        NewDonoRec = donationrecord.objects.create(donationrecid = donorec, iduser = iduser, firstname = f_name, lastname = l_name, email = email, street = street, housenr = housenr, postcode = postcode, donation = donation, fixedamount = fixedamount, createdat = createdat, verified = verified)
+            
+    # end def
             
 def roles():
     roleid = models.IntegerField(primary_key=True,null=False)
@@ -160,19 +178,19 @@ def RandChars(size=30, chars=string.ascii_uppercase + string.digits):
 
 
 def PasswordHashing(password):
-    print("password", password)
-    SaltText = RandChars() # Generate string as salt
-    Salt = sha256(str(SaltText).encode('utf-8')).hexdigest() # Hash salt
-    Password_Hash = sha256(''.join(password + Salt).encode('utf-8')).hexdigest() # hash salt hash and paswword
-    print("SaltText: ", SaltText)
-    print("salt: ", Salt)
-    print("passowr: ", Password_Hash)
-    return bytes.fromhex(Password_Hash), bytes.fromhex(Salt)
+    SaltText = RandChars()  # Generate string as salt
+    Salt = sha256(SaltText.encode('utf-8')).digest()  # Generate binary salt
+    Password_Hash = sha256((password + Salt.hex()).encode('utf-8')).digest()  # Hash password + salt
+    return Password_Hash, Salt
 
-# e
-def CheckPassword(EnteredPwd, password,salt):
-    EnteredPwdHashes = sha256(''.join(EnteredPwd + salt).encode('utf-8')).hexdigest()
-    return EnteredPwdHashes == password
+def CheckPassword(EnteredPwd, password, salt):
+    # Recalculate hash for the entered password
+    EnteredPwdHash = sha256((EnteredPwd + salt.hex()).encode('utf-8')).digest()
+
+    # Compare hashes
+    is_valid = EnteredPwdHash == password
+    print("Password Match:", is_valid)
+    return is_valid
 
 class CustomBackend(BaseBackend):
     def get_user(self, user_id):
