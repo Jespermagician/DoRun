@@ -160,19 +160,43 @@ def RandChars(size=30, chars=string.ascii_uppercase + string.digits):
 
 
 def PasswordHashing(password):
-    print("password", password)
-    SaltText = RandChars() # Generate string as salt
-    Salt = sha256(str(SaltText).encode('utf-8')).hexdigest() # Hash salt
-    Password_Hash = sha256(''.join(password + Salt).encode('utf-8')).hexdigest() # hash salt hash and paswword
-    print("SaltText: ", SaltText)
-    print("salt: ", Salt)
-    print("passowr: ", Password_Hash)
-    return bytes.fromhex(Password_Hash), bytes.fromhex(Salt)
+    SaltText = RandChars()  # Generate string as salt
+    Salt = sha256(SaltText.encode('utf-8')).digest()  # Generate binary salt
+    Password_Hash = sha256((password + Salt.hex()).encode('utf-8')).digest()  # Hash password + salt
+    return Password_Hash, Salt
+
+def CheckPassword(EnteredPwd, password, salt):
+    # Recalculate hash for the entered password
+    EnteredPwdHash = sha256((EnteredPwd + salt.hex()).encode('utf-8')).digest()
+    print("Calculated Hash:", EnteredPwdHash)
+
+    # Compare hashes
+    is_valid = EnteredPwdHash == password
+    print("Password Match:", is_valid)
+    return is_valid
+
+
 
 # e
-def CheckPassword(EnteredPwd, password,salt):
-    EnteredPwdHashes = sha256(''.join(EnteredPwd + salt).encode('utf-8')).hexdigest()
-    return EnteredPwdHashes == password
+# def CheckPassword(EnteredPwd, password,salt):
+#     print("--------------------")
+#     print("--------------------")
+#     print("--------------------")
+#     print("--------------------")
+#     print(salt)
+#     print(str(salt))
+#     print("--------------------")
+
+
+#     print("EnteredPwd ", EnteredPwd)
+#     print("pass ", password)
+#     EnteredPwdHashes = sha256(''.join(EnteredPwd + str(salt)).encode('utf-8')).hexdigest()
+#     print("EnteredPwdHashes ", EnteredPwdHashes)
+#     test = sha256(''.join(EnteredPwd + str(salt)).encode('utf-8')).hexdigest()
+#     print("hashTest ", test)
+#     print("comp ", EnteredPwdHashes == password)
+
+#     return EnteredPwdHashes == password
 
 class CustomBackend(BaseBackend):
     def get_user(self, user_id):

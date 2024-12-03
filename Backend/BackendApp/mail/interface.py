@@ -115,10 +115,10 @@ class MailSender():
 #   decoded_html = html_response.decode(encoding)
 def sendUserVerifyMail(request, UserID):
 
-    print(views.BASE_DIR)
-    print(UserID)
-    _getData = pd.read_json(f"{views.BASE_DIR}\Backend\CustomData\MailConfig.json", typ="series")
-    print(_getData)
+    # print(views.BASE_DIR)
+    # print(UserID)
+    # _getData = pd.read_json(f"{views.BASE_DIR}\Backend\CustomData\MailConfig.json", typ="series")
+    # print(_getData)
 
     # Fetch the user object from the database or raise a 404 error if not found
     user = get_object_or_404(Users, iduser=UserID)
@@ -130,16 +130,19 @@ def sendUserVerifyMail(request, UserID):
         pIsAttachement=False, 
         pMailText=views.UserAuth(request=request, UserID=UserID, user=user), 
         pAttachement="")
+    
+    mail.CloseConnection()
 
     return HttpResponse(f"Mail send to {user.lastname}, {user.firstname}")
 
 
 def sendDonationVerifyMail(request, UserID, DonationId):
 
-    print(views.BASE_DIR)
-    print(UserID)
-    _getData = pd.read_json(f"{views.BASE_DIR}\Backend\CustomData\MailConfig.json", typ="series")
-    print(_getData)
+    # kann warscheinlich weg
+    # print(views.BASE_DIR)
+    # print(UserID)
+    # _getData = pd.read_json(f"{views.BASE_DIR}\Backend\CustomData\MailConfig.json", typ="series")
+    # print(_getData)
 
     # Fetch the user object from the database or raise a 404 error if not found
     user = get_object_or_404(Users, iduser=UserID)
@@ -152,27 +155,175 @@ def sendDonationVerifyMail(request, UserID, DonationId):
         pIsAttachement=False, 
         pMailText=views.DonRecAuth(request=request, UserID=UserID, user=user, DonRecID=DonationId,DonRec=donRec), 
         pAttachement="")
+    
+    mail.CloseConnection()
 
     return HttpResponse(f"Mail send to {user.lastname}, {user.firstname}")
 
 
 
+class SponsData:
+    firstname: str
+    lastname: str
+    kilometer: int
+    FixedDonation: bool
+    Donation: float
+    DonationTotal: float
+    def __init__(self, pFirstname, pLastname, pKm, pFixedDon, pDon):
+        self.firstname = pFirstname
+        self.lastname = pLastname
+        self.kilometer = pKm
+        self.FixedDonation = pFixedDon
+        self.Donation = pDon
+        if(pFixedDon):
+            self.DonationTotal = pDon
+        else:
+            self.DonationTotal = pDon * pKm
+        
+def BinarySearchUsers(users, id):
+    min = 0
+    max = len(users)
+    while min + 1 < max:
+        index = min + (max - min) // 2
+        val = users[index].iduser
+        if(val == id):
+            return index
+        if(val < id):
+            min = index
+        else:
+            max = index
+    return -1;
 
-def sendSponsorInfo(request, DonRecEmail):
+
+
+def loadSponsorInfo(request, DonRecEmail, users):
     # user = get_object_or_404(Users, iduser=UserID)
     # donRec = get_object_or_404(donationrecord, email=DonRecEmail)
     donRec = donationrecord.objects.filter(email=DonRecEmail)
 
     print(donRec)
     mail = None
+    TotalDonation: float
+    TotalDonation = 0
+    TotalKilometers = 0
+    data = []
     for val in donRec:
-        print("-------------")
-        # print(f"donRec=")
-        print(val)
-        print(val.email)
-        print(val.firstname)
-        print(val.lastname)
-        # mail = val.email
+        usersIndex = BinarySearchUsers(users, val.iduser)
+        Kilometers = users[usersIndex].kilometers
+        dataRec = SponsData(
+            pFirstname=users[usersIndex].firstname, 
+            pLastname=users[usersIndex].lastname, 
+            pKm=Kilometers, 
+            pFixedDon=val.fixedamount, 
+            pDon=val.donation)
+        
+        TotalDonation += dataRec.DonationTotal
+        TotalKilometers += Kilometers
+
+        data.append(dataRec)
+
+    context = {
+            'name': f"{donRec[0].firstname} {donRec[0].lastname}",
+            'Amount': len(donRec),
+            'data': data,
+            'Total': TotalDonation,
+            'TotalKilometers': TotalKilometers,
+        }
+
     print("test")
+    print(context)
     print(donRec[0].firstname)
-    return HttpResponse(f"test")
+
+
+    tset = views.RenderMailText(context=context, request=request, template_name="SponsorInfo.html")
+    print("tset")
+    print(tset)
+    return tset
+
+
+
+# später die ganzen durch iterieren
+def sendRunnerInfo(request):
+    users = Users.objects.order_by("iduser")
+    eMailArr = donationrecord.objects.values_list('email', flat=True).distinct()
+    
+    print(users)
+
+    mail = MailSender()
+
+    for eMail in eMailArr:
+        mail.SendMail(
+            pReceiver=eMail, 
+            pSubject="Spendenlauf Spenden Informationen", 
+            pIsAttachement=False, 
+            pMailText=loadSponsorInfo(request=request, DonRecEmail=eMail, users=users), 
+            pAttachement="")
+
+    mail.CloseConnection() 
+
+    return HttpResponse("Mail send!")
+
+def loadRunnerInfo(request, donRecs, user):
+    # user = get_object_or_404(Users, iduser=UserID)
+    # donRec = get_object_or_404(donationrecord, email=DonRecEmail)
+    donRec = donationrecord.objects.filter(email=DonRecEmail)
+
+    print(donRec)
+    mail = None
+    TotalDonation: float
+    TotalDonation = 0
+    TotalKilometers = 0
+    data = []
+    for val in donRec:
+        usersIndex = BinarySearchUsers(users, val.iduser)
+        Kilometers = users[usersIndex].kilometers
+        dataRec = SponsData(
+            pFirstname=users[usersIndex].firstname, 
+            pLastname=users[usersIndex].lastname, 
+            pKm=Kilometers, 
+            pFixedDon=val.fixedamount, 
+            pDon=val.donation)
+        
+        TotalDonation += dataRec.DonationTotal
+        TotalKilometers += Kilometers
+
+        data.append(dataRec)
+
+    context = {
+            'name': f"{donRec[0].firstname} {donRec[0].lastname}",
+            'Amount': len(donRec),
+            'data': data,
+            'Total': TotalDonation,
+            'TotalKilometers': TotalKilometers,
+        }
+
+    print("test")
+    print(context)
+    print(donRec[0].firstname)
+
+
+    tset = views.RenderMailText(context=context, request=request, template_name="SponsorInfo.html")
+    print("tset")
+    print(tset)
+    return tset
+
+
+def sendSponsorInfo(request):
+    users = Users.objects.all()
+    donRecs = donationrecord.objects.all()
+    
+    print(users)
+
+    mail = MailSender()
+
+    for usr in users:
+        mail.SendMail(
+            pReceiver=usr.email, 
+            pSubject="Spendenlauf Spenden Informationen", 
+            pIsAttachement=False, 
+            pMailText=loadRunnerInfo(request=request, donRecs=donRecs, user=usr), 
+            pAttachement="")
+
+    mail.CloseConnection() 
+
+    return HttpResponse("Mail send!")

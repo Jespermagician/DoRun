@@ -13,6 +13,8 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
+            margin-top: 15%;
+            margin-bottom: 15%;
         }
         .container {
             max-width: 600px;
@@ -23,6 +25,9 @@
         p {
             color: #555;
             margin: 20px 0;
+        }
+        table {
+            margin-bottom: 5%;
         }
         tr {
             text-align: left;
@@ -62,35 +67,37 @@
             <table>
                 <tr>
                     <th>Vorname: </th>
-                    <td>{{ value.Fistname }}</td>
+                    <td>{{ value.firstname }}</td>
                 </tr>
                 <tr>
                     <th>Nachname: </th>
-                    <td>{{ value.Lastname: }}</td>
+                    <td>{{ value.lastname }}</td>
                 </tr>
                 <tr>
                     <th>Gelaufene Kilometer: </th>
-                    <td>{{ value.Kilometers }}</td>
+                    <td>{{ value.kilometer }}</td>
                 </tr>
-                {% if FixedDonation %}
-                    <tr>
-                        <th>Spende pro Kilometer: </th>
-                        <td>{{ value.RecMoney }} €</td>
-                    </tr>
-                {%  else %}
+                {% if value.FixedDonation%}
                     <tr>
                         <th>Feste Spende: </th>
-                        <td>{{ value.RecMoney }} €</td>
+                        <td>{{ value.Donation }} €</td>
                     </tr>
+                {%  else %}
+                <tr>
+                    <th>Spende pro Kilometer: </th>
+                    <td>{{ value.Donation }} €</td>
+                </tr>
                 {%  endif %}
+                <th>______________________</th>
                 <tr>
                     <th>Betrag: </th>
-                    <td>{{ value.Record }} €</td>
+                    <td>{{ value.DonationTotal }} €</td>
                 </tr>
             </table>
         {% endfor %}
 
         <h4>Insgesamt: {{ Total }} €</h4>
+        <h4>Insgesamt gelaufene Kilometer: {{ TotalKilometers }} km</h4>
 
         <hr>
         <!-- Aufforderung  -->
@@ -110,7 +117,7 @@
             </tr>
         </table>
 
-        <p>Spenden Sie bitte bis zum <i>01.01.9999</i></p>
+        <p>Spenden Sie den Betrag von <i>{{ Total }} €</i> bitte bis zum <i>01.01.9999</i></p>
         <div>
             <p>Sollten Sie nicht Spenden können oder die Frist verfehlen melden Sie sich unter: </p>
             <p><i>example@mail.de</i> oder bei den Spendenlauf verantworlichen</p>
