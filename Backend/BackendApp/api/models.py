@@ -53,14 +53,13 @@ class Users(models.Model):
         #2. Password hashing
         if (password != None):
             Password_hash, Salt = PasswordHashing(password)
-            
+        
         #3. Set current date 
         CreatedAt = date.today()
         
         #4. Set RoleID = 3 aka User
         RoleID = 3 
         
-        #
         #5. Set user-validation validation set by Link to true
         Kilometers = 0
         VerifiedUser = False
@@ -84,13 +83,11 @@ class Users(models.Model):
         try:
             #Get data to the provided email
             LoginUser = Users.objects.raw("Select * From api_users Where email = %s", [email])
-            
             for p in LoginUser:
                 # Enter the entered password encrypt it with the salt and compare it with the pwhash from the db
                 if (CheckPassword(password, p.password_hash, p.salt) ):
                     #Return LoginUser
                     return p
-        
         except:
             print("Error")
             
@@ -149,6 +146,27 @@ class donationrecord(models.Model):
         ]
 
         return JsonResponse(status=200, data={data})
+    
+    def Create_donationrecord():
+        """
+        Purpose: Creates a new donationrecord with recived data
+        """
+        donorec = "Test"
+        iduser = "Test"
+        f_name = "Test"
+        l_name = "Test"
+        email = "Test"
+        street = "Test"
+        housenr = "Test"
+        postcode = "Test"
+        donation = "Test"
+        fixedamount = False
+        createdat = date.today()
+        verified = False
+        
+        NewDonoRec = donationrecord.objects.create(donationrecid = donorec, iduser = iduser, firstname = f_name, lastname = l_name, email = email, street = street, housenr = housenr, postcode = postcode, donation = donation, fixedamount = fixedamount, createdat = createdat, verified = verified)
+            
+    # end def
             
 def roles():
     roleid = models.IntegerField(primary_key=True,null=False)
@@ -168,43 +186,29 @@ def PasswordHashing(password):
 def CheckPassword(EnteredPwd, password, salt):
     # Recalculate hash for the entered password
     EnteredPwdHash = sha256((EnteredPwd + salt.hex()).encode('utf-8')).digest()
-    print("Calculated Hash:", EnteredPwdHash)
 
     # Compare hashes
     is_valid = EnteredPwdHash == password
     print("Password Match:", is_valid)
     return is_valid
 
-
-
-# e
-# def CheckPassword(EnteredPwd, password,salt):
-#     print("--------------------")
-#     print("--------------------")
-#     print("--------------------")
-#     print("--------------------")
-#     print(salt)
-#     print(str(salt))
-#     print("--------------------")
-
-
-#     print("EnteredPwd ", EnteredPwd)
-#     print("pass ", password)
-#     EnteredPwdHashes = sha256(''.join(EnteredPwd + str(salt)).encode('utf-8')).hexdigest()
-#     print("EnteredPwdHashes ", EnteredPwdHashes)
-#     test = sha256(''.join(EnteredPwd + str(salt)).encode('utf-8')).hexdigest()
-#     print("hashTest ", test)
-#     print("comp ", EnteredPwdHashes == password)
-
-#     return EnteredPwdHashes == password
-
 class CustomBackend(BaseBackend):
     def get_user(self, user_id):
         # Optional: Benutzer anhand der ID aus deiner Datenbank holen
         return Users(id=user_id, username='benutzername')
 
-def user_logout(request):
-    #Reset acces 
-    request.session["iduser"] = 0
-    request.session["UserIsAuth"] = False
-    return redirect('login')
+# ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+#⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣾⣿⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+#⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⣿⣿⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+#⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⡈⠛⢉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+#⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣴⣿⣿⣿⣿⣿⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+#⠀⠀⠀⠀⠀⠀⠀⠀⣴⣿⣿⢿⣿⣿⣿⣿⣿⠀⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+#⠀⠀⠀⠀⠀⠀⠀⢰⣿⡏⠀⢸⣿⣿⣿⣿⡇⢸⣷⣤⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+#⠀⠀⠀⠀⠀⠀⠀⣼⣿⠁⠀⢸⣿⣿⣿⣿⠁⠀⠙⠻⢿⣿⣶⠀⠀⠀⠀⠀⠀⠀
+#⠀⠀⠀⠀⠀⠀⠀⠛⠋⠀⠀⠸⣿⣿⣿⡏⠀⠀⠀⠀⠀⠈⠉⠀⠀⠀⠀⠀⠀⠀
+#⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣄⠙⣿⣿⣷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+#⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣦⠈⢿⣿⣿⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+#⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣼⣿⡟⠀⠀⠻⣿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+#⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⠟⠁⠀⠀⠀⠘⢿⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+#⠀⠀⠀⠀⠀⠀⠀⢾⣿⠟⠁⠀⠀⠀⠀⠀⠀⠈⢻⣿⠇⠀⠀⠀⠀⠀⠀⠀⠀⠀
+#⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀

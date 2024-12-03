@@ -32,20 +32,27 @@ def register(request):
 
         try:
         #Erstelle neuen Benutzer auf der Datenbank
+            # Send Verification Mail
             print(first_name,last_name,email,password)
             NewUser = Users.RegisterUser(first_name,last_name,email,password)
             interface.sendUserVerifyMail(request=request, UserID=int(NewUser.iduser))
 
         except: 
         #Bei Fehler return error an Frontend
-            return JsonResponse({'message': 'Registrierung nicht erfolgreich'}, status=401)
+            return JsonResponse(data={"userid": None, "UserIsAuth": False,'message': 'Registrierung nicht erfolgreich'}, status=401)
         
         #Convert Userid
         NewUserID = int(NewUser.iduser)
 
-        # Send Verification Mail
+        
+        
+        User_Data = {
+             "userid": NewUserID,
+             "UserIsAuth": False,
+             "message": 'Registrierung erfolgreich' + str(NewUserID)
+            }
             
-        return JsonResponse({'message': 'Registrierung erfolgreich' + str(NewUserID)}, status=200)
+        return JsonResponse(data=User_Data, status=200)
 
 #Login user
 @csrf_exempt
@@ -59,25 +66,47 @@ def cust_login(request):
         password = data.get('password')
 
         # Versuche den Benutzer anzumelden
+        print(username,password)
         user = Users.LoginUser(username,password)
+        
+        #Controlls messages
+        if (user.verified == False):
+            message = "Der User ist noch nicht verifiziert!"
+        elif (user.verified == True):
+            message = "Login erfolgreich"
+        else:
+            message = "Login nicht erfolgreich"
+        
+        # Get Userid
         try:
             userid = user.iduser
         except:
-            return JsonResponse({'message': 'Login nicht erfolgreich'}, status=401)
+            User_Data = {
+                "userid": None,
+                "UserIsAuth": False,
+                "message": message,
+                "Role": False,
+            }
+            return JsonResponse(status=401, data={"userid": None,"UserIsAuth": False, 'message': 'Login nicht erfolgreich', "Role": False})
         
         if user is not None:
             # Erfolgreiche anmeldung
             # Setzt für die session die anmeldung auf true(Verwendung um Seiten nur für Nutzer anzuzeigen) 
-            request.session["UserIsAuth"] = True
-            request.session["iduser"] = userid
+            
+            User_Data = {
+                "userid": userid,
+                "UserIsAuth": user.verified,
+                "message": message,
+                "Role": user.roleid,
+            }
             messages.success(request, 'Erfolgreich eingeloggt!')
-            return JsonResponse({'message': 'Login erfolgreich'}, status=200)   # Nach erfolgreichem Login weiterleiten (zu einer Seite namens "home")
+            return JsonResponse(data=User_Data, status=200)   # Nach erfolgreichem Login weiterleiten (zu einer Seite namens "home")
         else:
             # Fehlgeschlagene anmeldung
             # Setzt für die session die anmeldung auf false(Verwendung um Seiten für nicht Nutzer zu blockieren)
             request.session["UserIsAuth"] = False
             messages.error(request, 'Benutzername oder Passwort sind falsch.')
-            return JsonResponse({'message': 'Login nicht erfolgreich'}, status=401)  # Benutzer zurück zur Login-Seite leiten
+            return JsonResponse({'message': message}, status=401)  # Benutzer zurück zur Login-Seite leiten
 
 @csrf_exempt
 def home(request):
