@@ -32,8 +32,10 @@ def register(request):
 
         try:
         #Erstelle neuen Benutzer auf der Datenbank
+            # Send Verification Mail
             print(first_name,last_name,email,password)
             NewUser = Users.RegisterUser(first_name,last_name,email,password)
+            interface.sendUserVerifyMail(request=request, UserID=int(NewUser.iduser))
 
         except: 
         #Bei Fehler return error an Frontend
@@ -42,8 +44,7 @@ def register(request):
         #Convert Userid
         NewUserID = int(NewUser.iduser)
 
-        # Send Verification Mail
-        interface.sendUserVerifyMail(request=request, UserID=NewUserID)
+        
         
         User_Data = {
              "userid": NewUserID,
