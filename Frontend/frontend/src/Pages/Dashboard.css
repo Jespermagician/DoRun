@@ -60,6 +60,16 @@
   color: black;
 }
 
+.sendmails-btn {
+  padding: 2px;
+  margin-bottom: 10px;
+  padding: 6px;
+  width: fit-content;
+  background-color: #ffffff;
+  color: black;
+  float: right;
+}
+
 /* Anpassen des Layouts bei kleinen Bildschirmen */
 @media (max-width: 768px) {
   .dashboard-wrapper {

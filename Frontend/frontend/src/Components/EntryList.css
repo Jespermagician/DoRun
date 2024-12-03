@@ -9,9 +9,10 @@
   flex-direction: column;
   gap: 10px;
   color: black;
-  float: right; margin-top: -625px;
+  float: right; 
+  margin-top: -612px;
   width: 965px;
-  height: 580px;
+  height: 570px;
 }
 
 .entry-list {
@@ -24,6 +25,8 @@
 
 .no-entries {
   text-align: center;
+  border-color: #555;
+  border: 1px solid #e0e0e0;
 }
 
 .entry-item {
@@ -31,7 +34,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  border-bottom: 1px solid #e0e0e0;
+  border: 1px solid #e0e0e0;
 }
 
 .entry-details span {
