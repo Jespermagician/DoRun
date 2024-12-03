@@ -5,6 +5,8 @@ import "./Login.css"; // CSS-Datei für das Styling und Slide-Effekt
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [userid, setUserid] = useState("");
+  const [isAuth, setIsAuth] = useState(Boolean);
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -21,16 +23,22 @@ function Login() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-      const data = await response.text();
+      const data = await response.json();
       if (!response.ok) {
         // throw new Error(data.message || "Fehler bei der Anmeldung");
         throw new Error(data.message);
+      }
+      else {
+        setUserid(data.userid)
+        localStorage.setItem("userid", userid);
+        setIsAuth(data.UserIsAuth)
+        localStorage.setItem("token", data.userIsAuth);
+        setError(data.message)
       }
 
       // Speichere das Token (optional)
       // localStorage.setItem("token", data.token);
 
-      // Weiterleitung zum Dashboard
       navigate("/home");
     } catch (error) {
       setError(error.message);

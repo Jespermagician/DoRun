@@ -1,6 +1,6 @@
 import React from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
-import { FaEdit, FaTrash, FaDoorOpen } from "react-icons/fa";
+import { FaEdit, FaTrash} from "react-icons/fa";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import "./EntryList.css";
 
@@ -18,9 +18,10 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry
             entries.map((entry) => (
               <li key={entry.id} className="entry-item">
                 <div className="entry-details">
-                  <span className="span-indent">{entry.name}</span>
-                  <span>{entry.amount}€</span>
-                  <span>{entry.date}</span>
+                  <span>{entry.id}</span>
+                  <span className="span-indent">{entry.firstname}</span>
+                  <span>{entry.donation}€</span>
+                  <span>{entry.fixedamount}</span>
                 </div>
                 <div className="entry-actions">
                   <button className="edit-btn" onClick={() => handleEditEntry(entry)}><FaEdit/></button>
