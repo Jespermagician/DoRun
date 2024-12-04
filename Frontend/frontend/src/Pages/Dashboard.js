@@ -11,13 +11,14 @@ const Dashboard = () => {
   const [entries, setEntries] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentEntry, setCurrentEntry] = useState(null);
-  const [userid, setUserid] = useState("");
+  const [userid, setUserid] = useState(Number);
   const navigate = useNavigate();
   const [info, setInfo] = useState(null); // State für Info-Daten
   const [loading, setLoading] = useState(true); // State für Ladeanzeige
   const [error, setError] = useState(null); // State für Fehler
+  const [user, setUser] = useState({});
 
-  const user = {name:"Jannik Schweitzer", email:"jannikschweitzer.js@gmail.com"};
+  // const user = {name:"Jannik Schweitzer", email:"jannikschweitzer.js@gmail.com"};
 
   // useEffect(() => {
   //   const fetchInfo = async () => {
@@ -43,20 +44,22 @@ const Dashboard = () => {
   // if (error) return <div>Fehler: {error}</div>; // Fehleranzeige
 
   useEffect(() => {
-    setUserid(localStorage.getItem("userid"));
+    // setUserid(localStorage.getItem("userid"));
+    var userid = localStorage.getItem("userid");
+    // alert(userid);
     const handleUserInfos = async (e) => {
       try {
         const response = await fetch("http://127.0.0.1:8000/api/home", { 
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userid }),
+          body: JSON.stringify({userid}),
         });
         const data = await response.json();
         if (!response.ok) {
           // throw new Error(data.message || "Fehler bei der Anmeldung");
           throw new Error(data.message);
         }
-  
+        setUser({name:data.UserFirstname, email:"jannikschweitzer.js@gmail.com"});
         // Speichere das Token (optional)
         // localStorage.setItem("token", data.token);
   
@@ -71,7 +74,7 @@ const Dashboard = () => {
   }, []);
 
 
-  // const user = {name:info.firstname, email:"jannikschweitzer.js@gmail.com"};
+  // const user = {name:data.firstname, email:"jannikschweitzer.js@gmail.com"};
 
   const handleLogOut = () => {
     localStorage.removeItem("token")

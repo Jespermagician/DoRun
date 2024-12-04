@@ -28,9 +28,14 @@ function Login() {
         // throw new Error(data.message || "Fehler bei der Anmeldung");
         throw new Error(data.message);
       }
+      else if (data.userid===-99) {
+        alert("Admin ohne Passwort")
+      }
       else if (data.UserIsAuth===true) {
-        setUserid(data.userid)
-        localStorage.setItem("userid", userid);
+        // setUserid(data.userid)
+        // alert(data.userid);
+        // alert(userid);
+        localStorage.setItem("userid", data.userid);
         setIsAuth(data.UserIsAuth)
         localStorage.setItem("token", data.userIsAuth);
         // setError(data.message)

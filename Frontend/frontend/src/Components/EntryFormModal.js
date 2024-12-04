@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './EntryFormModal.css'; // Modal Styles
 
 const EntryFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
-  const [formData, setFormData] = useState(initialData || { firstname: "", lastname: "", donation: "", fixedamount: true  });
+  const [formData, setFormData] = useState(initialData || { firstname: "", lastname: "", donation: "", fixedamount: ""  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
