@@ -107,8 +107,6 @@ class donationrecord(models.Model):
     verified = models.BooleanField(null=True)
     
     def GetUserStats(Userid):
-        
-        Userid = 1
         #Get Userdata for Welcome Screen 
         UserName = Users.objects.raw("Select iduser, firstname, lastname, email From api_users Where iduser = %s", [Userid])
         
@@ -119,45 +117,56 @@ class donationrecord(models.Model):
         
         #Get donationrecord for the loggedin user
         UserEntrys = donationrecord.objects.raw("Select * From api_donationrecord Where iduser = %s", [Userid])
+        #Get Userdat 
+        UserData = Users.objects.raw("Select * From api_users Where iduser = %s", [Userid])
         
         TotalDonations = 0
         TotalKilometers = 0
-        #Get Total amount for Donations and Total Kilomers 
-        #for row in UserEntrys:
-            #Calculate total Donations 
-            #if (row.fixedamount == True):
-                #TotalDonations += row.donation
-            #else:
-                #TotalDonations = TotalDonations + (row.donation)# * row.kilometers)
-            
-            #TotalKilometers += row.kilometers
+        #Get Total amount for Donations and Total Kilomers
+        for row in UserData:
+            print(row.kilometers)
+            kilometers = row.kilometers
         
-        #data = {"UserFirstname","UserLastname","UserEmail","firstname","lastname","email","street","housenr","postcode","donation","fixedamount","createdat","verified","Kilometers","TotalDonations","TotalKilometers"}
-        data = []
-        # Schleife durch die UserEntrys-Objekte
-        for obj in UserEntrys:
+        if (kilometers):
+        
+            for row in UserEntrys:
+                #Calculate total Donations 
+                if (row.fixedamount == True):
+                    TotalDonations += row.donation
+                else:
+                    TotalDonations = TotalDonations + (row.donation * kilometers)
+            
+                TotalKilometers += kilometers
+        
+            data = []
+            #Safe evaluation
             data.append({
-            "UserFirstname": UserFirstname,
-            "UserLastname": UserLastname,
-            "UserEmail": UserEmail,
-            "firstname": obj.firstname,
-            "lastname": obj.lastname,
-            "email": obj.email,
-            "street": obj.street,
-            "housenr":obj.housenr,
-            "postcode": obj.postcode,
-            "donation": obj.donation,
-            "fixedamount": obj.fixedamount,
-            "createdat": date.today(),
-            "verified": obj.verified,
-            #"Kilometer": obj.kilometer,
-            "TotalDonations": TotalDonations,
-            "TotalKilometers": TotalKilometers
-            })
+                "UserFirstname": UserFirstname,
+                "UserLastname": UserLastname,
+                "UserEmail": UserEmail,
+                "TotalDonations": TotalDonations,
+                "TotalKilometers": TotalKilometers})
+        
+            # Schleife durch die UserEntrys-Objekte
+            for obj in UserEntrys:
+                data.append({
+                "firstname": obj.firstname,
+                "lastname": obj.lastname,
+                "email": obj.email,
+                "street": obj.street,
+                "housenr":obj.housenr,
+                "postcode": obj.postcode,
+                "donation": obj.donation,
+                "fixedamount": obj.fixedamount,
+                "createdat": date.today(),
+                "verified": obj.verified,
+                "Kilometer": kilometers,
+                })
 
-        # JSON-Antwort zurückgeben
-            print(data)
-        return data
+            # JSON-Antwort zurückgeben
+            return data
+        else:
+            return False
     
     def Create_donationrecord():
         """

@@ -66,7 +66,6 @@ def cust_login(request):
         password = data.get('password')
 
         # Versuche den Benutzer anzumelden
-        print(username,password)
         user = Users.LoginUser(username,password)
         
         #Controlls messages
@@ -113,14 +112,16 @@ def cust_login(request):
 
 @csrf_exempt
 def home(request):
-# Prüft ob ein Benutzer angemeldet ist    
-    body = json.loads(request.body)
-    UserID = body.get('userid')
-    print(UserID)
-    if (request.method == 'POST'):
-        
+# Prüft ob ein Benutzer angemeldet ist
+    json_data = json.loads(request.body)
+    UserID = json_data["userid"]  
+    
+    if (request.method == 'POST' and UserID):
         Data = donationrecord.GetUserStats(UserID)
         
-        return JsonResponse(data=Data, status=200)
+        if (Data != False):
+            return JsonResponse(status = 200, data={"entries": Data})
+        else:
+            return JsonResponse(status=401, data={'message': 'An unexpected error has occurred'})
     else:
         return JsonResponse({'message': 'User ist nicht Authorisiert!'}, status=401)
