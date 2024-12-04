@@ -114,12 +114,13 @@ def cust_login(request):
 @csrf_exempt
 def home(request):
 # Prüft ob ein Benutzer angemeldet ist    
-    if (request.session["UserIsAuth"] == True and request.method == 'POST'):
-        
-        UserID = request.session["iduser"]
+    body = json.loads(request.body)
+    UserID = body.get('userid')
+    print(UserID)
+    if (request.method == 'POST'):
         
         Data = donationrecord.GetUserStats(UserID)
         
-        return JsonResponse(Data)
+        return JsonResponse(data=Data, status=200)
     else:
         return JsonResponse({'message': 'User ist nicht Authorisiert!'}, status=401)
