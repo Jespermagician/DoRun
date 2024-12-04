@@ -58,7 +58,6 @@ def register(request):
 @csrf_exempt
 def cust_login(request):
     # Wenn das Formular über POST gesendet wurde
-    # return JsonResponse({'message': 'Login erfolgreich'}, status=200)
     if request.method == 'POST':
         # Benutzerdaten aus dem Formular erhalten
         data = json.loads(request.body)
@@ -77,7 +76,10 @@ def cust_login(request):
             else:
                 message = "Login nicht erfolgreich"
         except:
-            message = "Unbekannter User"
+            if (user == -99):
+                return JsonResponse(status=200, data={"userid": -99,"UserIsAuth": False, 'message': 'Login nicht erfolgreich', "Role": False})
+            else:
+                message = "Unbekannter User"
         
         # Get Userid
         try:
@@ -114,7 +116,7 @@ def cust_login(request):
 def home(request):
 # Prüft ob ein Benutzer angemeldet ist
     json_data = json.loads(request.body)
-    UserID = json_data["userid"]  
+    UserID = 4#int(json_data["userid"])  
     
     if (request.method == 'POST' and UserID):
         Data = donationrecord.GetUserStats(UserID)
@@ -125,3 +127,19 @@ def home(request):
             return JsonResponse(status=401, data={'message': 'An unexpected error has occurred'})
     else:
         return JsonResponse({'message': 'User ist nicht Authorisiert!'}, status=401)
+    
+@csrf_exempt    
+def resetpassword(request):
+    json_data = json.loads(request.body)
+    UserID = json_data["userid"]
+    Password = json_data["password"]  
+    #Convert from string
+    try:
+        UserID = int(UserID)
+        Status, Message = Users.SetPassword(UserID,Password)
+        
+        return JsonResponse(status=Status, messages=Message)
+        
+    except:
+        UserID = None
+        

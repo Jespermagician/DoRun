@@ -68,8 +68,17 @@ class Users(models.Model):
         if (UserID != None and first_name != None and last_name != None and email != None and Password_hash != None and Salt != None and CreatedAt != None and RoleID != None):
             try:
                 print("Creating new User with ID: " + str(UserID))
-                print(bytearray.fromhex(Password_hash),bytearray.fromhex(Salt))
-                NewUser = Users.objects.create(iduser=UserID, firstname=first_name,lastname=last_name,email=email,password_hash=bytearray.fromhex(Password_hash),salt=bytearray.fromhex(Salt),createdat=CreatedAt,roleid=RoleID,verified=VerifiedUser, kilometers=Kilometers)
+                NewUser = Users.objects.create(
+                    iduser=UserID, 
+                    firstname=first_name,
+                    lastname=last_name,
+                    email=email,
+                    password_hash=bytearray.fromhex(Password_hash),
+                    salt=bytearray.fromhex(Salt),
+                    createdat=CreatedAt,
+                    roleid=RoleID,
+                    verified=VerifiedUser, 
+                    kilometers=Kilometers)
             except:
                 print("Error, user can't be added to DB")
         else:
@@ -85,13 +94,34 @@ class Users(models.Model):
             #Get data to the provided email
             LoginUser = Users.objects.raw("Select * From api_users Where email = %s", [email])
             for p in LoginUser:
+                #Init password 
+                test = str(b'')
+                #If init password eq user password then trigger reset
+                if (str(p.password_hash) == test):
+                    return -99
+                
                 # Enter the entered password encrypt it with the salt and compare it with the pwhash from the db
-                if (CheckPassword(password, p.password_hash, p.salt) ):
+                Password_correct = CheckPassword(password, p.password_hash, p.salt)
+                
+                if (Password_correct == True):
                     #Return LoginUser
                     return p
         except:
             print("Error")
+    
+    def SetPassword(UserID,Password):
+        Message = ""
+        Status = 401
+        try:
+            Password_hash, Salt = PasswordHashing(Password)
+            Users.objects.filter(iduser=UserID).update("password_hash", Password_hash, "salt", Salt )
+            Message = "Password changed succesfully"
+            Status = 200
+        except:
+            Message = "Cant set password!"
             
+        return Status, Message
+    
 class donationrecord(models.Model):
     donationrecid = models.IntegerField(primary_key=True, null=False)
     iduser = models.TextField(null=False)
@@ -124,11 +154,9 @@ class donationrecord(models.Model):
         TotalKilometers = 0
         #Get Total amount for Donations and Total Kilomers
         for row in UserData:
-            print(row.kilometers)
             kilometers = row.kilometers
         
-        if (kilometers):
-        
+        try:
             for row in UserEntrys:
                 #Calculate total Donations 
                 if (row.fixedamount == True):
@@ -137,16 +165,19 @@ class donationrecord(models.Model):
                     TotalDonations = TotalDonations + (row.donation * kilometers)
             
                 TotalKilometers += kilometers
+        except:
+            print("Can't calculate without data")
         
-            data = []
-            #Safe evaluation
-            data.append({
-                "UserFirstname": UserFirstname,
-                "UserLastname": UserLastname,
-                "UserEmail": UserEmail,
-                "TotalDonations": TotalDonations,
-                "TotalKilometers": TotalKilometers})
+        data = []
+        #Safe evaluation
+        data.append({
+            "UserFirstname": UserFirstname,
+            "UserLastname": UserLastname,
+            "UserEmail": UserEmail,
+            "TotalDonations": TotalDonations,
+            "TotalKilometers": TotalKilometers})
         
+        if (kilometers): 
             # Schleife durch die UserEntrys-Objekte
             for obj in UserEntrys:
                 data.append({
@@ -163,10 +194,8 @@ class donationrecord(models.Model):
                 "Kilometer": kilometers,
                 })
 
-            # JSON-Antwort zurückgeben
-            return data
-        else:
-            return False
+        # JSON-Antwort zurückgeben
+        return data
     
     def Create_donationrecord():
         """
@@ -196,7 +225,6 @@ def roles():
 # Method to create string of random chars
 def RandChars(size=30, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
-
 
 def PasswordHashing(password):
     SaltText = RandChars()  # Generate string as salt
