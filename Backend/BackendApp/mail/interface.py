@@ -89,7 +89,6 @@ class MailSender():
             msg.attach(part)
 
         print(msg.as_string())
-        Waiter = input("Waiting")
         
 
 
