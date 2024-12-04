@@ -86,7 +86,7 @@ const Dashboard = () => {
   const handleModalSubmit = (newEntry) => {
     if (currentEntry) {
       // Bearbeiteten Eintrag aktualisieren
-      alert(currentEntry.id);
+      // alert(currentEntry.id);
       setEntries(
         entries.map((entry) =>
           entry.id === currentEntry.id ? { ...entry, ...newEntry } : entry

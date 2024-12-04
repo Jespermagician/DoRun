@@ -18,10 +18,15 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry
             entries.map((entry) => (
               <li key={entry.id} className="entry-item">
                 <div className="entry-details">
-                  <span>{entry.id}</span>
-                  <span className="span-indent">{entry.firstname}</span>
+                  <span className="span-indent">{entry.firstname} {entry.lastname}</span>
+                  <span>{entry.email}</span>
                   <span>{entry.donation}€</span>
-                  <span>{entry.fixedamount}</span>
+                  {entry.fixedamount === true ? (
+                    <span>Festbetrag</span>
+                  ) : (
+                    <span>Pro Kilometer</span>
+                  )}
+
                 </div>
                 <div className="entry-actions">
                   <button className="edit-btn" onClick={() => handleEditEntry(entry)}><FaEdit/></button>
