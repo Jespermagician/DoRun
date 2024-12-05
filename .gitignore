@@ -5,6 +5,8 @@ settings.json
 .venv
 venv/
 
+.vscode
+launch.json
 
 # Inteface Credentials for Mail#
 MailConfig.json
