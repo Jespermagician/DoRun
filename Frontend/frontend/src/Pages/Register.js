@@ -33,17 +33,14 @@ function Register() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ firstname, lastname, email, password }),
       });
-      const data = await response.text();
+      const data = await response.json();
       if (!response.ok) {
         // throw new Error(data.message || "Fehler bei der Anmeldung");
         throw new Error(data.message);
       }
 
-      // Speichere das Token (optional)
-      // localStorage.setItem("token", data.token);
-
       // Weiterleitung zum Dashboard
-      navigate("/home");
+      navigate("/");
     } catch (error) {
       setError(error.message);
     }

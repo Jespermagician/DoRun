@@ -1,7 +1,12 @@
 .info-field {
   padding: 20px;
-  background: linear-gradient(to right, #4a90e2, #5cb3fd);
+  background: linear-gradient(to right, #a84122, #0f6ab4);
   border-radius: 10px;
   color: white;
   text-align: center;
+}
+
+.h2 {
+  text-align: center;
+  color: white
 }

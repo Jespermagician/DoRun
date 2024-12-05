@@ -68,7 +68,17 @@ class Users(models.Model):
         if (UserID != None and first_name != None and last_name != None and email != None and Password_hash != None and Salt != None and CreatedAt != None and RoleID != None):
             try:
                 print("Creating new User with ID: " + str(UserID))
-                NewUser = Users.objects.create(iduser=UserID, firstname=first_name,lastname=last_name,email=email,password_hash=bytearray.fromhex(Password_hash),salt=bytearray.fromhex(Salt),createdat=CreatedAt,roleid=RoleID,verified=VerifiedUser, kilometers=Kilometers)
+                NewUser = Users.objects.create(
+                    iduser=UserID, 
+                    firstname=first_name,
+                    lastname=last_name,
+                    email=email,
+                    password_hash=bytearray.fromhex(Password_hash),
+                    salt=bytearray.fromhex(Salt),
+                    createdat=CreatedAt,
+                    roleid=RoleID,
+                    verified=VerifiedUser, 
+                    kilometers=Kilometers)
             except:
                 print("Error, user can't be added to DB")
         else:
@@ -84,13 +94,34 @@ class Users(models.Model):
             #Get data to the provided email
             LoginUser = Users.objects.raw("Select * From api_users Where email = %s", [email])
             for p in LoginUser:
+                #Init password 
+                test = str(b'')
+                #If init password eq user password then trigger reset
+                if (str(p.password_hash) == test):
+                    return -99
+                
                 # Enter the entered password encrypt it with the salt and compare it with the pwhash from the db
-                if (CheckPassword(password, p.password_hash, p.salt) ):
+                Password_correct = CheckPassword(password, p.password_hash, p.salt)
+                
+                if (Password_correct == True):
                     #Return LoginUser
                     return p
         except:
             print("Error")
+    
+    def SetPassword(email,Password):
+        Message = ""
+        Status = 401
+        try:
+            Password_hash, Salt = PasswordHashing(Password)
+            Users.objects.filter(email=email).update("password_hash", Password_hash, "salt", Salt )
+            Message = "Password changed succesfully"
+            Status = 200
+        except:
+            Message = "Cant set password!"
             
+        return Status, Message
+    
 class donationrecord(models.Model):
     donationrecid = models.IntegerField(primary_key=True, null=False)
     iduser = models.TextField(null=False)
@@ -106,9 +137,8 @@ class donationrecord(models.Model):
     verified = models.BooleanField(null=True)
     
     def GetUserStats(Userid):
-        
         #Get Userdata for Welcome Screen 
-        UserName = Users.objects.raw("Select firstname, lastname, email From api_users Where iduser = %s", [Userid])
+        UserName = Users.objects.raw("Select iduser, firstname, lastname, email From api_users Where iduser = %s", [Userid])
         
         for row in UserName:
             UserFirstname = row.firstname
@@ -117,40 +147,107 @@ class donationrecord(models.Model):
         
         #Get donationrecord for the loggedin user
         UserEntrys = donationrecord.objects.raw("Select * From api_donationrecord Where iduser = %s", [Userid])
+        #Get Userdat 
+        UserData = Users.objects.raw("Select * From api_users Where iduser = %s", [Userid])
         
         TotalDonations = 0
         TotalKilometers = 0
-        #Get Total amount for Donations and Total Kilomers 
-        for row in UserEntrys:
-            #Calculate total Donations 
-            if (row.fixedamount == True):
-                TotalDonations += row.donation
-            else:
-                TotalDonations = TotalDonations + (row.donation * row.kilometers)
-            
-            TotalKilometers += row.kilometers
+        #Get Total amount for Donations and Total Kilomers
+        for row in UserData:
+            kilometers = row.kilometers
         
-        data = [
-            {
-             "UserFirstname": UserFirstname,
-             "UserLastname": UserLastname,
-             "UserEmail": UserEmail,
-             "firstname": obj.firstname, "lastname": obj.lastname, 
-             "email": obj.email, "street": obj.street, 
-             "housenr": obj.housenr,"postcode": obj.postcode, 
-             "donation": obj.donation, "fixedamount": obj.fixedamount, 
-             "createdat": obj.createdat, "verified": obj.verified, 
-             "Kilometers": obj.kilometers,  
-             "TotalDonations": TotalDonations,"TotalKilometers": TotalKilometers}  # Felder anpassen
-            for obj in UserEntrys
-        ]
+        try:
+            for row in UserEntrys:
+                #Calculate total Donations 
+                if (row.fixedamount == True):
+                    TotalDonations += row.donation
+                else:
+                    TotalDonations = TotalDonations + (row.donation * kilometers)
+            
+                TotalKilometers += kilometers
+        except:
+            print("Can't calculate without data")
+        
+        data = []
+        #Safe evaluation
+        data.append({
+            "UserFirstname": UserFirstname,
+            "UserLastname": UserLastname,
+            "UserEmail": UserEmail,
+            "TotalDonations": TotalDonations,
+            "TotalKilometers": TotalKilometers})
+        
+        if (kilometers): 
+            # Schleife durch die UserEntrys-Objekte
+            for obj in UserEntrys:
+                data.append({
+                "firstname": obj.firstname,
+                "lastname": obj.lastname,
+                "email": obj.email,
+                "street": obj.street,
+                "housenr":obj.housenr,
+                "postcode": obj.postcode,
+                "donation": obj.donation,
+                "fixedamount": obj.fixedamount,
+                "createdat": date.today(),
+                "verified": obj.verified,
+                "Kilometer": kilometers,
+                })
 
-        return JsonResponse(status=200, data={data})
+        #return JSON 
+        return data
+    
+    def GetAdminStats(Userid):
+        #vars
+        Message = "Permission denied"
+        data = []
+        #Get Userdata for welcome screen 
+        UserName = Users.objects.raw("Select iduser, firstname, lastname, email From api_users Where iduser = %s", [Userid])
+        
+        for row in UserName:
+            UserFirstname = row.firstname
+            UserLastname = row.lastname
+            UserEmail = row.email
+            Roleid = row.roleid
+
+        if (Roleid < 3):
+            Message = "Permission granted"
+        
+        #Safe evaluation
+        data.append({
+            "UserFirstname": UserFirstname,
+            "UserLastname": UserLastname,
+            "UserEmail": UserEmail,
+            "Message": Message})
+
+
+        if (Roleid == 1 or Roleid == 2):
+            #Get Userdat 
+            UserData = Users.objects.all()
+            
+            for row in UserData:
+            
+                data.append({"firstname": row.firstname,
+                            "lastname": row.lastname,
+                            "email": row.email,
+                            "createdat": row.createdat,
+                            "verified": row.verified,
+                            "kilometers": row.kilometers})
+        
+        return data
     
     def Create_donationrecord():
         """
         Purpose: Creates a new donationrecord with recived data
         """
+        
+        data = []
+        #Safe evaluation
+        #data.append({
+        #    "UserFirstname": UserFirstname,
+        #    "UserLastname": UserLastname,
+        #    "UserEmail": UserEmail
+            
         donorec = "Test"
         iduser = "Test"
         f_name = "Test"
@@ -164,6 +261,9 @@ class donationrecord(models.Model):
         createdat = date.today()
         verified = False
         
+        #Userdaten allgemein
+        #Alle daten aus user (firstname, lastname, email, createdat, verified, kilometers)
+        
         NewDonoRec = donationrecord.objects.create(donationrecid = donorec, iduser = iduser, firstname = f_name, lastname = l_name, email = email, street = street, housenr = housenr, postcode = postcode, donation = donation, fixedamount = fixedamount, createdat = createdat, verified = verified)
             
     # end def
@@ -175,7 +275,6 @@ def roles():
 # Method to create string of random chars
 def RandChars(size=30, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
-
 
 def PasswordHashing(password):
     SaltText = RandChars()  # Generate string as salt
@@ -195,7 +294,6 @@ def CheckPassword(EnteredPwd, password, salt):
 
 class CustomBackend(BaseBackend):
     def get_user(self, user_id):
-        # Optional: Benutzer anhand der ID aus deiner Datenbank holen
         return Users(id=user_id, username='benutzername')
 
 # ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀

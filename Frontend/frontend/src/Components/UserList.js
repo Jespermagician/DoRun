@@ -4,10 +4,10 @@ import { FaEdit, FaTrash} from "react-icons/fa";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import "./EntryList.css";
 
-const EntryList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry }) => {
+const UserList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry }) => {
   return (
     <div className="entry-list-container">
-      <h3>Spendeneinträge</h3>
+      <h3>Angemeldete Läufer</h3>
       <PerfectScrollbar>
         <ul className="entry-list">
           {entries.length === 0 ? (
@@ -18,15 +18,10 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry
             entries.map((entry) => (
               <li key={entry.id} className="entry-item">
                 <div className="entry-details">
-                  <span className="span-indent">{entry.firstname} {entry.lastname}</span>
-                  <span>{entry.email}</span>
+                  <span>{entry.id}</span>
+                  <span className="span-indent">{entry.firstname}</span>
                   <span>{entry.donation}€</span>
-                  {entry.fixedamount === true ? (
-                    <span>Festbetrag</span>
-                  ) : (
-                    <span>Pro Kilometer</span>
-                  )}
-
+                  <span>{entry.fixedamount}</span>
                 </div>
                 <div className="entry-actions">
                   <button className="edit-btn" onClick={() => handleEditEntry(entry)}><FaEdit/></button>
@@ -37,12 +32,8 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry
           )}
         </ul>
       </PerfectScrollbar>
-      {/* Der Button bleibt immer sichtbar */}
-      <button className="add-entry-btn" onClick={handleAddEntry}>
-        Neuen Eintrag hinzufügen
-      </button>
     </div>
   );
 };
 
-export default EntryList;
+export default UserList;

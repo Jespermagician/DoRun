@@ -23,7 +23,7 @@ class CreateUserView(generics.CreateAPIView):
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
-        # Daten auslesen
+        #Read data
         data = json.loads(request.body)
         first_name = data.get("firstname")
         last_name = data.get("lastname")
@@ -49,7 +49,7 @@ def register(request):
         User_Data = {
              "userid": NewUserID,
              "UserIsAuth": False,
-             "message": 'Registrierung erfolgreich' + str(NewUserID)
+             "message": 'Registrierung erfolgreich'
             }
             
         return JsonResponse(data=User_Data, status=200)
@@ -58,7 +58,6 @@ def register(request):
 @csrf_exempt
 def cust_login(request):
     # Wenn das Formular über POST gesendet wurde
-    # return JsonResponse({'message': 'Login erfolgreich'}, status=200)
     if request.method == 'POST':
         # Benutzerdaten aus dem Formular erhalten
         data = json.loads(request.body)
@@ -66,7 +65,6 @@ def cust_login(request):
         password = data.get('password')
 
         # Versuche den Benutzer anzumelden
-        print(username,password)
         user = Users.LoginUser(username,password)
         
         #Controlls messages
@@ -78,7 +76,10 @@ def cust_login(request):
             else:
                 message = "Login nicht erfolgreich"
         except:
-            message = "Unbekannter User"
+            if (user == -99):
+                return JsonResponse(status=200, data={"userid": -99,"UserIsAuth": False, 'message': 'Login nicht erfolgreich', "Role": False})
+            else:
+                message = "Unbekannter User"
         
         # Get Userid
         try:
@@ -113,13 +114,45 @@ def cust_login(request):
 
 @csrf_exempt
 def home(request):
-# Prüft ob ein Benutzer angemeldet ist    
-    if (request.session["UserIsAuth"] == True and request.method == 'POST'):
-        
-        UserID = request.session["iduser"]
-        
+# Prüft ob ein Benutzer angemeldet ist
+    json_data = json.loads(request.body)
+    UserID = int(json_data["userid"])  
+    
+    if (request.method == 'POST' and UserID):
         Data = donationrecord.GetUserStats(UserID)
         
-        return JsonResponse(Data)
+        if (Data != False):
+            return JsonResponse(status = 200, data={"entries": Data})
+        else:
+            return JsonResponse(status=401, data={'message': 'An unexpected error has occurred'})
+    else:
+        return JsonResponse({'message': 'User ist nicht Authorisiert!'}, status=401)
+    
+@csrf_exempt    
+def resetpassword(request):
+    json_data = json.loads(request.body)
+    email = json_data["email"]
+    Password = json_data["password"]  
+    #Convert from string
+    try:
+        Status, Message = Users.SetPassword(email,Password)
+        
+        return JsonResponse(status=Status, messages=Message)
+        
+    except:
+        UserID = None
+        
+@csrf_exempt
+def adminhome(request):
+    json_data = json.loads(request.body)
+    UserID = json_data["userid"]
+    
+    if (request.method == 'POST' and UserID):
+        Data = donationrecord.GetAdminStats(UserID)
+        
+        if (Data != False):
+            return JsonResponse(status = 200, data={"entries": Data})
+        else:
+            return JsonResponse(status=401, data={'message': 'An unexpected error has occurred'})
     else:
         return JsonResponse({'message': 'User ist nicht Authorisiert!'}, status=401)
