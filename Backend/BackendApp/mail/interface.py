@@ -249,13 +249,13 @@ def loadRunnerInfo(request, donRecs, user, RunnerAmount, EventKilometers, EventT
     # Variablen implementieren
     mail = None
     Kilometers = user.kilometers
-    SponsorAmount = donRecs.filer(iduser=user.iduser)
+    SponsorAmount = donRecs.filter(iduser=user.iduser).count()
     data = []
     RunnerTotal: float
     RunnerTotal = 0
 
     # Iterieren der Spendeneinträge mit nutzer id
-    for val in donRecs.filer(iduser=user.iduser):
+    for val in donRecs.filter(iduser=user.iduser):
         # Erstellt die Einräge der Sponsor Daten
         dataRec = SponsData(
             pFirstname=val.firstname, 
