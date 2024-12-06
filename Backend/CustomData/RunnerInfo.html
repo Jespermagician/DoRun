@@ -13,6 +13,8 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
+            margin-top: 15%;
+            margin-bottom: 15%;
         }
         .container {
             max-width: 600px;
@@ -20,12 +22,12 @@
         h2 {
             color: #333;
         }
-        table {
-            margin-bottom: 5%;
-        }
         p {
             color: #555;
             margin: 20px 0;
+        }
+        table {
+            margin-bottom: 5%;
         }
         tr {
             text-align: left;
@@ -59,42 +61,44 @@
         <h2>Hallo, {{ name }}</h2> 
         <h3>Der Spendenlauf ist zu ende!</h3> 
         <p>Wir sind Ihnen sehr dankbar, für Ihre Teilnahme!</p>
-        <p>Insgesamt sind  {{ RunnerAmount }} Läufe*innen  {{ EventKilometers }} gelaufen und haben {{ EventTotal }} € erlaufen!</p>
+        <p>Insgesamt sind  {{ RunnerAmount }} Läufer*innen  {{ EventKilometers }} km gelaufen und haben {{ EventTotal }} € erlaufen!</p>
 
-        <p>Sie selbst sind {{ RunnerKilometers }} gelaufen</p> 
+        <hr>
+        <p>Sie selbst sind {{ RunnerKilometers }} km gelaufen</p> 
         <p>Und haben {{ RunnerTotal }} € gesammelt</p> 
 
-        <p>Ihre {{ Amount }} Sponsor*innen:</p> 
+        <p>Ihre {{ SponsorAmount }} Sponsor*innen:</p> 
 
         {% for value in data %}
             <table>
                 <tr>
                     <th>Vorname: </th>
-                    <td>{{ value.Fistname }}</td>
+                    <td>{{ value.firstname }}</td>
                 </tr>
                 <tr>
                     <th>Nachname: </th>
-                    <td>{{ value.Lastname: }}</td>
+                    <td>{{ value.lastname }}</td>
                 </tr>
-                {% if FixedDonation %}
+                {% if value.FixedDonation %}
                     <tr>
-                        <th>Spende pro Kilometer: </th>
-                        <td>{{ value.RecMoney }} €</td>
+                        <th>Feste Spende: </th>
+                        <td>{{ value.Donation }} €</td>
                     </tr>
                 {%  else %}
                     <tr>
-                        <th>Feste Spende: </th>
-                        <td>{{ value.RecMoney }} €</td>
+                        <th>Spende pro Kilometer: </th>
+                        <td>{{ value.Donation }} €</td>
                     </tr>
                 {%  endif %}
+                <th>______________________</th>
                 <tr>
                     <th>Betrag: </th>
-                    <td>{{ value.Record }} €</td>
+                    <td>{{ value.DonationTotal }} €</td>
                 </tr>
             </table>
         {% endfor %}
 
-        <h4>Insgesamt: {{ Total }} €</h4>
+        <h4>Insgesamt: {{ RunnerTotal }} €</h4>
 
         <hr>
         <!-- Aufforderung  -->
@@ -114,7 +118,7 @@
             </tr>
         </table>
 
-        <p>Spenden Sie bitte bis zum <i>01.01.9999</i></p>
+        <p>Spenden Sie bitte bis zum <i>**Datum einfügen**</i></p>
         <div>
             <p>Sollten Sie nicht Spenden können oder die Frist verfehlen melden Sie sich unter: </p>
             <p><i>example@mail.de</i> oder bei den Spendenlauf verantworlichen</p>

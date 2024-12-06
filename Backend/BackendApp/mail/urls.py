@@ -9,4 +9,5 @@ urlpatterns = [
     path("auth/<int:UserID>/<str:token>/", views.verify_user, name="verify_user"),
     path("auth/don/<int:UserID>/<int:DonRecID>/<str:token>/", views.verify_donRec, name="verify_user"),
     path("sponinfo", interface.sendSponsorInfo, name="verify_user"),
+    path("runinfo", interface.sendRunnerInfo, name="verify_user"),
 ]

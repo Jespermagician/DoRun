@@ -23,7 +23,7 @@ class CreateUserView(generics.CreateAPIView):
 @csrf_exempt
 def register(request):
     if request.method == 'POST':
-        # Daten auslesen
+        #Read data
         data = json.loads(request.body)
         first_name = data.get("firstname")
         last_name = data.get("lastname")
@@ -49,7 +49,7 @@ def register(request):
         User_Data = {
              "userid": NewUserID,
              "UserIsAuth": False,
-             "message": 'Registrierung erfolgreich' + str(NewUserID)
+             "message": 'Registrierung erfolgreich'
             }
             
         return JsonResponse(data=User_Data, status=200)
@@ -116,7 +116,7 @@ def cust_login(request):
 def home(request):
 # Prüft ob ein Benutzer angemeldet ist
     json_data = json.loads(request.body)
-    UserID = 4#int(json_data["userid"])  
+    UserID = int(json_data["userid"])  
     
     if (request.method == 'POST' and UserID):
         Data = donationrecord.GetUserStats(UserID)
@@ -131,15 +131,28 @@ def home(request):
 @csrf_exempt    
 def resetpassword(request):
     json_data = json.loads(request.body)
-    UserID = json_data["userid"]
+    email = json_data["email"]
     Password = json_data["password"]  
     #Convert from string
     try:
-        UserID = int(UserID)
-        Status, Message = Users.SetPassword(UserID,Password)
+        Status, Message = Users.SetPassword(email,Password)
         
         return JsonResponse(status=Status, messages=Message)
         
     except:
         UserID = None
         
+@csrf_exempt
+def adminhome(request):
+    json_data = json.loads(request.body)
+    UserID = json_data["userid"]
+    
+    if (request.method == 'POST' and UserID):
+        Data = donationrecord.GetAdminStats(UserID)
+        
+        if (Data != False):
+            return JsonResponse(status = 200, data={"entries": Data})
+        else:
+            return JsonResponse(status=401, data={'message': 'An unexpected error has occurred'})
+    else:
+        return JsonResponse({'message': 'User ist nicht Authorisiert!'}, status=401)

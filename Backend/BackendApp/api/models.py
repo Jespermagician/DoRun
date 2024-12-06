@@ -109,12 +109,12 @@ class Users(models.Model):
         except:
             print("Error")
     
-    def SetPassword(UserID,Password):
+    def SetPassword(email,Password):
         Message = ""
         Status = 401
         try:
             Password_hash, Salt = PasswordHashing(Password)
-            Users.objects.filter(iduser=UserID).update("password_hash", Password_hash, "salt", Salt )
+            Users.objects.filter(email=email).update("password_hash", Password_hash, "salt", Salt )
             Message = "Password changed succesfully"
             Status = 200
         except:
@@ -194,13 +194,60 @@ class donationrecord(models.Model):
                 "Kilometer": kilometers,
                 })
 
-        # JSON-Antwort zurückgeben
+        #return JSON 
+        return data
+    
+    def GetAdminStats(Userid):
+        #vars
+        Message = "Permission denied"
+        data = []
+        #Get Userdata for welcome screen 
+        UserName = Users.objects.raw("Select iduser, firstname, lastname, email From api_users Where iduser = %s", [Userid])
+        
+        for row in UserName:
+            UserFirstname = row.firstname
+            UserLastname = row.lastname
+            UserEmail = row.email
+            Roleid = row.roleid
+
+        if (Roleid < 3):
+            Message = "Permission granted"
+        
+        #Safe evaluation
+        data.append({
+            "UserFirstname": UserFirstname,
+            "UserLastname": UserLastname,
+            "UserEmail": UserEmail,
+            "Message": Message})
+
+
+        if (Roleid == 1 or Roleid == 2):
+            #Get Userdat 
+            UserData = Users.objects.all()
+            
+            for row in UserData:
+            
+                data.append({"firstname": row.firstname,
+                            "lastname": row.lastname,
+                            "email": row.email,
+                            "createdat": row.createdat,
+                            "verified": row.verified,
+                            "kilometers": row.kilometers})
+        
         return data
     
     def Create_donationrecord():
         """
         Purpose: Creates a new donationrecord with recived data
         """
+        
+        data = []
+        #Safe evaluation
+        #data.append({
+        #    "UserFirstname": UserFirstname,
+        #    "UserLastname": UserLastname,
+        #    "UserEmail": UserEmail
+            
         donorec = "Test"
         iduser = "Test"
         f_name = "Test"
@@ -213,6 +260,9 @@ class donationrecord(models.Model):
         fixedamount = False
         createdat = date.today()
         verified = False
+        
+        #Userdaten allgemein
+        #Alle daten aus user (firstname, lastname, email, createdat, verified, kilometers)
         
         NewDonoRec = donationrecord.objects.create(donationrecid = donorec, iduser = iduser, firstname = f_name, lastname = l_name, email = email, street = street, housenr = housenr, postcode = postcode, donation = donation, fixedamount = fixedamount, createdat = createdat, verified = verified)
             
@@ -244,7 +294,6 @@ def CheckPassword(EnteredPwd, password, salt):
 
 class CustomBackend(BaseBackend):
     def get_user(self, user_id):
-        # Optional: Benutzer anhand der ID aus deiner Datenbank holen
         return Users(id=user_id, username='benutzername')
 
 # ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
