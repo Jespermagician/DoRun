@@ -1,14 +1,39 @@
-import string
-import random
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 from pathlib import Path
 from hashlib import sha256
 from django.shortcuts import get_object_or_404
 from api.models import Users, donationrecord
+from django.views.decorators.csrf import csrf_exempt
+from . import interface
 
 # The base directory for the "DoRun" project
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+
+@csrf_exempt
+def SendInfoMailsSponsors(request):
+    if request.method == 'POST':
+
+        try:
+            interface.sendSponsorInfo(request=request)
+        except: 
+            return HttpResponse("Mails Couldn't send to the Sponsors", status=401)
+        
+    
+        return HttpResponse("Mails Send to Sponsors", status=200)
+    
+@csrf_exempt
+def SendInfoMailsRunners(request):
+    if request.method == 'POST':
+
+        try:
+            interface.sendRunnerInfo(request=request)
+        except: 
+            return HttpResponse("Mails Couldn't send to the Runner", status=401)
+        
+    
+        return HttpResponse("Mails Send to Verified Runners", status=200)
+
 
 # A simple index view that returns a plain text response
 def indexMail(request):
