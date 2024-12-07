@@ -11,52 +11,47 @@ const Dashboard = () => {
   const [entries, setEntries] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentEntry, setCurrentEntry] = useState(null);
-  const [userid, setUserid] = useState("");
+  const [userid, setUserid] = useState(Number);
   const navigate = useNavigate();
   const [info, setInfo] = useState(null); // State für Info-Daten
   const [loading, setLoading] = useState(true); // State für Ladeanzeige
   const [error, setError] = useState(null); // State für Fehler
+  const [user, setUser] = useState({});
+  const [totalDonations, setTotalDonations] = useState(Number);
 
-  const user = {name:"Jannik Schweitzer", email:"jannikschweitzer.js@gmail.com"};
-
-  // useEffect(() => {
-  //   const fetchInfo = async () => {
-  //     try {
-  //       const response = await fetch('http://127.0.0.1:8000/api/home');
-  //       if (!response.ok) {
-  //         throw new Error(`HTTP-Error! Status: ${response.status}`);
-  //       }
-  //       const data = await response.json(); // Antwort in JSON umwandeln
-  //       setInfo(data); // Daten speichern
-  //       alert(data)
-  //       setLoading(false); // Laden beendet
-  //     } catch (err) {
-  //       setError(err.message); // Fehler speichern
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchInfo(); // Funktion aufrufen
-  // }, []); // Leer, damit der Effekt nur einmal ausgeführt wird
-
-  // if (loading) return <div>Lade Info...</div>; // Ladeanzeige
-  // if (error) return <div>Fehler: {error}</div>; // Fehleranzeige
+  let isFetched = false;
 
   useEffect(() => {
-    setUserid(localStorage.getItem("userid"));
+    // setUserid(localStorage.getItem("userid"));
+    var userid = localStorage.getItem("RoRunUserid");
+    // alert(userid);
     const handleUserInfos = async (e) => {
       try {
         const response = await fetch("http://127.0.0.1:8000/api/home", { 
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userid }),
+          body: JSON.stringify({userid}),
         });
         const data = await response.json();
         if (!response.ok) {
           // throw new Error(data.message || "Fehler bei der Anmeldung");
-          throw new Error(data.message);
+          throw new Error("Fehler beim erhalten der User Daten!");
         }
-  
+        // alert(data.entries[0].UserFirstname);
+        setUser({name:(data.entries[0].UserFirstname + " " + data.entries[0].UserLastname), email:data.entries[0].UserEmail});
+        setTotalDonations(data.totalDonations);
+        if (data.entries.length === 1) {
+          // alert("Nur der User Eintrag ist vorhanden!")
+        }
+        else {
+          const remainingEntries = data.entries.slice(1);
+          setEntries((prevEntries) => [
+            ...prevEntries,
+            ...remainingEntries.map((entry) => ({ id: entry.email, ...entry })),
+          ]);
+        }
+        // alert(data.totalDonations);
+        // alert(totalDonations);
         // Speichere das Token (optional)
         // localStorage.setItem("token", data.token);
   
@@ -67,14 +62,18 @@ const Dashboard = () => {
       }
     };
 
-    handleUserInfos();
+    if (!isFetched) {
+      handleUserInfos();
+      isFetched = true;
+    }
   }, []);
 
 
-  // const user = {name:info.firstname, email:"jannikschweitzer.js@gmail.com"};
+  // const user = {name:data.firstname, email:"jannikschweitzer.js@gmail.com"};
 
   const handleLogOut = () => {
-    localStorage.removeItem("token")
+    localStorage.removeItem("DoRunToken")
+    localStorage.removeItem("RoRunUserid");
     navigate("/");
   };
   
@@ -100,6 +99,23 @@ const Dashboard = () => {
     setModalOpen(false); // Modal schließen
   };
 
+  const handleModalSubmit2 = (newEntry) => {
+    if (currentEntry) {
+      // Bearbeiteten Eintrag aktualisieren
+      // alert(currentEntry.id);
+      setEntries(
+        entries.map((entry) =>
+          entry.id === currentEntry.id ? { ...entry, ...newEntry } : entry
+        )
+      );
+    } else {
+      // Neuen Eintrag hinzufügen
+      // alert(currentEntry);
+      setEntries([...entries, { id: Date.now(), ...newEntry }]);
+    }
+    setModalOpen(false); // Modal schließen
+  }
+
   return (
     <div>
       <div>
@@ -115,6 +131,7 @@ const Dashboard = () => {
           {/* Infofeld für Gesamtspenden */}
           <div className="stats-section">
             <StatsChart totalDonations={entries.reduce((sum, entry) => sum + parseFloat(entry.donation || 0), 0)} />
+            {/* <StatsChart totalDonations={totalDonations} /> */}
           </div>
 
           {/* Eintragsliste */}

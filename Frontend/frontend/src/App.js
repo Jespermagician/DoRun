@@ -14,19 +14,24 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />}/>
           <Route path="/register" element={<Register />}/>
-          <Route path="/home" element={<Dashboard />}/>
-          <Route path="/admin" element={<Admin />}/>
+          <Route path="/homeTest" element={<Dashboard />}/>
+          <Route path="/adminTest" element={<Admin />}/>
           <Route 
-            path="/home2"
+            path="/home"
             element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
             }
             />
+          <Route path="*" element={<NotFound />}/>
         </Routes>
       </Router>
   );
+}
+
+function NotFound() {
+  return <h1>404 - Seite nicht gefunden</h1>;
 }
 
 export default App;

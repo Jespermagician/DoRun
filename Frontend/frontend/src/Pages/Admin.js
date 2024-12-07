@@ -4,8 +4,6 @@ import { FaDoorOpen, FaMailBulk } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import StatsChart from '../Components/StatsChart';
 import UserList from '../Components/UserList';
-import InfoField from '../Components/InfoField';
-import EntryFormModal from '../Components/EntryFormModal';
 import AdminInfos from "../Components/AdminInfos";
 
 const Admin = () => {
@@ -16,10 +14,102 @@ const Admin = () => {
   const [info, setInfo] = useState(null); // State für Info-Daten
   const [loading, setLoading] = useState(true); // State für Ladeanzeige
   const [error, setError] = useState(null); // State für Fehler
+  const [user, setUser] = useState({});
 
-  const user = {name:"Jannik Schweitzer", email:"jannikschweitzer.js@gmail.com"};
+  let isFetched = false;
+
+  useEffect(() => {
+    setEntries([]);
+    // setUserid(localStorage.getItem("userid"));
+    var userid = 1;
+    // alert(userid);
+    const handleAdminInfos = async (e) => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/adminhome", { 
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({userid}),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          // throw new Error(data.message || "Fehler bei der Anmeldung");
+          throw new Error("Fehler beim erhalten der User Daten!");
+        }
+        // alert(data.entries[0].UserFirstname);
+        setUser({name:(data.entries[0].UserFirstname + " " + data.entries[0].UserLastname), email:data.entries[0].UserEmail});
+        // setTotalDonations(data.totalDonations);
+        if (data.entries.length === 1) {
+          alert("Nur der User Eintrag ist vorhanden!")
+        }
+        else {
+          const remainingEntries = data.entries.slice(1);
+          setEntries((prevEntries) => [
+            ...prevEntries,
+            ...remainingEntries.map((entry) => ({ id: entry.email, ...entry })),
+          ]);
+        }
+        // alert(totalDonations);
+        // Speichere das Token (optional)
+        // localStorage.setItem("token", data.token);
+  
+        // Weiterleitung zum Dashboard
+        // navigate("/home");
+      } catch (error) {
+        // setError(error.message);
+      }
+    };
+
+    if (!isFetched) {
+      handleAdminInfos();
+      isFetched = true;
+    }
+    // handleAdminInfos();
+  }, []);
+
+  const handleUserMails = async (e) => {
+    // e.preventDefault();
+    try {
+      const response = await fetch("http://127.0.0.1:8000/mail/runinfo", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      // const data = await response.json();
+      if (!response.ok) {
+        // throw new Error(data.message || "Fehler bei der Anmeldung");
+        // throw new Error(data.message);
+        return
+      }
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleDonatorMails = async (e) => {
+    // e.preventDefault();
+    try {
+      const response = await fetch("http://127.0.0.1:8000/mail/sponinfo", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      // const data = await response.json();
+      if (!response.ok) {
+        // throw new Error(data.message || "Fehler bei der Anmeldung");
+        // throw new Error(data.message);
+        return
+      }
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleSendMails = () => {
+    handleUserMails();
+    handleDonatorMails();
+  }
 
   const handleLogOut = () => {
+    localStorage.removeItem("DoRunToken")
+    localStorage.removeItem("RoRunUserid");
     navigate("/");
   };
   
@@ -34,7 +124,7 @@ const Admin = () => {
         <button className="logout-btn" onClick={handleLogOut}>
           {<FaDoorOpen/>}  Logout
         </button>
-        <button className="sendmails-btn" >
+        <button className="sendmails-btn" onClick={handleSendMails}>
           {<FaMailBulk/>} Send Donation Request
         </button>
       </div>

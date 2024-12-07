@@ -41,6 +41,8 @@ function Register() {
 
       // Weiterleitung zum Dashboard
       navigate("/");
+      Notification("Test");
+      alert("Email zu Verifizierung wurde an " + email + " gesendet");
     } catch (error) {
       setError(error.message);
     }

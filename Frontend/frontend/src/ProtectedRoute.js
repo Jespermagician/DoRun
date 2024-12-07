@@ -2,7 +2,7 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ children, role}) {
-  const token = localStorage.getItem("token"); // Prüfe Authentifizierung
+  const token = localStorage.getItem("DoRunToken"); // Prüfe Authentifizierung
 
   if (!token) {
     // Wenn kein Token, leite zur Login-Seite weiter
