@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css"; // CSS-Datei für das Styling und Slide-Effekt
+import SetAdminPPopup from "../Components/SetAdminPPopup";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -9,6 +10,7 @@ function Login() {
   const [isAuth, setIsAuth] = useState(Boolean);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [PopupOpen, setPopupOpen] = useState(false);
 
   // Beispiel für Handling mit API Backend Aufruf
   const handleLogin = async (e) => {
@@ -29,15 +31,16 @@ function Login() {
         throw new Error(data.message);
       }
       else if (data.userid===-99) {
-        alert("Admin ohne Passwort")
+        // alert("Admin ohne Passwort");
+        setPopupOpen(true);
       }
       else if (data.UserIsAuth===true) {
         // setUserid(data.userid)
         // alert(data.userid);
         // alert(userid);
-        localStorage.setItem("userid", data.userid);
+        localStorage.setItem("RoRunUserid", data.userid);
         setIsAuth(data.UserIsAuth)
-        localStorage.setItem("token", data.userIsAuth);
+        localStorage.setItem("DoRunToken", data.userIsAuth);
         // setError(data.message)
         navigate("/home");
       }
@@ -100,6 +103,12 @@ function Login() {
           </form>
         </div>
       </div>
+      <SetAdminPPopup
+          isOpen={PopupOpen}
+          onClose={() => setPopupOpen(false)}
+          password={password}
+          email={email}
+        />
     </div>
   );
 }

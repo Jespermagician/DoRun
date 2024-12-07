@@ -20,6 +20,14 @@
   text-align: right;
 }
 
+.popup-content {
+  background: rgb(13, 62, 125);
+  padding: 20px;
+  border-radius: 10px;
+  width: 470px;
+  text-align: right;
+}
+
 h3 {
   text-align: center;
 }
