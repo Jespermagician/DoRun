@@ -44,8 +44,6 @@ def register(request):
         #Convert Userid
         NewUserID = int(NewUser.iduser)
 
-        
-        
         User_Data = {
              "userid": NewUserID,
              "UserIsAuth": False,
@@ -137,10 +135,12 @@ def resetpassword(request):
     try:
         Status, Message = Users.SetPassword(email,Password)
         
-        return JsonResponse(status=Status, messages=Message)
+        return JsonResponse(status=Status, data={"message":Message})
         
     except:
-        UserID = None
+        Status = 401
+        Message = "Error, cant change password!"
+        return JsonResponse(status=Status, data={"message":Message})
         
 @csrf_exempt
 def adminhome(request):
