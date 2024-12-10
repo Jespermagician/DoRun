@@ -12,7 +12,7 @@ CREATE TABLE api_roles
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS api_roles
-    OWNER to "Hackerman";
+    OWNER to "admin";
  
  
 -- Table: public.api_users
@@ -37,11 +37,10 @@ CREATE TABLE api_users
                     ON UPDATE CASCADE
 )
 
-
 TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS api_users
-    OWNER to "Hackerman";
+    OWNER to "admin";
 
 
 
@@ -52,7 +51,7 @@ ALTER TABLE IF EXISTS api_users
 CREATE TABLE api_donationrecord
 (
     donationrecid integer PRIMARY KEY,
-    iduser integer NOT NULL,
+    iduser integer,
     firstname text NOT NULL,
     lastname text NOT NULL,
     email VARCHAR(320) NOT NULL,
@@ -73,4 +72,4 @@ CREATE TABLE api_donationrecord
 TABLESPACE pg_default;
  
 ALTER TABLE IF EXISTS api_DonationRecord
-    OWNER to "Hackerman";
+    OWNER to "admin";

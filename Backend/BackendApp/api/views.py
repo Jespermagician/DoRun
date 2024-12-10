@@ -1,17 +1,21 @@
-from django.shortcuts import render
-
-from django.http import JsonResponse, HttpResponse
-from .models import Users
-from django.http import JsonResponse
-from .models import Users, donationrecord
-from rest_framework import generics
-from django.contrib.auth.models import User
-from .serializers import UserSerializer
-from rest_framework.permissions import AllowAny
-from django.contrib import messages
-from django.views.decorators.csrf import csrf_exempt
+#Python default
 import json
 from mail import interface
+from datetime import date
+
+#Django
+from django.shortcuts import render
+from django.http import JsonResponse, HttpResponse
+from django.contrib.auth.models import User
+from django.db import connection
+from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+
+#Rest
+from .models import Users, donationrecord
+from rest_framework import generics
+from rest_framework.permissions import AllowAny
+from .serializers import UserSerializer
 
 # Create ur views here
 class CreateUserView(generics.CreateAPIView):
@@ -156,3 +160,174 @@ def adminhome(request):
             return JsonResponse(status=401, data={'message': 'An unexpected error has occurred'})
     else:
         return JsonResponse({'message': 'User ist nicht Authorisiert!'}, status=401)
+    
+@csrf_exempt    
+def UpdateDonations(request):
+#Lege Return Werte fest
+    Status = 401
+    Message = "Unerwarteter Fehler"
+    
+     # JSON aus dem Request-Body lesen
+    try:
+        data = json.loads(request.body)  # JSON-Daten in ein Python-Objekt parsen
+    except json.JSONDecodeError as e:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    
+    # Über die Liste in der JSON-Datenstruktur iterieren
+    for entry in data:
+        UserID = entry.get("Userid")
+        donationid = entry.get("DonoID")
+        firstname = entry.get("firstname")
+        lastname = entry.get("lastname")
+        email = entry.get("email")
+        street = entry.get("street")
+        housenr = entry.get("HouseNr")
+        Plz = entry.get("Plz")
+        DonoAmount = entry.get("DonoAmount")
+        FixedAmount = entry.get("FixedAmount")
+
+        Dono = donationrecord.objects.raw("Select * From api_donationrecord Where iduser=%s",[donationid])
+        for row in Dono:
+            DB_data = row
+            break
+
+        # Neuer Eintrag
+        if (donationid == None):
+            #Erstelle neuen Datensatz 
+            CreatedAt = date.today()
+            
+            MaxDoID = donationid.objects.raw("Select Max( donationrecid ) From api_donationrecord")
+            MaxDoID += 1
+            try:
+                donationrecord.objects.create(donationrecid= MaxDoID,
+                                              iduser = UserID,
+                                              firstname = firstname,
+                                              lastname = lastname,
+                                              email = email,
+                                              street = street,
+                                              housenr = housenr,
+                                              postcode = Plz,
+                                              donation = DonoAmount,
+                                              fixedamount = FixedAmount,
+                                              createdat = CreatedAt,
+                                              verified = False)
+
+                Status = 200
+                Message = "Neuer Datensatz angelegt"
+            except e:
+                Message = e
+                break
+        else:
+            #Eintrag aktualisieren
+            if (firstname==None):
+                firstname = DB_data.firstname
+        
+            if (lastname==None):
+                lastname = DB_data.lastname
+            
+            if (email==None):
+                email = DB_data.email
+        
+            if (street==None):
+                street = DB_data.street
+
+            if (housenr==None):
+                housenr = DB_data.housenr
+        
+            if (Plz==None):
+                Plz = DB_data.postcode
+
+            if (DonoAmount==None):
+                DonoAmount = DB_data.donation
+        
+            if (FixedAmount==None):
+                FixedAmount = DB_data.fixedamount
+        
+            #Schicke E-Mail raus um Spendenbeleg zu verifizieren @Jesper
+            #Code goes here    
+            verified = DB_data.verified
+        
+            # SQL-Abfrage
+            sql = "UPDATE api_users SET donationredid = %s, iduser= %s, firstname = %s, lastname = %s, email = %s, street = %s, housenr = %s, postcode %s, donation = %s,fixedamount = %s, createdat=%s, verified=%s WHERE iduser = %s"
+            # Parameter
+            values = [donationid,UserID,firstname,lastname,email,street,housenr,Plz,DonoAmount,FixedAmount,CreatedAt,verified]
+
+            # SQL ausführen
+            try:
+                with connection.cursor() as cursor:
+                    cursor.execute(sql, values)
+                Message = "Daten wurden geupdated"
+                Status = 200
+            except e:
+                Message = "Der SQL-Befehl lifert folgendes zurueck: " + str(e)
+        
+    return JsonResponse({"message": Message}, status=Status)
+    
+    
+@csrf_exempt
+def UpdateUsers(request):
+    #Lege Return Werte fest
+    Status = 401
+    Message = "Unerwarteter Fehler"
+    
+     # JSON aus dem Request-Body lesen
+    try:
+        data = json.loads(request.body)  # JSON-Daten in ein Python-Objekt parsen
+    except json.JSONDecodeError as e:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    
+    # Über die Liste in der JSON-Datenstruktur iterieren
+    for entry in data:
+        iduser = entry.get("Userid")
+
+        firstname = entry.get("firstname")
+        lastname = entry.get("lastname")
+        email = entry.get("email")
+        roleid = entry.get("Roleid")
+        verified = entry.get("verified")
+        kilometers = entry.get("Kilometer")
+
+        User = Users.objects.raw("Select * From api_users Where iduser=%s",[iduser])
+        for row in User:
+            DB_data = row
+            break
+
+        # Werte prüfen und ggf. von DB verwenden
+        if (iduser == None):
+            Message = "Kein User gefunden"
+            Status = 401
+            break
+
+        if (firstname==None):
+            firstname = DB_data.firstname
+        
+        if (lastname==None):
+            lastname = DB_data.lastname
+            
+        if (email==None):
+            email = DB_data.email
+        
+        if (roleid==None):
+            roleid = DB_data.roleid
+
+        if (verified==None):
+            verified = DB_data.verified
+        
+        if (kilometers==None):
+            kilometers = DB_data.kilometers
+        
+         # SQL-Abfrage
+        sql = "UPDATE api_users SET firstname = %s, lastname = %s, email = %s, roleid = %s, verified = %s, kilometers=%s WHERE iduser = %s"
+        # Parameter
+        values = [firstname,lastname,email,roleid,verified,kilometers,iduser]
+
+        # SQL ausführen
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(sql, values)
+            Status = 200
+            Message= "Daten wurden geupdated"
+        except e:
+            Message = "Der SQL-Befehl lifert folgendes zurueck: " + str(e)
+        
+    return JsonResponse({"message": Message}, status=Status)
