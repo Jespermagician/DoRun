@@ -25,8 +25,8 @@ CREATE TABLE api_users
     firstname text NOT NULL,
     lastname text NOT NULL,
     email VARCHAR(320) NOT NULL UNIQUE,
-    password_hash bytea NOT NULL,
-    salt bytea NOT NULL,
+    password_hash bytea,
+    salt bytea,
     Kilometers integer default 0,
     createdat timestamp without time zone DEFAULT NOW(),
     roleid integer NOT NULL,    -- ForeignKey

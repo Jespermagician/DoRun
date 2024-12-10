@@ -5,6 +5,7 @@ from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth import logout
 from django.http import JsonResponse
 import array
+from django.db import connection
 from hashlib import sha256
 import random
 import string
@@ -98,6 +99,8 @@ class Users(models.Model):
                 test = str(b'')
                 #If init password eq user password then trigger reset
                 if (str(p.password_hash) == test):
+                    print(p.password_hash, test)
+                    print("No password for User")
                     return -99
                 
                 # Enter the entered password encrypt it with the salt and compare it with the pwhash from the db
@@ -114,7 +117,17 @@ class Users(models.Model):
         Status = 401
         try:
             Password_hash, Salt = PasswordHashing(Password)
-            Users.objects.filter(email=email).update("password_hash", Password_hash, "salt", Salt )
+            print(Password_hash, Salt)
+            
+            # SQL-Abfrage
+            sql = "UPDATE api_users SET password_hash = %s, salt = %s WHERE email = %s"
+            # Parameter
+            values = [bytearray.fromhex(Password_hash), bytearray.fromhex(Salt), email]
+
+            # SQL ausführen
+            with connection.cursor() as cursor:
+                cursor.execute(sql, values)
+                
             Message = "Password changed succesfully"
             Status = 200
         except:
