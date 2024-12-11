@@ -262,15 +262,14 @@ def UpdateDonations(request):
                 Message = "Der SQL-Befehl lifert folgendes zurueck: " + str(e)
         
     return JsonResponse({"message": Message}, status=Status)
-    
-    
+        
 @csrf_exempt
 def UpdateUsers(request):
     #Lege Return Werte fest
     Status = 401
     Message = "Unerwarteter Fehler"
     
-     # JSON aus dem Request-Body lesen
+    # JSON aus dem Request-Body lesen
     try:
         data = json.loads(request.body)  # JSON-Daten in ein Python-Objekt parsen
     except json.JSONDecodeError as e:
@@ -331,3 +330,40 @@ def UpdateUsers(request):
             Message = "Der SQL-Befehl lifert folgendes zurueck: " + str(e)
         
     return JsonResponse({"message": Message}, status=Status)
+
+@csrf_exempt
+def DelUser(request):
+    #Lege Return Werte fest
+    Status = 401
+    Message = "Unerwarteter Fehler"
+    
+    # JSON aus dem Request-Body lesen
+    try:
+        data = json.loads(request.body)  # JSON-Daten in ein Python-Objekt parsen
+    except json.JSONDecodeError as e:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+    
+    # Über die Liste in der JSON-Datenstruktur iterieren
+    for entry in data:
+        iduser = entry.get("Userid")
+        
+        Users.objects.raw("Delete From api_users Where iduser = %s", [iduser])
+        
+@csrf_exempt
+def DelDonaoRec(request):
+    #Lege Return Werte fest
+    Status = 401
+    Message = "Unerwarteter Fehler"
+    
+    # JSON aus dem Request-Body lesen
+    try:
+        data = json.loads(request.body)  # JSON-Daten in ein Python-Objekt parsen
+    except json.JSONDecodeError as e:
+        return JsonResponse({"error": "Invalid JSON"}, status=400)
+
+    # Über die Liste in der JSON-Datenstruktur iterieren
+    for entry in data:
+        donoid = entry.get("donoid")
+        
+        donationrecord.objects.raw("Delete From api_users Where iduser = %s", [donoid])
+        

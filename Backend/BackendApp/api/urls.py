@@ -12,5 +12,7 @@ urlpatterns = [
     path('adminhome',views.adminhome,name='adminhome'),
     path('UpdateDonations',views.UpdateDonations,name='UpdatDonations'),
     path('UpdateUsers',views.UpdateUsers,name='UpdateUsers'),
-    path('resetpassword',views.resetpassword,name='ResetPassword')
+    path('resetpassword',views.resetpassword,name='ResetPassword'),
+    path('DelDonoRec',views.DelDonaoRec,name='DelDonaoRec'),
+    path('DelUser',views.DelUser,name='DelUser')
 ]
