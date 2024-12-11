@@ -194,6 +194,7 @@ class donationrecord(models.Model):
             # Schleife durch die UserEntrys-Objekte
             for obj in UserEntrys:
                 data.append({
+                "donoid" : obj.donationrecid,
                 "firstname": obj.firstname,
                 "lastname": obj.lastname,
                 "email": obj.email,
@@ -236,11 +237,12 @@ class donationrecord(models.Model):
 
         if (Roleid == 1 or Roleid == 2):
             #Get Userdat 
-            UserData = Users.objects.all()
+            UserData = Users.objects.all().order_by('iduser')
             
             for row in UserData:
             
-                data.append({"firstname": row.firstname,
+                data.append({"userid":row.iduser,
+                            "firstname": row.firstname,
                             "lastname": row.lastname,
                             "email": row.email,
                             "createdat": row.createdat,
@@ -248,37 +250,6 @@ class donationrecord(models.Model):
                             "kilometers": row.kilometers})
         
         return data
-    
-    def Create_donationrecord():
-        """
-        Purpose: Creates a new donationrecord with recived data
-        """
-        
-        data = []
-        #Safe evaluation
-        #data.append({
-        #    "UserFirstname": UserFirstname,
-        #    "UserLastname": UserLastname,
-        #    "UserEmail": UserEmail
-            
-        donorec = "Test"
-        iduser = "Test"
-        f_name = "Test"
-        l_name = "Test"
-        email = "Test"
-        street = "Test"
-        housenr = "Test"
-        postcode = "Test"
-        donation = "Test"
-        fixedamount = False
-        createdat = date.today()
-        verified = False
-        
-        #Userdaten allgemein
-        #Alle daten aus user (firstname, lastname, email, createdat, verified, kilometers)
-        
-        NewDonoRec = donationrecord.objects.create(donationrecid = donorec, iduser = iduser, firstname = f_name, lastname = l_name, email = email, street = street, housenr = housenr, postcode = postcode, donation = donation, fixedamount = fixedamount, createdat = createdat, verified = verified)
-            
     # end def
             
 def roles():
