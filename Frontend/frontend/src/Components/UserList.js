@@ -18,7 +18,7 @@ const UserList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry 
             entries.map((entry) => (
               <li key={entry.id} className="entry-item">
                 <div className="entry-details">
-                  {/* <span>{entry.id}</span> */}
+                  <span>{entry.id}</span>
                   <span className="span-indent">{entry.firstname} {entry.lastname}</span>
                   <span>{entry.email}</span>
                   {/* <span>{entry.donation}€</span> */}

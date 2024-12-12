@@ -27,6 +27,9 @@ const SetAdminPPopup = ({ isOpen, onClose, password, email}) => {
         // throw new Error(data.message || "Fehler bei der Anmeldung");
         throw new Error(data.message);
       }
+      else {
+        onClose();
+      }
     } catch (error) {
       setError(error.message);
     }
