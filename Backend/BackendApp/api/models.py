@@ -218,6 +218,17 @@ class donationrecord(models.Model):
         #Get Userdata for welcome screen 
         UserName = Users.objects.raw("Select iduser, firstname, lastname, email From api_users Where iduser = %s", [Userid])
         
+        Super_Data = donationrecord.objects.all()
+        
+        TDonoF = 0
+        TDono = 0
+        for Super_row in Super_Data:
+            if (Super_row.fixedamount == True):
+                TDonoF += Super_row.donation
+            else:
+                KM = Users.objects.raw("Select kilometers From api_users Where iduser = %s",[Super_row.iduser])
+                TDono += (Super_row.donation * KM)
+        
         for row in UserName:
             UserFirstname = row.firstname
             UserLastname = row.lastname
@@ -229,6 +240,8 @@ class donationrecord(models.Model):
         
         #Safe evaluation
         data.append({
+            "DonoFix": TDonoF,
+            "DonoTotal": TDono,
             "UserFirstname": UserFirstname,
             "UserLastname": UserLastname,
             "UserEmail": UserEmail,
