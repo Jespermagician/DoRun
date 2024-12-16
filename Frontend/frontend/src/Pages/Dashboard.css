@@ -1,4 +1,4 @@
-/* Grundlegendes Layout für das Dashboard */
+/* Dashboard-Container */
 .dashboard-container {
   padding: 20px;
   background-color: #f4f4f4;
@@ -51,6 +51,7 @@
   font-style: italic;
 }
 
+/* Logout-Button */
 .logout-btn {
   padding: 2px;
   margin-bottom: 10px;
@@ -70,15 +71,39 @@
   float: right;
 }
 
-/* Anpassen des Layouts bei kleinen Bildschirmen */
+/* Mobile Anpassungen für Layout und Flexbox */
 @media (max-width: 768px) {
+  /* Container und Flexbox-Styling */
   .dashboard-wrapper {
-    flex-direction: column; /* Auf kleineren Bildschirmen werden die Boxen untereinander gestapelt */
+    flex-direction: column; /* Boxen untereinander anordnen */
+    gap: 15px;  /* Weniger Abstand auf kleineren Bildschirmen */
   }
 
+  .dashboard-container {
+    padding: 20px;
+    background-color: #f4f4f4;
+    height: 800px;
+    width: 350px;
+    border-radius: 10px;
+  }
+
+  /* Gesamtspenden und Eintragsliste Boxen */
   .total-donations,
   .entry-list {
-    min-width: auto; /* Keine feste Mindestbreite mehr erforderlich */
+    min-width: auto;  /* Keine feste Mindestbreite */
     flex: 1 1 100%;  /* Beide Sektionen nehmen den gesamten Platz ein */
+    padding: 15px;  /* Weniger Padding für kleinere Geräte */
+  }
+
+  /* Logout-Button */
+  .logout-btn {
+    padding: 8px;
+    font-size: 14px;  /* Kleinere Schriftgröße auf mobilen Geräten */
+    margin-bottom: 15px; /* Mehr Abstand */
+  }
+
+  /* Weitere Feinanpassungen für Mobilgeräte */
+  .content-section {
+    padding: 10px; /* Etwas weniger Padding */
   }
 }

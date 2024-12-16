@@ -21,7 +21,8 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry
                   <span className="span-indent">{entry.donoid}</span>
                   <span className="span-indent">{entry.firstname} {entry.lastname}</span>
                   <span className="span-indent">{entry.email}</span>
-                  <span className="span-indent">{entry.DonoAmount} €</span>
+                  {/* <span className="span-indent">{entry.DonoAmount} €</span> */}
+                  <span className="span-indent">{entry.donation} €</span>
                   <span className="span-indent">{entry.FixedAmount === true ? "Festbetrag" : "Pro Kilometer"}</span>
                 </div>
                 <div className="entry-actions">
