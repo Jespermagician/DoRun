@@ -196,8 +196,12 @@ def UpdateDonations(request):
             #Erstelle neuen Datensatz 
             CreatedAt = date.today()
             
-            MaxDoID = donationid.objects.raw("Select Max( donationrecid ) From api_donationrecord")
-            MaxDoID += 1
+            MaxDoID = donationrecord.objects.raw("Select Max( donationrecid ) From api_donationrecord")
+            try: 
+                MaxDoID = MaxDoID + 1
+            except:
+                MaxDoID = 1
+
             try:
                 donationrecord.objects.create(donationrecid= MaxDoID,
                                               iduser = UserID,
@@ -214,8 +218,7 @@ def UpdateDonations(request):
 
                 Status = 200
                 Message = "Neuer Datensatz angelegt"
-            except e:
-                Message = e
+            except:
                 break
         else:
             #Eintrag aktualisieren
@@ -258,8 +261,8 @@ def UpdateDonations(request):
                     cursor.execute(sql, values)
                 Message = "Daten wurden geupdated"
                 Status = 200
-            except e:
-                Message = "Der SQL-Befehl lifert folgendes zurueck: " + str(e)
+            except:
+                Message = "Der SQL-Befehl lifert folgendes zurueck: "
         
     return JsonResponse({"message": Message}, status=Status)
         
