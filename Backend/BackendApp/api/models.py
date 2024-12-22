@@ -274,20 +274,15 @@ def RandChars(size=30, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 def PasswordHashing(password):
-    SaltText = RandChars()  # Generate string as salt
-    Salt = sha256(SaltText.encode('utf-8')).digest().hex()  # Generate binary salt
-    Password_Hash = sha256((password + Salt).encode('utf-8')).digest()  # Hash password + salt
-    
-    return Password_Hash.hex(), Salt
+    SaltText = RandChars()                                              # Generiert zufällige Zeichenabfolge   
+    Salt = sha256(SaltText.encode('utf-8')).digest().hex()              # Erstellt den Hash des Salts
+    Password_Hash = sha256((password + Salt).encode('utf-8')).digest()  # Verschlüsselung des Passwords und Salt
+    return Password_Hash.hex(), Salt                                    # Rückgabe
 
-def CheckPassword(EnteredPwd, password, salt):
-    # Recalculate hash for the entered password
-    EnteredPwdHash = sha256((EnteredPwd + salt.hex()).encode('utf-8')).digest()
-
-    # Compare hashes
-    is_valid = EnteredPwdHash == password
-    print("Password Match:", is_valid)
-    return is_valid
+def CheckPassword(EnteredPwd, password, salt):                          
+    EnteredPwdHash = sha256((EnteredPwd + salt.hex()).encode('utf-8')).digest() # Bildet den Hash nach
+    is_valid = EnteredPwdHash == password                                       # Vergleicht den Gespeicherten und Neu generierten Hash
+    return is_valid                                                             # Gibt einen Boolschen Wert zurück
 
 class CustomBackend(BaseBackend):
     def get_user(self, user_id):
