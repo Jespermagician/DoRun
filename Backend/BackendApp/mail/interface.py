@@ -1,11 +1,10 @@
 import smtplib
 from django.shortcuts import get_object_or_404
-from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from email import encoders
 import pandas as pd
 from . import views
+from BackendApp import settings as set
 from django.http import HttpResponse
 from api.models import Users, donationrecord
 from django.db.models import Sum
@@ -26,6 +25,7 @@ from django.db.models import Sum
 ###########################################
 
 
+
 class getServerData:
     sender_email: str
     password: str
@@ -33,7 +33,7 @@ class getServerData:
     smtp_port: int
     def __init__(self):
         _getData = pd.read_json(f"{views.BASE_DIR}\Backend\CustomData\MailConfig.json", typ="series")
-        print(_getData)
+        set.logger.print(_getData)
         # the attributes behind _getData have to match the json
         self.sender_email = _getData.sender_email
         self.password = _getData.password
@@ -43,54 +43,38 @@ class getServerData:
 
 
 class MailSender():
-    Server = None
-    SD = None
+    Server = None  # SMTP-Verbindung zum Mail-Server
+    SD = None      # Objekt, das Serverdaten wie Host, Port und Login-Daten enthält
 
-    def __init__(self):
-        self.SD = getServerData()
-        print(self.SD)
-        print(self.SD.sender_email)
+    def __init__(self): 
+        self.SD = getServerData()       # Funktion, die Serverdaten zurückgibt (nicht definiert im Code)
         self.ConnectToServer()
+        set.logger.print("Server Started")
 
-    def ConnectToServer(self):
-        print(self.SD.smtp_server)
+    def ConnectToServer(self):          # Stellt eine Verbindung zum SMTP-Server her
         self.Server = smtplib.SMTP(host=self.SD.smtp_server, port=self.SD.smtp_port)
-        self.Server.starttls()
-        self.Server.login(user=self.SD.sender_email, password=self.SD.password)
-        print("Connection to Mail-Server successfuly")
+        self.Server.starttls()                                                          # Aktiviert den TLS-Schlüssel
+        self.Server.login(user=self.SD.sender_email, password=self.SD.password)         # Authentifizierung
 
-    def SendMail(self, pReceiver: str, pSubject: str, pIsAttachement: bool, pAttachement, pMailText: str):
-        msg = MIMEMultipart()
-        msg['Subject'] = pSubject
-        msg['From'] = self.SD.sender_email
-        msg['To'] = pReceiver
+    def SendMail(self, pReceiver: str, pSubject: str, pMailText: str):
+        msg = MIMEMultipart()                               # Erstellt eine  Nachricht 
+        msg['Subject'] = pSubject                           # Betreff
+        msg['From'] = self.SD.sender_email                  # Absenderadresse
+        msg['To'] = pReceiver                               # Empfängeradresse
+        msg.attach(MIMEText(pMailText, 'html', 'utf-8'))    # Fügt den Nachrichtentext hinzu (HTML-formatiert)
         
-        print(pMailText)
-        msg.attach(MIMEText(pMailText, 'html', 'utf-8'))
-        
-        part = MIMEBase('application', "octet-stream")
-
-        if pIsAttachement:
-            part.set_payload(open(pAttachement, "rb").read())
-            encoders.encode_base64(part)
-            part.add_header('Content-Disposition', 'attachment; filename="Example_doc.pdf"')
-            msg.attach(part)
-
-        print("Message Generated")
-        
-
-        # Sende die Mail Final
+        # Sende die vorbereitete Nachricht
         try:
-            self.Server.sendmail(self.SD.sender_email, pReceiver, msg.as_string())
-            print("Mail send")
+            self.Server.sendmail(self.SD.sender_email, pReceiver, msg.as_string())  # Sendet die E-Mail
+            set.logger.print("Mail sent")  # Rückgabe bei Erfolg
         except:
-            print("Unexpected error ocurred while sending Mail!")
-        
-    
-    # Breche die Verbindung zum Server ab
+            set.logger.print("Unexpected error occurred while sending Mail!")  # Fehlerbehandlung 
+
+    # Beendet die Verbindung zum Mail-Server
     def CloseConnection(self):
         self.Server.quit()
-        print("Disconnect from Mail Server")
+        set.logger.print("Disconnected from Mail Server")
+
     
 
 def sendUserVerifyMail(request, UserID):
@@ -171,7 +155,7 @@ def BinarySearchUsers(users, id):
 def loadSponsorInfo(request, DonRecEmail, users):
     donRec = donationrecord.objects.filter(email=DonRecEmail) # Ziehe alle Spendeneinträge mir der E-Mail
 
-    print(donRec)
+    set.logger.print(donRec)
     # Implementiere alle Variablen
     mail = None
     TotalDonation: float
@@ -206,7 +190,7 @@ def loadSponsorInfo(request, DonRecEmail, users):
             'TotalKilometers': TotalKilometers,
         }
 
-    print(context)
+    set.logger.print(context)
     
     # Gibt die Daten, request und das Template  weiter -> erstellt den EMAIL inhalt
     return views.RenderMailText(context=context, request=request, template_name="SponsorInfo.html")
@@ -221,7 +205,7 @@ def sendSponsorInfo(request):
     # Ziehe jede E-Mail-Adr. einmal
     eMailArr = donationrecord.objects.values_list('email', flat=True).distinct()
     
-    print(users)
+    set.logger.print(users)
 
     mail = MailSender()     # Verbingung zum Mail-Server
 
@@ -280,7 +264,7 @@ def loadRunnerInfo(request, donRecs, user, RunnerAmount, EventKilometers, EventT
             'data': data,
         }
 
-    print(context)
+    set.logger.print(context)
     # Gibt die Daten, request und das Template  weiter -> erstellt den EMAIL inhalt
     return views.RenderMailText(context=context, request=request, template_name="RunnerInfo.html")
 
@@ -300,20 +284,20 @@ def sendRunnerInfo(request):
     EventKilometers = users.aggregate(total_km=Sum('kilometers'))['total_km'] or 0
     # Erlaufendes Geld aller Läufer
     EventTotal = 0
-    print("test")
+    set.logger.print("test")
     # usersSortet = users.order_by("iduser")
     for donRec in donRecs.filter(verified=True):
         if donRec.fixedamount:
             EventTotal += donRec.donation
         else:
-            print(donRec.iduser)
+            set.logger.print(donRec.iduser)
             km = 0
             try:
-                # print("filter")
-                # print(users.filter(iduser=donRec.iduser)[0].kilometers)
+                # set.logger.printLog("filter")
+                # set.logger.printLog(users.filter(iduser=donRec.iduser)[0].kilometers)
                 km = users.get(iduser=donRec.iduser).kilometers
             except Exception as es:
-                print("error ", es)
+                set.logger.print("error ", es)
 
             EventTotal += donRec.donation * km
 
