@@ -87,9 +87,9 @@ def sendUserVerifyMail(request, UserID):
     mail.SendMail(
         pReceiver=user.email, 
         pSubject="Anmeldung Spendenlauf", 
-        pIsAttachement=False, 
         pMailText=views.UserAuth(request=request, UserID=UserID, user=user), 
-        pAttachement="")
+        # pAttachement=""
+        )
     
     mail.CloseConnection()      # Verbindung zum Server abbrechen
 

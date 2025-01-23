@@ -35,14 +35,17 @@ def register(request):
         password = data.get("password")
 
         try:
-        #Erstelle neuen Benutzer auf der Datenbank
-            # Send Verification Mail
+            #Erstelle neuen Benutzer auf der Datenbank
+                # Send Verification Mail
+
+            print("first_name,last_name,email,password")
             print(first_name,last_name,email,password)
             NewUser = Users.RegisterUser(first_name,last_name,email,password)
+            print("test") # debug
             interface.sendUserVerifyMail(request=request, UserID=int(NewUser.iduser))
-
-        except: 
-        #Bei Fehler return error an Frontend
+        except : 
+        # #Bei Fehler return error an Frontend
+        #     print("Error occured: ")
             return JsonResponse(data={"userid": None, "UserIsAuth": False,'message': 'Registrierung nicht erfolgreich'}, status=401)
         
         #Convert Userid

@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
-import logs
+from . import logs
 
 # Create Instance of Log
 logger = logs.log()
@@ -109,7 +109,7 @@ DATABASES = {
          "ENGINE": "django.db.backends.postgresql",
          "NAME": "DoRun",
          "USER": "admin",
-         "PASSWORD": "SupersicheresPasswort!1",
+         "PASSWORD": "ZyZLeG331Bqfoo9ClIQD",
          "HOST": "localhost",
          "PORT": "5432",
      }
