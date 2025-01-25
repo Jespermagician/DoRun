@@ -13,9 +13,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
-import logs
+from . import logs
 
-# Create Instance of Log
+# Create global Instance of Log
+global logger
 logger = logs.log()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -109,7 +110,7 @@ DATABASES = {
          "ENGINE": "django.db.backends.postgresql",
          "NAME": "DoRun",
          "USER": "admin",
-         "PASSWORD": "SupersicheresPasswort!1",
+         "PASSWORD": "ZyZLeG331Bqfoo9ClIQD",
          "HOST": "localhost",
          "PORT": "5432",
      }
