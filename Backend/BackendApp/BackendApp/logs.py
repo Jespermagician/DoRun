@@ -9,7 +9,7 @@ class log:
         self.print("Set up log and start time") 
 
     # Formatted Console Print
-    def print(self, logText):
+    def print(self, logText: str):
         runTime = round((datetime.datetime.now() - self.start_time).microseconds / 1000)
         x = f"[{datetime.datetime.now()}] - {runTime} ms: {logText}"
         print(x)

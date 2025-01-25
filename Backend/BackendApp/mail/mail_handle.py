@@ -1,87 +1,28 @@
-import smtplib
+# import smtplib
 from django.shortcuts import get_object_or_404
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-import pandas as pd
+# from email.mime.multipart import MIMEMultipart
+# from email.mime.text import MIMEText
+# import pandas as pd
 from . import views
 from BackendApp import settings as set
 from django.http import HttpResponse
 from api.models import Users, donationrecord
 from django.db.models import Sum
+# Project class:
+from BackendApp.settings import logger
+from .mailSender import  MailSender
 
 
 
-###########Create Mail Interface############
-# Create the file 'MailConfig.json' in this folder
-# set the values sender_email and password. Like
-# {
-#     "sender_email":"test@test.de",
-#     "password":"password123"
-#     "smtp_server":"smtp.gmail.com",
-#     "smtp_port":587
-# }
-# the smtp_port should be an integer
-# the attributes behind _getData have to match the json!!!
-###########################################
+# implement interface for mail here
 
-
-
-class getServerData:
-    sender_email: str
-    password: str
-    smtp_server: str
-    smtp_port: int
-    def __init__(self):
-        _getData = pd.read_json(f"{views.BASE_DIR}\Backend\CustomData\MailConfig.json", typ="series")
-        set.logger.print(_getData)
-        # the attributes behind _getData have to match the json
-        self.sender_email = _getData.sender_email
-        self.password = _getData.password
-        self.smtp_server = _getData.smtp_server
-        self.smtp_port = _getData.smtp_port 
-        
-
-
-class MailSender():
-    Server = None  # SMTP-Verbindung zum Mail-Server
-    SD = None      # Objekt, das Serverdaten wie Host, Port und Login-Daten enthält
-
-    def __init__(self): 
-        self.SD = getServerData()       # Funktion, die Serverdaten zurückgibt (nicht definiert im Code)
-        self.ConnectToServer()
-        set.logger.print("Server Started")
-
-    def ConnectToServer(self):          # Stellt eine Verbindung zum SMTP-Server her
-        self.Server = smtplib.SMTP(host=self.SD.smtp_server, port=self.SD.smtp_port)
-        self.Server.starttls()                                                          # Aktiviert den TLS-Schlüssel
-        self.Server.login(user=self.SD.sender_email, password=self.SD.password)         # Authentifizierung
-
-    def SendMail(self, pReceiver: str, pSubject: str, pMailText: str):
-        msg = MIMEMultipart()                               # Erstellt eine  Nachricht 
-        msg['Subject'] = pSubject                           # Betreff
-        msg['From'] = self.SD.sender_email                  # Absenderadresse
-        msg['To'] = pReceiver                               # Empfängeradresse
-        msg.attach(MIMEText(pMailText, 'html', 'utf-8'))    # Fügt den Nachrichtentext hinzu (HTML-formatiert)
-        
-        # Sende die vorbereitete Nachricht
-        try:
-            self.Server.sendmail(self.SD.sender_email, pReceiver, msg.as_string())  # Sendet die E-Mail
-            set.logger.print("Mail sent")  # Rückgabe bei Erfolg
-        except:
-            set.logger.print("Unexpected error occurred while sending Mail!")  # Fehlerbehandlung 
-
-    # Beendet die Verbindung zum Mail-Server
-    def CloseConnection(self):
-        self.Server.quit()
-        set.logger.print("Disconnected from Mail Server")
-
-    
+# then implement class implemented by the interface
 
 def sendUserVerifyMail(request, UserID):
     user = get_object_or_404(Users, iduser=UserID)      # Bekomme einzelnen User anhand der ID
 
     
-    mail = MailSender()     # Verbindung zum Mail Server erstellen
+    mail = MailSender()     # Connect to Mail-Server and init class 
 
     # Absendung der Mail initiieren
     mail.SendMail(
@@ -91,7 +32,7 @@ def sendUserVerifyMail(request, UserID):
         # pAttachement=""
         )
     
-    mail.CloseConnection()      # Verbindung zum Server abbrechen
+    mail.CloseConnection()      # Disconnect Server connection
 
     return HttpResponse(f"Mail send to {user.lastname}, {user.firstname}")          # Http-Anwtort senden
 
@@ -106,9 +47,10 @@ def sendDonationVerifyMail(request, UserID, DonationId):
     mail.SendMail(
         pReceiver=donRec.email, 
         pSubject=f"Sponsoranmeldung für {user.lastname}, {user.firstname}", 
-        pIsAttachement=False, 
+        # pIsAttachement=False, 
         pMailText=views.DonRecAuth(request=request, UserID=UserID, user=user, DonRecID=DonationId,DonRec=donRec), 
-        pAttachement="")
+        # pAttachement=""
+        )
     
     mail.CloseConnection()      # Verbindung zum Server abbrechen
 
@@ -214,9 +156,10 @@ def sendSponsorInfo(request):
         mail.SendMail(
             pReceiver=eMail, 
             pSubject="Spendenlauf Spenden Informationen", 
-            pIsAttachement=False, 
+            # pIsAttachement=False, 
             pMailText=loadSponsorInfo(request=request, DonRecEmail=eMail, users=users),  # 
-            pAttachement="")
+            # pAttachement=""
+            )
 
     mail.CloseConnection()  # Schließe die Verbindung zu Server
 
@@ -306,12 +249,13 @@ def sendRunnerInfo(request):
         mail.SendMail(
             pReceiver=usr.email, 
             pSubject="Spendenlauf Spenden Informationen", 
-            pIsAttachement=False, 
+            # pIsAttachement=False, 
             pMailText=loadRunnerInfo(request=request, 
                                      user=usr, donRecs=donRecs, 
                                      EventTotal=EventTotal, RunnerAmount=RunnerAmount, 
                                      EventKilometers=EventKilometers), 
-            pAttachement="")
+            # pAttachement=""
+            )
 
     mail.CloseConnection() 
 

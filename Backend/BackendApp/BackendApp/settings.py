@@ -15,7 +15,8 @@ from datetime import timedelta
 import os
 from . import logs
 
-# Create Instance of Log
+# Create global Instance of Log
+global logger
 logger = logs.log()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
