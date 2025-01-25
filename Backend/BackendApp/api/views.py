@@ -9,13 +9,17 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.models import User
 from django.db import connection
 from django.contrib import messages
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie, csrf_protect
+from django.middleware.csrf import get_token
+
 
 #Rest
 from .models import Users, donationrecord
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 from .serializers import UserSerializer
+from django.http import JsonResponse  # Importiere JsonResponse
+from django.http import HttpResponse  # Importiere HttpResponse
 
 # Create ur views here
 class CreateUserView(generics.CreateAPIView):
@@ -24,7 +28,7 @@ class CreateUserView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
 #Handels the registration page
-@csrf_exempt
+@csrf_protect
 def register(request):
     if request.method == 'POST':
         #Read data
@@ -366,4 +370,7 @@ def DelDonaoRec(request):
         donoid = entry.get("donoid")
         
         donationrecord.objects.raw("Delete From api_users Where iduser = %s", [donoid])
-        
+
+def csrf_token_view(request):
+    token = get_token(request)  # Generiert den CSRF-Token
+    return JsonResponse({"csrftoken": token})  # Gibt den CSRF-Token als JSON zurück        

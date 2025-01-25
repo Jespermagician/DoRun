@@ -2,9 +2,6 @@
 from django.urls import path, include
 from . import views
 
-
-
-
 urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.cust_login, name='login'),
@@ -14,5 +11,6 @@ urlpatterns = [
     path('UpdateUsers',views.UpdateUsers,name='UpdateUsers'),
     path('resetpassword',views.resetpassword,name='ResetPassword'),
     path('DelDonoRec',views.DelDonaoRec,name='DelDonaoRec'),
-    path('DelUser',views.DelUser,name='DelUser')
+    path('DelUser',views.DelUser,name='DelUser'),
+    path('csrf-token/',views.csrf_token_view)
 ]

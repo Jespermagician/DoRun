@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css"; // CSS-Datei für das Styling und Slide-Effekt
 
@@ -9,12 +9,38 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [csrfToken, setCsrfToken] = useState(null); // Zustand für das CSRF-Token
   const navigate = useNavigate();
 
   // Beispiel für Handling mit API Backend Aufruf
   const handleLogin = () => {
     navigate("/");
   };
+
+  // CSRF-Token abrufen
+  const getCsrfToken = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/csrf-token/', {
+        method: 'GET',
+        credentials: 'include', // Cookies mit einbeziehen
+      });
+
+      if (!response.ok) {
+        throw new Error("Fehler beim Abrufen des CSRF-Tokens");
+      }
+
+      const data = await response.json();
+      setCsrfToken(data.csrfToken); // Setze das Token in den Zustand
+    } catch (error) {
+      setError("Fehler beim Abrufen des CSRF-Tokens");
+      console.error("Fehler beim Abrufen des CSRF-Tokens:", error);
+    }
+  };
+
+  // Hol das CSRF-Token beim ersten Laden der Seite
+  useEffect(() => {
+    getCsrfToken();
+  }, []);
 
   // Handler für die Registrierung
   const handleRegister = async (e) => {
@@ -27,26 +53,35 @@ function Register() {
       setError("Die Passwörter stimmen nicht überein.");
       return;
     }
+
+    if (!csrfToken) {
+      setError("CSRF-Token fehlt");
+      return;
+    }
+
     try {
       const response = await fetch("http://127.0.0.1:8000/api/register/", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken, // Füge das CSRF-Token als Header hinzu
+        },
+        credentials: "include", // Cookies mit einbeziehen
         body: JSON.stringify({ firstname, lastname, email, password }),
       });
+
       const data = await response.json();
+
       if (!response.ok) {
-        // throw new Error(data.message || "Fehler bei der Anmeldung");
-        throw new Error(data.message);
+        throw new Error(data.message || "Fehler bei der Anmeldung");
       }
 
       // Weiterleitung zum Dashboard
       navigate("/");
-      Notification("Test");
       alert("Email zu Verifizierung wurde an " + email + " gesendet");
     } catch (error) {
       setError(error.message);
     }
-    // alert("Registrierung erfolgreich!");
   };
 
   return (
@@ -67,7 +102,7 @@ function Register() {
                 value={firstname}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
-                />
+              />
             </div>
             <div className="form-group">
               <label className="login-label" htmlFor="register-lastName">Nachname</label>
@@ -79,7 +114,7 @@ function Register() {
                 value={lastname}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                />
+              />
             </div>
             <div className="form-group">
               <label className="login-label" htmlFor="register-email">E-Mail-Adresse</label>
