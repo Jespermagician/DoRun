@@ -1,6 +1,7 @@
 #Python default
 import json
-from mail import interface
+# from Backend.BackendApp.mail import mail_handle
+import mail.mail_handle  as mail_handle
 from datetime import date
 
 #Django
@@ -39,14 +40,17 @@ def register(request):
         password = data.get("password")
 
         try:
-        #Erstelle neuen Benutzer auf der Datenbank
-            # Send Verification Mail
+            #Erstelle neuen Benutzer auf der Datenbank
+                # Send Verification Mail
+
+            print("first_name,last_name,email,password")
             print(first_name,last_name,email,password)
             NewUser = Users.RegisterUser(first_name,last_name,email,password)
-            interface.sendUserVerifyMail(request=request, UserID=int(NewUser.iduser))
-
-        except: 
-        #Bei Fehler return error an Frontend
+            print("test") # debug
+            mail_handle.sendUserVerifyMail(request=request, UserID=int(NewUser.iduser))
+        except : 
+        # #Bei Fehler return error an Frontend
+        #     print("Error occured: ")
             return JsonResponse(data={"userid": None, "UserIsAuth": False,'message': 'Registrierung nicht erfolgreich'}, status=401)
         
         #Convert Userid

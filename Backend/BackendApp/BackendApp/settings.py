@@ -17,7 +17,7 @@ from . import logs
 
 # Create global Instance of Log
 global logger
-logger = logs.Log()
+logger = logs.log()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -110,7 +110,7 @@ DATABASES = {
          "ENGINE": "django.db.backends.postgresql",
          "NAME": "DoRun",
          "USER": "admin",
-         "PASSWORD": "SupersicheresPasswort!1",
+         "PASSWORD": "ZyZLeG331Bqfoo9ClIQD",
          "HOST": "localhost",
          "PORT": "5432",
      }
