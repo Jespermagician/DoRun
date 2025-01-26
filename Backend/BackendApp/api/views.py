@@ -372,5 +372,4 @@ def DelDonaoRec(request):
         donationrecord.objects.raw("Delete From api_users Where iduser = %s", [donoid])
 
 def csrf_token_view(request):
-    token = get_token(request)  # Generiert den CSRF-Token
-    return JsonResponse({"csrftoken": token})  # Gibt den CSRF-Token als JSON zurück        
+    return JsonResponse({"csrftoken": get_token(request)})  # Gibt den CSRF-Token als JSON zurück        

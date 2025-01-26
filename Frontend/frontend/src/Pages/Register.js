@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css"; // CSS-Datei für das Styling und Slide-Effekt
+import { getCsrfToken } from "../utils/csrf"; // Function for csrf
 
 function Register() {
   const [firstname, setFirstName] = useState("");
@@ -9,38 +10,12 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const [csrfToken, setCsrfToken] = useState(null); // Zustand für das CSRF-Token
   const navigate = useNavigate();
 
   // Beispiel für Handling mit API Backend Aufruf
   const handleLogin = () => {
     navigate("/");
   };
-
-  // CSRF-Token abrufen
-  const getCsrfToken = async () => {
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/csrf-token/', {
-        method: 'GET',
-        credentials: 'include', // Cookies mit einbeziehen
-      });
-
-      if (!response.ok) {
-        throw new Error("Fehler beim Abrufen des CSRF-Tokens");
-      }
-
-      const data = await response.json();
-      setCsrfToken(data.csrfToken); // Setze das Token in den Zustand
-    } catch (error) {
-      setError("Fehler beim Abrufen des CSRF-Tokens");
-      console.error("Fehler beim Abrufen des CSRF-Tokens:", error);
-    }
-  };
-
-  // Hol das CSRF-Token beim ersten Laden der Seite
-  useEffect(() => {
-    getCsrfToken();
-  }, []);
 
   // Handler für die Registrierung
   const handleRegister = async (e) => {
@@ -54,12 +29,11 @@ function Register() {
       return;
     }
 
-    if (!csrfToken) {
-      setError("CSRF-Token fehlt");
-      return;
-    }
-
     try {
+
+    // Get CSRF-Token and cookie 
+    const csrfToken = await getCsrfToken();
+
       const response = await fetch("http://127.0.0.1:8000/api/register/", {
         method: "POST",
         headers: {
