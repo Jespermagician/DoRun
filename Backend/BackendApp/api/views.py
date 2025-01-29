@@ -1,6 +1,7 @@
 #Python default
 import json
-from mail import interface
+# from Backend.BackendApp.mail import mail_handle
+import mail.mail_handle  as mail_handle
 from datetime import date
 
 #Django
@@ -9,13 +10,17 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.models import User
 from django.db import connection
 from django.contrib import messages
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie, csrf_protect
+from django.middleware.csrf import get_token
+
 
 #Rest
 from .models import Users, donationrecord
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 from .serializers import UserSerializer
+from django.http import JsonResponse  # Importiere JsonResponse
+from django.http import HttpResponse  # Importiere HttpResponse
 
 # Create ur views here
 class CreateUserView(generics.CreateAPIView):
@@ -24,7 +29,7 @@ class CreateUserView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
 #Handels the registration page
-@csrf_exempt
+@csrf_protect
 def register(request):
     if request.method == 'POST':
         #Read data
@@ -35,14 +40,17 @@ def register(request):
         password = data.get("password")
 
         try:
-        #Erstelle neuen Benutzer auf der Datenbank
-            # Send Verification Mail
+            #Erstelle neuen Benutzer auf der Datenbank
+                # Send Verification Mail
+
+            print("first_name,last_name,email,password")
             print(first_name,last_name,email,password)
             NewUser = Users.RegisterUser(first_name,last_name,email,password)
-            interface.sendUserVerifyMail(request=request, UserID=int(NewUser.iduser))
-
-        except: 
-        #Bei Fehler return error an Frontend
+            print("test") # debug
+            mail_handle.sendUserVerifyMail(request=request, UserID=int(NewUser.iduser))
+        except : 
+        # #Bei Fehler return error an Frontend
+        #     print("Error occured: ")
             return JsonResponse(data={"userid": None, "UserIsAuth": False,'message': 'Registrierung nicht erfolgreich'}, status=401)
         
         #Convert Userid
@@ -369,4 +377,6 @@ def DelDonaoRec(request):
         donoid = entry.get("donoid")
         
         donationrecord.objects.raw("Delete From api_users Where iduser = %s", [donoid])
-        
+
+def csrf_token_view(request):
+    return JsonResponse({"csrftoken": get_token(request)})  # Gibt den CSRF-Token als JSON zurück        

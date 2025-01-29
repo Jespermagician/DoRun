@@ -1,113 +1,38 @@
-import smtplib
+# import smtplib
 from django.shortcuts import get_object_or_404
-from email.mime.base import MIMEBase
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email import encoders
-import pandas as pd
+# from email.mime.multipart import MIMEMultipart
+# from email.mime.text import MIMEText
+# import pandas as pd
 from . import views
+from BackendApp import settings as set
 from django.http import HttpResponse
 from api.models import Users, donationrecord
 from django.db.models import Sum
+# Project class:
+from BackendApp.settings import logger
+from .mailSender import  MailSender
 
 
 
-###########Create Mail Interface############
-# Create the file 'MailConfig.json' in this folder
-# set the values sender_email and password. Like
-# {
-#     "sender_email":"test@test.de",
-#     "password":"password123"
-#     "smtp_server":"smtp.gmail.com",
-#     "smtp_port":587
-# }
-# the smtp_port should be an integer
-# the attributes behind _getData have to match the json!!!
-###########################################
+# implement interface for mail here
 
-
-class getServerData:
-    sender_email: str
-    password: str
-    smtp_server: str
-    smtp_port: int
-    def __init__(self):
-        _getData = pd.read_json(f"{views.BASE_DIR}\Backend\CustomData\MailConfig.json", typ="series")
-        print(_getData)
-        # the attributes behind _getData have to match the json
-        self.sender_email = _getData.sender_email
-        self.password = _getData.password
-        self.smtp_server = _getData.smtp_server
-        self.smtp_port = _getData.smtp_port 
-        
-
-
-class MailSender():
-    Server = None
-    SD = None
-
-    def __init__(self):
-        self.SD = getServerData()
-        print(self.SD)
-        print(self.SD.sender_email)
-        self.ConnectToServer()
-
-    def ConnectToServer(self):
-        print(self.SD.smtp_server)
-        self.Server = smtplib.SMTP(host=self.SD.smtp_server, port=self.SD.smtp_port)
-        self.Server.starttls()
-        self.Server.login(user=self.SD.sender_email, password=self.SD.password)
-        print("Connection to Mail-Server successfuly")
-
-    def SendMail(self, pReceiver: str, pSubject: str, pIsAttachement: bool, pAttachement, pMailText: str):
-        msg = MIMEMultipart()
-        msg['Subject'] = pSubject
-        msg['From'] = self.SD.sender_email
-        msg['To'] = pReceiver
-        
-        print(pMailText)
-        msg.attach(MIMEText(pMailText, 'html', 'utf-8'))
-        
-        part = MIMEBase('application', "octet-stream")
-
-        if pIsAttachement:
-            part.set_payload(open(pAttachement, "rb").read())
-            encoders.encode_base64(part)
-            part.add_header('Content-Disposition', 'attachment; filename="Example_doc.pdf"')
-            msg.attach(part)
-
-        print("Message Generated")
-        
-
-        # Sende die Mail Final
-        try:
-            self.Server.sendmail(self.SD.sender_email, pReceiver, msg.as_string())
-            print("Mail send")
-        except:
-            print("Unexpected error ocurred while sending Mail!")
-        
-    
-    # Breche die Verbindung zum Server ab
-    def CloseConnection(self):
-        self.Server.quit()
-        print("Disconnect from Mail Server")
-    
+# then implement class implemented by the interface
 
 def sendUserVerifyMail(request, UserID):
     user = get_object_or_404(Users, iduser=UserID)      # Bekomme einzelnen User anhand der ID
 
     
-    mail = MailSender()     # Verbindung zum Mail Server erstellen
+    mail = MailSender()     # Connect to Mail-Server and init class 
 
     # Absendung der Mail initiieren
     mail.SendMail(
         pReceiver=user.email, 
         pSubject="Anmeldung Spendenlauf", 
-        pIsAttachement=False, 
         pMailText=views.UserAuth(request=request, UserID=UserID, user=user), 
-        pAttachement="")
+        # pAttachement=""
+        )
     
-    mail.CloseConnection()      # Verbindung zum Server abbrechen
+    mail.CloseConnection()      # Disconnect Server connection
 
     return HttpResponse(f"Mail send to {user.lastname}, {user.firstname}")          # Http-Anwtort senden
 
@@ -122,9 +47,10 @@ def sendDonationVerifyMail(request, UserID, DonationId):
     mail.SendMail(
         pReceiver=donRec.email, 
         pSubject=f"Sponsoranmeldung für {user.lastname}, {user.firstname}", 
-        pIsAttachement=False, 
+        # pIsAttachement=False, 
         pMailText=views.DonRecAuth(request=request, UserID=UserID, user=user, DonRecID=DonationId,DonRec=donRec), 
-        pAttachement="")
+        # pAttachement=""
+        )
     
     mail.CloseConnection()      # Verbindung zum Server abbrechen
 
@@ -171,7 +97,7 @@ def BinarySearchUsers(users, id):
 def loadSponsorInfo(request, DonRecEmail, users):
     donRec = donationrecord.objects.filter(email=DonRecEmail) # Ziehe alle Spendeneinträge mir der E-Mail
 
-    print(donRec)
+    set.logger.print(donRec)
     # Implementiere alle Variablen
     mail = None
     TotalDonation: float
@@ -206,7 +132,7 @@ def loadSponsorInfo(request, DonRecEmail, users):
             'TotalKilometers': TotalKilometers,
         }
 
-    print(context)
+    set.logger.print(context)
     
     # Gibt die Daten, request und das Template  weiter -> erstellt den EMAIL inhalt
     return views.RenderMailText(context=context, request=request, template_name="SponsorInfo.html")
@@ -221,7 +147,7 @@ def sendSponsorInfo(request):
     # Ziehe jede E-Mail-Adr. einmal
     eMailArr = donationrecord.objects.values_list('email', flat=True).distinct()
     
-    print(users)
+    set.logger.print(users)
 
     mail = MailSender()     # Verbingung zum Mail-Server
 
@@ -230,9 +156,10 @@ def sendSponsorInfo(request):
         mail.SendMail(
             pReceiver=eMail, 
             pSubject="Spendenlauf Spenden Informationen", 
-            pIsAttachement=False, 
+            # pIsAttachement=False, 
             pMailText=loadSponsorInfo(request=request, DonRecEmail=eMail, users=users),  # 
-            pAttachement="")
+            # pAttachement=""
+            )
 
     mail.CloseConnection()  # Schließe die Verbindung zu Server
 
@@ -280,7 +207,7 @@ def loadRunnerInfo(request, donRecs, user, RunnerAmount, EventKilometers, EventT
             'data': data,
         }
 
-    print(context)
+    set.logger.print(context)
     # Gibt die Daten, request und das Template  weiter -> erstellt den EMAIL inhalt
     return views.RenderMailText(context=context, request=request, template_name="RunnerInfo.html")
 
@@ -300,20 +227,20 @@ def sendRunnerInfo(request):
     EventKilometers = users.aggregate(total_km=Sum('kilometers'))['total_km'] or 0
     # Erlaufendes Geld aller Läufer
     EventTotal = 0
-    print("test")
+    set.logger.print("test")
     # usersSortet = users.order_by("iduser")
     for donRec in donRecs.filter(verified=True):
         if donRec.fixedamount:
             EventTotal += donRec.donation
         else:
-            print(donRec.iduser)
+            set.logger.print(donRec.iduser)
             km = 0
             try:
-                # print("filter")
-                # print(users.filter(iduser=donRec.iduser)[0].kilometers)
+                # set.logger.printLog("filter")
+                # set.logger.printLog(users.filter(iduser=donRec.iduser)[0].kilometers)
                 km = users.get(iduser=donRec.iduser).kilometers
             except Exception as es:
-                print("error ", es)
+                set.logger.print("error ", es)
 
             EventTotal += donRec.donation * km
 
@@ -322,12 +249,13 @@ def sendRunnerInfo(request):
         mail.SendMail(
             pReceiver=usr.email, 
             pSubject="Spendenlauf Spenden Informationen", 
-            pIsAttachement=False, 
+            # pIsAttachement=False, 
             pMailText=loadRunnerInfo(request=request, 
                                      user=usr, donRecs=donRecs, 
                                      EventTotal=EventTotal, RunnerAmount=RunnerAmount, 
                                      EventKilometers=EventKilometers), 
-            pAttachement="")
+            # pAttachement=""
+            )
 
     mail.CloseConnection() 
 

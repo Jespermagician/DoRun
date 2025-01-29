@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css"; // CSS-Datei für das Styling und Slide-Effekt
+import { getCsrfToken } from "../utils/csrf"; // Function for csrf
 
 function Register() {
   const [firstname, setFirstName] = useState("");
@@ -27,26 +28,34 @@ function Register() {
       setError("Die Passwörter stimmen nicht überein.");
       return;
     }
+
     try {
+
+    // Get CSRF-Token and cookie 
+    const csrfToken = await getCsrfToken();
+
       const response = await fetch("http://127.0.0.1:8000/api/register/", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken, // Füge das CSRF-Token als Header hinzu
+        },
+        credentials: "include", // Cookies mit einbeziehen
         body: JSON.stringify({ firstname, lastname, email, password }),
       });
+
       const data = await response.json();
+
       if (!response.ok) {
-        // throw new Error(data.message || "Fehler bei der Anmeldung");
-        throw new Error(data.message);
+        throw new Error(data.message || "Fehler bei der Anmeldung");
       }
 
       // Weiterleitung zum Dashboard
       navigate("/");
-      Notification("Test");
       alert("Email zu Verifizierung wurde an " + email + " gesendet");
     } catch (error) {
       setError(error.message);
     }
-    // alert("Registrierung erfolgreich!");
   };
 
   return (
@@ -67,7 +76,7 @@ function Register() {
                 value={firstname}
                 onChange={(e) => setFirstName(e.target.value)}
                 required
-                />
+              />
             </div>
             <div className="form-group">
               <label className="login-label" htmlFor="register-lastName">Nachname</label>
@@ -79,7 +88,7 @@ function Register() {
                 value={lastname}
                 onChange={(e) => setLastName(e.target.value)}
                 required
-                />
+              />
             </div>
             <div className="form-group">
               <label className="login-label" htmlFor="register-email">E-Mail-Adresse</label>

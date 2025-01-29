@@ -27,13 +27,14 @@ class Users(models.Model):
         #1. Set UserID
         #Check if email already exists
         double = False
+        UserID = None
         try:
             CheckForDoubleUser = Users.objects.raw("Select * From api_users Where email = "+ "'" + email + "'")
             for p in CheckForDoubleUser:
                 double = True
         except:
             double = False
-        
+        print(double)
         try:
             if (double == False):
                 #Get current highest iduser
@@ -41,12 +42,15 @@ class Users(models.Model):
                 user = Users.objects.raw(query)
 
                 #Chech if the new user is the first then id = 1 else max id + 1
+                test = False
                 for p in user:
+                    test = True
                     if (p.iduser != None):
                         UserID = p.iduser
                         UserID = UserID + 1
                     elif (p.iduser == None):
                         UserID = 1
+                print(test)
                 
         except:
             print("Unexpected error ocurred!")
@@ -85,6 +89,7 @@ class Users(models.Model):
         else:
             print("Not all requirements are fulfilled to create a user")
         
+
         return NewUser
  
     # end def
@@ -274,20 +279,15 @@ def RandChars(size=30, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 def PasswordHashing(password):
-    SaltText = RandChars()  # Generate string as salt
-    Salt = sha256(SaltText.encode('utf-8')).digest().hex()  # Generate binary salt
-    Password_Hash = sha256((password + Salt).encode('utf-8')).digest()  # Hash password + salt
-    
-    return Password_Hash.hex(), Salt
+    SaltText = RandChars()                                              # Generiert zufällige Zeichenabfolge   
+    Salt = sha256(SaltText.encode('utf-8')).digest().hex()              # Erstellt den Hash des Salts
+    Password_Hash = sha256((password + Salt).encode('utf-8')).digest()  # Verschlüsselung des Passwords und Salt
+    return Password_Hash.hex(), Salt                                    # Rückgabe
 
-def CheckPassword(EnteredPwd, password, salt):
-    # Recalculate hash for the entered password
-    EnteredPwdHash = sha256((EnteredPwd + salt.hex()).encode('utf-8')).digest()
-
-    # Compare hashes
-    is_valid = EnteredPwdHash == password
-    print("Password Match:", is_valid)
-    return is_valid
+def CheckPassword(EnteredPwd, password, salt):                          
+    EnteredPwdHash = sha256((EnteredPwd + salt.hex()).encode('utf-8')).digest() # Bildet den Hash nach
+    is_valid = EnteredPwdHash == password                                       # Vergleicht den Gespeicherten und Neu generierten Hash
+    return is_valid                                                             # Gibt einen Boolschen Wert zurück
 
 class CustomBackend(BaseBackend):
     def get_user(self, user_id):

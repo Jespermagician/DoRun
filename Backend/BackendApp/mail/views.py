@@ -5,7 +5,7 @@ from hashlib import sha256
 from django.shortcuts import get_object_or_404
 from api.models import Users, donationrecord
 from django.views.decorators.csrf import csrf_exempt
-from . import interface
+from . import mail_handle
 
 # The base directory for the "DoRun" project
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
@@ -15,7 +15,7 @@ def SendInfoMailsSponsors(request):
     if request.method == 'POST':
 
         try:
-            interface.sendSponsorInfo(request=request)
+            mail_handle.sendSponsorInfo(request=request)
         except: 
             return HttpResponse("Mails Couldn't send to the Sponsors", status=401)
         
@@ -27,7 +27,7 @@ def SendInfoMailsRunners(request):
     if request.method == 'POST':
 
         try:
-            interface.sendRunnerInfo(request=request)
+            mail_handle.sendRunnerInfo(request=request)
         except: 
             return HttpResponse("Mails Couldn't send to the Runner", status=401)
         

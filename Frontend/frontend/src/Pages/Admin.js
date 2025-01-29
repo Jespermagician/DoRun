@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import StatsChart from '../Components/StatsChart';
 import UserList from '../Components/UserList';
 import AdminInfos from "../Components/AdminInfos";
+import { getCsrfToken } from "../utils/csrf"; // Function for csrf
 
 const Admin = () => {
   const [entries, setEntries] = useState([]);
@@ -28,9 +29,15 @@ const Admin = () => {
     // alert(userid);
     const handleAdminInfos = async (e) => {
       try {
+        // Get CSRF-Token and cookie 
+        const csrfToken = await getCsrfToken();
+
         const response = await fetch("http://127.0.0.1:8000/api/adminhome", { 
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,},
+            credentials: "include",
           body: JSON.stringify({userid}),
         });
         const data = await response.json();
@@ -72,9 +79,16 @@ const Admin = () => {
   const handleUserMails = async (e) => {
     // e.preventDefault();
     try {
+      // Get CSRF-Token and cookie 
+      const csrfToken = await getCsrfToken();
+
       const response = await fetch("http://127.0.0.1:8000/mail/runinfo", { 
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        credentials: "include",
       });
       // const data = await response.json();
       if (!response.ok) {
@@ -90,9 +104,16 @@ const Admin = () => {
   const handleDonatorMails = async (e) => {
     // e.preventDefault();
     try {
+      // Get CSRF-Token and cookie 
+      const csrfToken = await getCsrfToken();
+
       const response = await fetch("http://127.0.0.1:8000/mail/sponinfo", { 
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        credentials: "include",
       });
       // const data = await response.json();
       if (!response.ok) {

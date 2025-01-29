@@ -12,7 +12,7 @@ attachement = "D:\Coding\Python\DoRun\E-Mail Texts\Example_doc.pdf"
 customizing_file = "D:\Coding\Python\DoRun\E-Mail Texts\Customizing.txt"
 
 
-rec_email = "weiershausenf@gmail.com"
+rec_email = "Nyester7@gmail.com"
 
 #Read from customizing
 sender_email = ""#"DoRun.NoReply@gmail.com"

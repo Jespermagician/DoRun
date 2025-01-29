@@ -13,11 +13,16 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 import os
+from . import logs
+
+# Create global Instance of Log
+global logger
+logger = logs.log()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-print("BASE_DIR")
-print(BASE_DIR)
+#logger.print(f"BASE_DIR = '{BASE_DIR}'")
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -63,7 +68,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    'django.middleware.csrf.CsrfViewMiddleware',
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -105,7 +110,7 @@ DATABASES = {
          "ENGINE": "django.db.backends.postgresql",
          "NAME": "DoRun",
          "USER": "admin",
-         "PASSWORD": "SupersicheresPasswort!1",
+         "PASSWORD": "ZyZLeG331Bqfoo9ClIQD",
          "HOST": "localhost",
          "PORT": "5432",
      }
@@ -157,9 +162,29 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-#CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWS_CREDENTIALS = True
+# CSRF-Konfiguration
+CSRF_COOKIE_SAMESITE = 'None'  # Für Cookies nötig
+CSRF_COOKIE_SECURE = True  # Lokal sollte Secure=False sein
+#CSRF_COOKIE_HTTPONLY = False  # JS braucht Zugriff auf den Cookie
+CSRF_TRUSTED_ORIGINS = [
+    'https://localhost:3000',
+    'https://localhost:8000',
+    'https://127.0.0.1:3000',
+    'https://127.0.0.1:8000',
+]
+#CSRF_COOKIE_DOMAIN = [
+#    'http://localhost:3000',
+#    'http://localhost:8000',
+#    'http://127.0.0.1:3000',
+#    'http://127.0.0.1:8000',
+#]  # Entfernen, da du lokal testest
 
-CORS_ALLOWED_ORIGINS = (
-     'http://localhost:3000',
- )
+#CORS_ALLOW_ALL_ORIGINS = False  # Sicherer Ansatz
+CORS_ORIGIN_ALLOW_ALL=True
+CORS_ALLOWED_ORIGINS = [
+    'https://localhost:3000',
+    'https://localhost:8000',
+    'https://127.0.0.1:3000',
+    'https://127.0.0.1:8000',
+]
+CORS_ALLOW_CREDENTIALS = True  # Für Cookies nötig

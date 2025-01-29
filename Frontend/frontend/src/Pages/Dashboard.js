@@ -6,6 +6,7 @@ import StatsChart from '../Components/StatsChart';
 import EntryList from '../Components/EntryList';
 import InfoField from '../Components/InfoField';
 import EntryFormModal from '../Components/EntryFormModal';
+import { getCsrfToken } from "../utils/csrf"; // Function for csrf
 
 const Dashboard = () => {
   const [entries, setEntries] = useState([]);
@@ -30,9 +31,16 @@ const Dashboard = () => {
     // alert(userid);
     const handleUserInfos = async (e) => {
       try {
+        // Get CSRF-Token and cookie 
+        const csrfToken = await getCsrfToken();
+
         const response = await fetch("http://127.0.0.1:8000/api/home", { 
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+          },
+          credentials: "include",
           body: JSON.stringify({userid}),
         });
         const data = await response.json();
