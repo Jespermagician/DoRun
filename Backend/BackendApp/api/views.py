@@ -65,7 +65,7 @@ def register(request):
         return JsonResponse(data=User_Data, status=200)
 
 #Login user
-@csrf_exempt
+@csrf_protect
 def cust_login(request):
     # Wenn das Formular über POST gesendet wurde
     if request.method == 'POST':
@@ -122,7 +122,7 @@ def cust_login(request):
             messages.error(request, 'Benutzername oder Passwort sind falsch.')
             return JsonResponse({'message': message}, status=401)  # Benutzer zurück zur Login-Seite leiten
 
-@csrf_exempt
+@csrf_protect
 def home(request):
 # Prüft ob ein Benutzer angemeldet ist
     json_data = json.loads(request.body)
@@ -138,7 +138,7 @@ def home(request):
     else:
         return JsonResponse({'message': 'User ist nicht Authorisiert!'}, status=401)
     
-@csrf_exempt    
+@csrf_protect   
 def resetpassword(request):
     json_data = json.loads(request.body)
     email = json_data["email"]
@@ -154,7 +154,7 @@ def resetpassword(request):
         Message = "Error, cant change password!"
         return JsonResponse(status=Status, data={"message":Message})
         
-@csrf_exempt
+@csrf_protect
 def adminhome(request):
     json_data = json.loads(request.body)
     UserID = json_data["userid"]
@@ -169,7 +169,7 @@ def adminhome(request):
     else:
         return JsonResponse({'message': 'User ist nicht Authorisiert!'}, status=401)
     
-@csrf_exempt    
+@csrf_protect
 def UpdateDonations(request):
 #Lege Return Werte fest
     Status = 401
@@ -271,7 +271,7 @@ def UpdateDonations(request):
         
     return JsonResponse({"message": Message}, status=Status)
         
-@csrf_exempt
+@csrf_protect
 def UpdateUsers(request):
     #Lege Return Werte fest
     Status = 401
@@ -339,7 +339,7 @@ def UpdateUsers(request):
         
     return JsonResponse({"message": Message}, status=Status)
 
-@csrf_exempt
+@csrf_protect
 def DelUser(request):
     #Lege Return Werte fest
     Status = 401
@@ -354,11 +354,16 @@ def DelUser(request):
     # Über die Liste in der JSON-Datenstruktur iterieren
     for entry in data:
         iduser = entry.get("Userid")
+        email = entry.get("email")
+
+        if (iduser == None):
+            iduser = Users.objects.raw("Select iduser From api_users Where email = %s",[email])    
+
+            if (iduser != None):
+                Users.objects.raw("Delete From api_users Where iduser = %s", [iduser])
         
-        Users.objects.raw("Delete From api_users Where iduser = %s", [iduser])
-        
-@csrf_exempt
-def DelDonaoRec(request):
+@csrf_protect
+def DelDonoRec(request):
     #Lege Return Werte fest
     Status = 401
     Message = "Unerwarteter Fehler"

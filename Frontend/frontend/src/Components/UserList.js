@@ -26,7 +26,7 @@ const UserList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry 
                 </div>
                 <div className="entry-actions">
                   <button className="edit-btn" onClick={() => handleEditEntry(entry)}><FaEdit/></button>
-                  {/* <button className="delete-btn" onClick={() => handleDeleteEntry(entry.id)}><FaTrash/></button> */}
+                  <button className="delete-btn" onClick={() => handleDeleteEntry(entry.id)}><FaTrash/></button>
                 </div>
               </li>
             ))
