@@ -10,7 +10,7 @@ urlpatterns = [
     path('UpdateDonations',views.UpdateDonations,name='UpdatDonations'),   
     path('UpdateUsers',views.UpdateUsers,name='UpdateUsers'),
     path('resetpassword',views.resetpassword,name='ResetPassword'),
-    path('DelDonoRec',views.DelDonaoRec,name='DelDonaoRec'),
+    path('DelDonoRec',views.DelDonoRec,name='DelDonoRec'),
     path('DelUser',views.DelUser,name='DelUser'),
     path('csrf-token/',views.csrf_token_view)
 ]
