@@ -88,6 +88,8 @@ def cust_login(request):
         except:
             if (user == -99):
                 return JsonResponse(status=200, data={"userid": -99,"UserIsAuth": False, 'message': 'Login nicht erfolgreich', "Role": False})
+            elif (user == -100):
+                message = "Zu viele Fehlversuche. Benutzer wurde gesperrt!"
             else:
                 message = "Unbekannter User"
         
