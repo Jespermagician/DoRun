@@ -113,9 +113,15 @@ const Dashboard = () => {
 
   const handleAddAndEditDonoEntries = async (updatedEntries) => {
     try {
+      const csrfToken = await getCsrfToken();
+      
       const response = await fetch("http://127.0.0.1:8000/api/UpdateDonations", { 
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        credentials: "include",
         body: JSON.stringify(updatedEntries),
       });
       // const data = await response.json();
