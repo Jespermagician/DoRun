@@ -22,6 +22,7 @@ class Users(models.Model):
     roleid = models.IntegerField(null=False)
     kilometers = models.IntegerField(null=False)
     verified = models.BooleanField()
+    logintrys = models.IntegerField(default=0)
     
     def RegisterUser(first_name,last_name,email,password):
         #1. Set UserID
@@ -89,7 +90,6 @@ class Users(models.Model):
         else:
             print("Not all requirements are fulfilled to create a user")
         
-
         return NewUser
  
     # end def
@@ -111,9 +111,41 @@ class Users(models.Model):
                 # Enter the entered password encrypt it with the salt and compare it with the pwhash from the db
                 Password_correct = CheckPassword(password, p.password_hash, p.salt)
                 
+                logintrys = p.logintrys
+
                 if (Password_correct == True):
                     #Return LoginUser
-                    return p
+                    
+                    if (logintrys <= 5):
+                        logintrys = 0
+                        sql = "UPDATE api_users SET logintrys = %s WHERE email = %s"
+                        # Parameter
+                        values = [logintrys,email]
+
+                        # SQL ausführen
+                        try:
+                            with connection.cursor() as cursor:
+                                cursor.execute(sql, values)
+                        except:
+                            return -100
+                        return p
+                    else:
+                        return -100
+                
+                elif (Password_correct == False):
+                    logintrys = logintrys + 1
+                    sql = "UPDATE api_users SET logintrys = %s WHERE email = %s"
+                    # Parameter
+                    values = [logintrys,email]
+
+                    # SQL ausführen
+                    try:
+                        with connection.cursor() as cursor:
+                            cursor.execute(sql, values)
+                        return -100
+                    except:
+                        return -100
+                    
         except:
             print("Error")
     
@@ -232,7 +264,7 @@ class donationrecord(models.Model):
                 TDonoF += Super_row.donation
             else:
                 KM = Users.objects.raw("Select kilometers From api_users Where iduser = %s",[Super_row.iduser])
-                TDono += (Super_row.donation * KM)
+                TDono = TDono + (Super_row.donation * KM)
         
         for row in UserName:
             UserFirstname = row.firstname
