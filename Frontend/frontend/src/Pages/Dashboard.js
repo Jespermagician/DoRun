@@ -168,6 +168,11 @@ const Dashboard = () => {
     setModalOpen(false); // Modal schließen
   };
 
+  const handleDeleteEntry = (newEntry) => {
+    setEntries((prevEntries) => prevEntries.filter((entry) => entry.donoid !== newEntry.donoid));
+    handleAddAndEditDonoEntries();
+  };
+
   return (
     <div>
       <div>
@@ -195,7 +200,8 @@ const Dashboard = () => {
                 setCurrentEntry(entry); // Zu bearbeitenden Eintrag setzen
                 setModalOpen(true); // Modal öffnen
               }}
-              handleDeleteEntry={(id) => setEntries(entries.filter((entry) => entry.id !== id))}
+              // handleDeleteEntry={(id) => setEntries(entries.filter((entry) => entry.id !== id))}
+              handleDeleteEntry={handleDeleteEntry}
             />
           </div>
         </div>

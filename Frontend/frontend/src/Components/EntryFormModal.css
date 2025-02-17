@@ -14,17 +14,17 @@
 
 .modal-content {
   background: rgb(55, 117, 197);
-  padding: 20px;
+  padding: 15px;
   border-radius: 10px;
-  width: 400px;
+  width: 350px;
   text-align: right;
 }
 
 .popup-content {
   background: rgb(13, 62, 125);
-  padding: 20px;
+  padding: 15px;
   border-radius: 10px;
-  width: 470px;
+  width: 400px;
   text-align: right;
 }
 
@@ -54,6 +54,51 @@ label {
 }
 
 input {
-  width: 250px;
+  width: 200px;
   margin-right: 37px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal-content, .popup-content {
+    width: 80%;
+    padding: 10px;
+  }
+
+  input {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .modal-buttons {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .btn-left, .btn-right {
+    margin: 0;
+    padding: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content, .popup-content {
+    width: 90%;
+    padding: 5px;
+  }
+
+  h3 {
+    font-size: 1.2em;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn-left, .btn-right {
+    width: 100%;
+    margin: 5px 0;
+  }
 }
