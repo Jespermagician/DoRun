@@ -9,6 +9,7 @@ import Admin from './Pages/Admin';
 import ProtectedRoute from "./ProtectedRoute";
 
 import VerifyUser from "./Pages/auth/VerifyUser";
+import VerifyDon from "./Pages/auth/VerifyDon";
 
 function App() {
   return (
@@ -27,7 +28,7 @@ function App() {
             }
             />
           <Route path="/auth/user/:UserID/:token/:TimeStamp" element={<VerifyUser />} />
-          <Route path="/auth/don/:UserID/:token/:TimeStamp" element={<VerifyUser />} />
+          <Route path="/auth/don/:UserID/:token/:TimeStamp" element={<VerifyDon />} />
           <Route path="*" element={<NotFound />}/>
         </Routes>
       </Router>

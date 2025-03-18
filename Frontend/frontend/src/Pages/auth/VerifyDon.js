@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCsrfToken } from "../../utils/csrf";
 
-const VerifyUser = () => {
+const VerifyDon = () => {
   // Extract parameters from the URL
   const { UserID, token, DonRecID } = useParams();
   const navigate = useNavigate();
@@ -102,4 +102,4 @@ const VerifyUser = () => {
   );
 };
 
-export default VerifyUser;
+export default VerifyDon;
