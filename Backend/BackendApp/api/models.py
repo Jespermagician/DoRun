@@ -70,27 +70,30 @@ class Users(models.Model):
         Kilometers = 0
         VerifiedUser = False
         
+        NewUser = None
         #Creat new DB entry if values are filled    
         if (UserID != None and first_name != None and last_name != None and email != None and Password_hash != None and Salt != None and CreatedAt != None and RoleID != None):
-            try:
-                print("Creating new User with ID: " + str(UserID))
-                NewUser = Users.objects.create(
-                    iduser=UserID, 
-                    firstname=first_name,
-                    lastname=last_name,
-                    email=email,
-                    password_hash=bytearray.fromhex(Password_hash),
-                    salt=bytearray.fromhex(Salt),
-                    createdat=CreatedAt,
-                    roleid=RoleID,
-                    verified=VerifiedUser, 
-                    kilometers=Kilometers)
-            except:
-                print("Error, user can't be added to DB")
+            print("Creating new User with ID: " + str(UserID))
+            NewUser = Users.objects.create(
+                iduser=UserID, 
+                firstname=first_name,
+                lastname=last_name,
+                email=email,
+                password_hash=bytearray.fromhex(Password_hash),
+                salt=bytearray.fromhex(Salt),
+                createdat=CreatedAt,
+                roleid=RoleID,
+                verified=VerifiedUser, 
+                kilometers=Kilometers)
+            return NewUser;
+            # try:
+            # except:
+            #     print("Error, user can't be added to DB!")
         else:
             print("Not all requirements are fulfilled to create a user")
         
-        return NewUser
+        # if the process was denied, no NewUser is created
+        return None
  
     # end def
 

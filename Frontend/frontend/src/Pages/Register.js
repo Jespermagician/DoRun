@@ -29,6 +29,10 @@ function Register() {
       return;
     }
 
+    // Get the domain of the frontend and send it to the backend for user verification
+    const domain = window.location.host;
+    console.log("Domain is: ", domain);
+
     try {
 
     // Get CSRF-Token and cookie 
@@ -41,7 +45,7 @@ function Register() {
           "X-CSRFToken": csrfToken, // Füge das CSRF-Token als Header hinzu
         },
         credentials: "include", // Cookies mit einbeziehen
-        body: JSON.stringify({ firstname, lastname, email, password }),
+        body: JSON.stringify({ firstname, lastname, email, password, domain }),
       });
 
       const data = await response.json();

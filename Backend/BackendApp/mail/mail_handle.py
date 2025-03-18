@@ -18,7 +18,7 @@ from .mailSender import  MailSender
 
 # then implement class implemented by the interface
 
-def sendUserVerifyMail(request, UserID):
+def sendUserVerifyMail(request, UserID, frontendDomain):
     user = get_object_or_404(Users, iduser=UserID)      # Bekomme einzelnen User anhand der ID
 
     
@@ -28,7 +28,7 @@ def sendUserVerifyMail(request, UserID):
     mail.SendMail(
         pReceiver=user.email, 
         pSubject="Anmeldung Spendenlauf", 
-        pMailText=views.UserAuth(request=request, UserID=UserID, user=user), 
+        pMailText=views.UserAuth(request=request, UserID=UserID, user=user, frontendDomain=frontendDomain), 
         # pAttachement=""
         )
     
@@ -37,7 +37,7 @@ def sendUserVerifyMail(request, UserID):
     return HttpResponse(f"Mail send to {user.lastname}, {user.firstname}")          # Http-Anwtort senden
 
 
-def sendDonationVerifyMail(request, UserID, DonationId):
+def sendDonationVerifyMail(request, UserID, DonationId, frontendDomain):
     user = get_object_or_404(Users, iduser=UserID)      # Bekomme einzelnen User anhand der ID
     donRec = get_object_or_404(donationrecord, donationrecid=DonationId)        # Bekomme einzelnen Spendeneintrag anhand der ID
 
@@ -48,7 +48,7 @@ def sendDonationVerifyMail(request, UserID, DonationId):
         pReceiver=donRec.email, 
         pSubject=f"Sponsoranmeldung für {user.lastname}, {user.firstname}", 
         # pIsAttachement=False, 
-        pMailText=views.DonRecAuth(request=request, UserID=UserID, user=user, DonRecID=DonationId,DonRec=donRec), 
+        pMailText=views.DonRecAuth(request=request, UserID=UserID, user=user, DonRecID=DonationId,DonRec=donRec, frontendDomain=frontendDomain), 
         # pAttachement=""
         )
     
@@ -107,7 +107,15 @@ def loadSponsorInfo(request, DonRecEmail, users):
 
     # Iteriere die Spendeneinträge, um Daten der Läufer zusammeln
     for val in donRec:
+
+        # Later implement the ORM function to get the user - but now it works (never change a running system)
         usersIndex = BinarySearchUsers(users, val.iduser)
+        if usersIndex < 0:
+            logger.print(f"Warning: User Id {val.iduser} doesn't exist")
+            continue
+
+
+
         Kilometers = users[usersIndex].kilometers
         # Erstelle den Daten eintrag
         dataRec = SponsData(
@@ -251,8 +259,10 @@ def sendRunnerInfo(request):
             pSubject="Spendenlauf Spenden Informationen", 
             # pIsAttachement=False, 
             pMailText=loadRunnerInfo(request=request, 
-                                     user=usr, donRecs=donRecs, 
-                                     EventTotal=EventTotal, RunnerAmount=RunnerAmount, 
+                                     user=usr, 
+                                     donRecs=donRecs, 
+                                     EventTotal=EventTotal, 
+                                     RunnerAmount=RunnerAmount, 
                                      EventKilometers=EventKilometers), 
             # pAttachement=""
             )

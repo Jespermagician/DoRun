@@ -8,6 +8,8 @@ import Register from './Pages/Register';
 import Admin from './Pages/Admin';
 import ProtectedRoute from "./ProtectedRoute";
 
+import VerifyUser from "./Pages/auth/VerifyUser";
+
 function App() {
   return (
       <Router>
@@ -24,6 +26,8 @@ function App() {
               </ProtectedRoute>
             }
             />
+          <Route path="/auth/user/:UserID/:token/:TimeStamp" element={<VerifyUser />} />
+          <Route path="/auth/don/:UserID/:token/:TimeStamp" element={<VerifyUser />} />
           <Route path="*" element={<NotFound />}/>
         </Routes>
       </Router>
