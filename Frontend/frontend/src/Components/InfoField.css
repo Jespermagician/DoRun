@@ -1,3 +1,4 @@
+/* Standard Styles für InfoField */
 .info-field {
   padding: 20px;
   background: linear-gradient(to right, #a84122, #0f6ab4);
@@ -9,4 +10,35 @@
 .h2 {
   text-align: center;
   color: white
+}
+
+/* Styling für die H3-Überschrift */
+.info-field h3 {
+  font-size: 24px; /* Größere Schrift für Desktop */
+}
+
+/* Styling für die Benutzerinformationen */
+.info-field p {
+  font-size: 18px; /* Standardgröße für Text */
+  margin: 10px 0; /* Abstände zwischen den Absätzen */
+}
+
+.info-field strong {
+  font-weight: bold;
+  color: #f5f5f5; /* Helle Schriftfarbe für die Labels */
+}
+
+/* Responsive Anpassungen für kleinere Bildschirme */
+@media (max-width: 768px) {
+  .info-field {
+    padding: 15px; /* Weniger Padding für kleinere Geräte */
+  }
+
+  .info-field h3 {
+    font-size: 20px; /* Kleinere Schriftgröße auf mobilen Geräten */
+  }
+
+  .info-field p {
+    font-size: 16px; /* Kleinere Textgröße für bessere Lesbarkeit auf mobilen Geräten */
+  }
 }

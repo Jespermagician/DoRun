@@ -16,13 +16,16 @@ const Admin = () => {
   const [loading, setLoading] = useState(true); // State für Ladeanzeige
   const [error, setError] = useState(null); // State für Fehler
   const [user, setUser] = useState({});
+  const [roleid, setRoleid] = useState({});
+  const [kilometers, setKilometers] = useState({});
 
   let isFetched = false;
+  var userid = localStorage.getItem("DoRunUserid");
 
   useEffect(() => {
     setEntries([]);
     // setUserid(localStorage.getItem("userid"));
-    var userid = 1;
+    // var userid = localStorage.getItem("DoRunUserId");
     // alert(userid);
     const handleAdminInfos = async (e) => {
       try {
@@ -52,7 +55,7 @@ const Admin = () => {
           const remainingEntries = data.entries.slice(1);
           setEntries((prevEntries) => [
             ...prevEntries,
-            ...remainingEntries.map((entry) => ({ id: entry.email, ...entry })),
+            ...remainingEntries.map((entry) => ({ id: entry.userid, ...entry })),
           ]);
         }
         // alert(totalDonations);
@@ -128,9 +131,28 @@ const Admin = () => {
     handleDonatorMails();
   }
 
+  const handleUserEntriesChange = async (e) => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/UpdateUsers", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({userid, roleid, kilometers}),
+      });
+      // const data = await response.json();
+      if (!response.ok) {
+        // throw new Error(data.message || "Fehler bei der Anmeldung");
+        // throw new Error(data.message);
+        return
+      }
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
   const handleLogOut = () => {
     localStorage.removeItem("DoRunToken")
-    localStorage.removeItem("RoRunUserid");
+    localStorage.removeItem("DoRunUserid");
+    localStorage.removeItem("DoRunRole")
     navigate("/");
   };
   

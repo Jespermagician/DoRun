@@ -230,9 +230,9 @@ class donationrecord(models.Model):
             "TotalDonations": TotalDonations,
             "TotalKilometers": TotalKilometers})
         
-        if (kilometers): 
+        #if (kilometers): 
             # Schleife durch die UserEntrys-Objekte
-            for obj in UserEntrys:
+        for obj in UserEntrys:
                 data.append({
                 "donoid" : obj.donationrecid,
                 "firstname": obj.firstname,

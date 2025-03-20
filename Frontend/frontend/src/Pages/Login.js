@@ -39,14 +39,21 @@ function Login() {
         throw new Error(data.message);
       }
       else if (data.userid===-99) {
-        // alert("Admin ohne Passwort");
         setPopupOpen(true);
       }
+      // else if (data.Role===1 || data.Role===2) {
+      //   localStorage.setItem("DoRunUserid", data.userid);
+      //   setIsAuth(data.UserIsAuth);
+      //   localStorage.setItem("DoRunToken", data.userIsAuth);
+      //   navigate("/admin");
+      // }
       else if (data.UserIsAuth===true) {
         // setUserid(data.userid)
         // alert(data.userid);
         // alert(userid);
-        localStorage.setItem("RoRunUserid", data.userid);
+        // alert(data.Role);
+        localStorage.setItem("DoRunRole", data.Role);
+        localStorage.setItem("DoRunUserid", data.userid);
         setIsAuth(data.UserIsAuth)
         localStorage.setItem("DoRunToken", data.userIsAuth);
         // setError(data.message)
@@ -56,7 +63,7 @@ function Login() {
         // setError(data.message)
       }
 
-      setError(data.message)
+      // setError(data.message)
 
       // Speichere das Token (optional)
       // localStorage.setItem("token", data.token);

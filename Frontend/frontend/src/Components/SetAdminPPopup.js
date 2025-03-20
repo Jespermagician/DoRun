@@ -18,21 +18,25 @@ const SetAdminPPopup = ({ isOpen, onClose, password, email}) => {
         return;
     }
     try {
+      // Get CSRF-Token and cookie 
       const csrfToken = await getCsrfToken();
-
+      
       const response = await fetch("http://127.0.0.1:8000/api/resetpassword", { 
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
-          "X-CSRFToken": csrfToken,
+          "X-CSRFToken": csrfToken, 
         },
-        body: JSON.stringify({ email, password}),
         credentials: "include",
+        body: JSON.stringify({ email, password}),
       });
       const data = await response.json();
       if (!response.ok) {
         // throw new Error(data.message || "Fehler bei der Anmeldung");
         throw new Error(data.message);
+      }
+      else {
+        onClose();
       }
     } catch (error) {
       setError(error.message);

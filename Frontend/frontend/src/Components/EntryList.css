@@ -1,20 +1,20 @@
+/* Container der Eintragsliste */
 .entry-list-container {
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 16px;
   background-color: #f9f9f9;
-  /* max-height: 400px;  */
-  /* Maximale Höhe für die Scrollbar */
   display: flex;
   flex-direction: column;
   gap: 10px;
   color: black;
-  float: right; 
+  float: right;
   margin-top: -612px;
   width: 965px;
   height: 570px;
 }
 
+/* Die Liste der Einträge */
 .entry-list {
   list-style: none;
   padding: 0;
@@ -23,12 +23,14 @@
   color: black;
 }
 
+/* Keine Einträge anzeigen */
 .no-entries {
   text-align: center;
   border-color: #555;
   border: 1px solid #e0e0e0;
 }
 
+/* Stil für einzelne Eintragszeilen */
 .entry-item {
   display: flex;
   justify-content: space-between;
@@ -37,16 +39,19 @@
   border: 1px solid #e0e0e0;
 }
 
+/* Details der Einträge */
 .entry-details span {
   margin-right: 16px;
   font-size: 14px;
 }
 
+/* Aktionen (Bearbeiten/Löschen) */
 .entry-actions {
   display: flex;
   gap: 8px;
 }
 
+/* Buttons für Bearbeiten und Löschen */
 .edit-btn,
 .delete-btn {
   background: none;
@@ -66,6 +71,7 @@
   color: #f44336;
 }
 
+/* Button zum Hinzufügen eines neuen Eintrags */
 .add-entry-btn {
   display: block;
   margin: auto; /* Zentriert den Button */
@@ -85,4 +91,57 @@
 
 .span-indent {
   margin-left: 10px;
+}
+
+/* Anpassungen für mobile Geräte */
+@media (max-width: 768px) {
+  /* Container auf mobilen Geräten */
+  .entry-list-container {
+    width: 100%; /* Volle Breite auf kleineren Geräten */
+    height: 390px; /* Höhe automatisch anpassen */
+    margin-top: 0; /* Kein negativer Abstand mehr */
+    padding: 10px; /* Weniger Padding */
+    margin-left: 20px;
+    margin-right: -10px;
+  }
+
+  /* Flexbox für Einträge anpassen */
+  .entry-item {
+    flex-direction: column; /* Stapele die Details untereinander */
+    gap: 8px;
+    padding: 12px 0; /* Etwas mehr Padding */
+  }
+
+  /* Details der Einträge */
+  .entry-details span {
+    font-size: 13px; /* Größere Schrift auf mobilen Geräten */
+    margin-right: 0; /* Kein Abstand nach rechts */
+    margin-bottom: 4px; /* Abstände zwischen den Details */
+  }
+
+  /* Aktionen (Bearbeiten/Löschen) horizontal anpassen */
+  .entry-actions {
+    justify-content: center; /* Zentriere die Buttons */
+    margin-top: 8px; /* Etwas Abstand nach oben */
+  }
+
+  /* Bearbeiten und Löschen Buttons vergrößern */
+  .edit-btn,
+  .delete-btn {
+    font-size: 18px; /* Größere Icons für bessere Bedienbarkeit */
+    margin-right: 12px;
+  }
+
+  /* Button zum Hinzufügen auf mobilen Geräten */
+  .add-entry-btn {
+    width: 100%; /* Button auf voller Breite */
+    padding: 12px 0; /* Mehr Padding */
+    font-size: 16px; /* Größere Schrift */
+  }
+
+  .span-indent::after {
+    margin-left: 110px;
+    content: '\A';
+    white-space: pre;
+  }
 }
