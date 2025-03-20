@@ -1,11 +1,13 @@
 from django.template.loader import render_to_string
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from pathlib import Path
 from hashlib import sha256
 from django.shortcuts import get_object_or_404
 from api.models import Users, donationrecord
 from django.views.decorators.csrf import csrf_exempt
 from . import mail_handle
+from datetime import datetime
+
 
 # The base directory for the "DoRun" project
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
@@ -14,10 +16,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 def SendInfoMailsSponsors(request):
     if request.method == 'POST':
 
+        mail_handle.sendSponsorInfo(request=request)
         try:
-            mail_handle.sendSponsorInfo(request=request)
+            print("tsd")
         except: 
-            return HttpResponse("Mails Couldn't send to the Sponsors", status=401)
+            return HttpResponse("Mails Couldn't be send to the Sponsors", status=401)
         
     
         return HttpResponse("Mails Send to Sponsors", status=200)
@@ -29,7 +32,7 @@ def SendInfoMailsRunners(request):
         try:
             mail_handle.sendRunnerInfo(request=request)
         except: 
-            return HttpResponse("Mails Couldn't send to the Runner", status=401)
+            return HttpResponse("Mails could not be send to the Runner", status=401)
         
     
         return HttpResponse("Mails Send to Verified Runners", status=200)
@@ -65,17 +68,31 @@ def RenderMailText(context, template_name, request):
 
 
 # Function for user authentication email generation
-def UserAuth(request, UserID: int, user):
+def UserAuth(request, UserID: int, user, frontendDomain: str):
     
     # Path to the template file
     template_name = "UserAuth.html"
 
+    # generate Timstamp, so the token has a ttl later
+    dt_timestamp = datetime.strptime(str(datetime.now()), "%Y-%m-%d %H:%M:%S.%f")
+    epoch_time = int(dt_timestamp.timestamp() * 1000)  # Millisekunden-Genauigkei
+
+    # Base-16 umwandeln (Hexadezimal)
+    compressed = format(epoch_time, 'x')  # Beispiel: "1944bc7a51"
+    print("Compressed String:", compressed)
+
     # Generate a token for the user
     token = generateToken(user.salt, user.email)
+    # compressed_token = format(int(token, 16), 'x')  # Hexadezimal umwandeln
+    # print("Compressed Token:", compressed_token)
 
     # Construct the full URL for the authentication link
-    domain = request.build_absolute_uri('/')[:-1]  # Get the domain without trailing slash
-    target_link = f"{domain}/mail/auth/{UserID}/{token}"  # Append the path with UserID and token
+    target_link = f"https://{frontendDomain}/auth/user/{UserID}/{token}/{compressed}"  # Append the path with UserID and token
+
+    # old target link (obsolet)
+    # domain = request.build_absolute_uri('/')[:-1]  # Get the domain without trailing slash
+    # target_link = f"{domain}/mail/auth/{UserID}/{token}"  # Append the path with UserID and token
+
 
     print("target_link: ", target_link)  # Debug: print the generated link
 
@@ -87,7 +104,7 @@ def UserAuth(request, UserID: int, user):
     return RenderMailText(context, template_name, request);
 
 
-def DonRecAuth(request, UserID: int, user, DonRecID: int, DonRec):
+def DonRecAuth(request, UserID: int, user, DonRecID: int, DonRec, frontendDomain: str):
     
     # Path to the template file
     template_name = "DonRecAuth.html"
@@ -95,9 +112,11 @@ def DonRecAuth(request, UserID: int, user, DonRecID: int, DonRec):
     # Generate a token for the user. conacte both mails (otherwise the token isn`t unique)
     token = generateToken(user.salt, '-'.join(user.email + DonRec.email))
 
-    # Construct the full URL for the authentication link
-    domain = request.build_absolute_uri('/')[:-1]  # Get the domain without trailing slash
-    target_link = f"{domain}/mail/auth/don/{UserID}/{DonRecID}/{token}"  # Append the path with UserID and token
+    target_link = f"https://{frontendDomain}/mail/auth/don/{UserID}/{DonRecID}/{token}"  # Append the path with UserID and token
+
+    # old way to get the domain
+    # domain = request.build_absolute_uri('/')[:-1]  # Get the domain without trailing slash
+    # target_link = f"{domain}/mail/auth/don/{UserID}/{DonRecID}/{token}"  # Append the path with UserID and token
 
     print("target_link: ", target_link)  # Debug: print the generated link
 
@@ -112,25 +131,32 @@ def DonRecAuth(request, UserID: int, user, DonRecID: int, DonRec):
     return RenderMailText(context, template_name, request);
 
 
-def verify_user(request, UserID, token):
+def verify_user(request, UserID, token, TimeStamp):
     # Suche nach dem Benutzer mit der ID
     user = get_object_or_404(Users, iduser=UserID)
 
+    # get TimeStamp and use it later for ttl
+    epoch_time_back = int(TimeStamp, 16)
+    TimeStampVerification = datetime.fromtimestamp(epoch_time_back / 1000)
+    print("TimeStampVerification: ", TimeStampVerification)
+    # return JsonResponse({"message": "EXPIRED"}, status=400)
+     
     # Token neu generieren
     compared_token = generateToken(user.salt, pEMail=user.email)
     # Token vergleichen
     if compared_token == token:
         if user.verified:
             print("Nutzer bereits verifiziert!")
-            return HttpResponse("Nutzer bereits verifiziert!")
+            return JsonResponse({"message": "VERIFIED"}, status=200)
 
         # Verifizieren und speichern
         user.verified = True
         user.save()
-        print("Benutzer erfolgreich verifiziert!")
-        return HttpResponse("Benutzer erfolgreich verifiziert!")
+        print("User is verified!")
+        return JsonResponse({"message": "VERIFIED"}, status=200)
     else:
-        return HttpResponse("Ungültiger Token oder Benutzer nicht gefunden.", status=400)
+        return JsonResponse({"message": "INVALID"}, status=400)
+        # return HttpResponse("Ungültiger Token oder Benutzer nicht gefunden.", status=400)
     
 
 
@@ -146,12 +172,12 @@ def verify_donRec(requst, UserID, DonRecID, token):
     if compared_token == token:
         if donRec.verified:
             print("Spendenbereitschaft bereits verifiziert!")
-            return HttpResponse("Spendenbereitschaft bereits verifiziert!")
+            return JsonResponse({"message": "VERIFIED"}, status=200)
 
         # Verifizieren und speichern
         donRec.verified = True
         donRec.save()
         print("Spendenbereitschaft erfolgreich verifiziert!")
-        return HttpResponse("Spendenbereitschaft erfolgreich verifiziert!")
+        return JsonResponse({"message": "VERIFIED"}, status=200)
     else:
-        return HttpResponse("Ungültiger Token oder Benutzer oder Spendeneintrag nicht gefunden.", status=400)
+        return JsonResponse({"message": "INVALID"}, status=400)

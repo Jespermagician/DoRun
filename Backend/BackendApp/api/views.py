@@ -38,20 +38,27 @@ def register(request):
         last_name = data.get("lastname")
         email = data.get("email")
         password = data.get("password")
+        domain = data.get("domain")
 
-        try:
-            #Erstelle neuen Benutzer auf der Datenbank
-                # Send Verification Mail
+        # try:
+        #Erstelle neuen Benutzer auf der Datenbank
+            # Send Verification Mail
 
-            print("first_name,last_name,email,password")
-            print(first_name,last_name,email,password)
-            NewUser = Users.RegisterUser(first_name,last_name,email,password)
-            print("test") # debug
-            mail_handle.sendUserVerifyMail(request=request, UserID=int(NewUser.iduser))
-        except : 
+        print("first_name,last_name,email,password")
+        print(first_name,last_name,email,password)
+        NewUser = Users.RegisterUser(first_name, last_name, email,password)
+        # Check if the User is created
+        if NewUser == None:
+            print("Process interupted. Try Again!")
+            # return HttpResponse(content="User couldn't be created!", status=200)
+            return JsonResponse(data={}, status=400)
+        
+        
+        mail_handle.sendUserVerifyMail(request=request, UserID=int(NewUser.iduser), frontendDomain=domain)
+        # except : 
         # #Bei Fehler return error an Frontend
         #     print("Error occured: ")
-            return JsonResponse(data={"userid": None, "UserIsAuth": False,'message': 'Registrierung nicht erfolgreich'}, status=401)
+            # return JsonResponse(data={"userid": None, "UserIsAuth": False,'message': 'Registrierung nicht erfolgreich'}, status=401)
         
         #Convert Userid
         NewUserID = int(NewUser.iduser)
