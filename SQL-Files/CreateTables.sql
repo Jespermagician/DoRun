@@ -34,7 +34,7 @@ CREATE TABLE api_users
     logintrys integer default 0,
     CONSTRAINT fk_Role
         FOREIGN KEY(roleid)
-            REFERENCES api_roles(roleid)
+            REFERENCES api_roles(RoleID)
                     ON UPDATE CASCADE
 )
 

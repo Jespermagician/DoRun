@@ -266,8 +266,9 @@ class donationrecord(models.Model):
             if (Super_row.fixedamount == True):
                 TDonoF += Super_row.donation
             else:
-                KM = Users.objects.raw("Select kilometers From api_users Where iduser = %s",[Super_row.iduser])
-                TDono = TDono + (Super_row.donation * KM)
+                UserData = Users.objects.raw("Select iduser, kilometers From api_users Where iduser = %s",[Super_row.iduser])
+                for user in UserData:
+                    TDono = TDono + (Super_row.donation * user.kilometers)
         
         for row in UserName:
             UserFirstname = row.firstname
