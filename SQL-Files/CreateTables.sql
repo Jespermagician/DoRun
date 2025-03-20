@@ -31,10 +31,10 @@ CREATE TABLE api_users
     createdat timestamp without time zone DEFAULT NOW(),
     roleid integer NOT NULL,    -- ForeignKey
     verified boolean default false,
-    logintrys integer default 0;
+    logintrys integer default 0,
     CONSTRAINT fk_Role
         FOREIGN KEY(roleid)
-            REFERENCES api_roles(roleid)
+            REFERENCES api_roles(RoleID)
                     ON UPDATE CASCADE
 )
 
