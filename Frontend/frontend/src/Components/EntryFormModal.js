@@ -27,12 +27,10 @@ const EntryFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
         <label>Haus Nr.: <input type="text" name="houseNr" value={formData.houseNr} onChange={handleChange} /></label>
         <label>PLZ: <input type="text" name="Plz" value={formData.Plz} onChange={handleChange} /></label>
         <label>Betrag: <input type="number" name="DonoAmount" value={formData.DonoAmount} onChange={handleChange} /></label>
-        <label>Festbetrag: <input type="checkbox" name="FixedAmount" value={formData.FixedAmount} onChange={handleChange} /></label>
-        <div className="modal-buttons btn-left">
-          <button onClick={handleSubmit}>Speichern</button>
-        </div>
-        <div className="modal-buttons btn-right">
-          <button onClick={onClose}>Abbrechen</button>
+        <label>Festbetrag: <input type="checkbox" name="FixedAmount" checked={formData.FixedAmount} onChange={handleChange} /></label>
+        <div className="modal-buttons">
+          <button className="btn-left" onClick={handleSubmit}>Speichern</button>
+          <button className="btn-right" onClick={onClose}>Abbrechen</button>
         </div>
       </div>
     </div>

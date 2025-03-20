@@ -4,7 +4,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,93 +12,103 @@
   color: white;
 }
 
-.modal-content {
+.modal-content, .popup-content {
   background: rgb(55, 117, 197);
-  padding: 15px;
-  border-radius: 10px;
-  width: 350px;
-  text-align: right;
+  padding: 30px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .popup-content {
   background: rgb(13, 62, 125);
-  padding: 15px;
-  border-radius: 10px;
-  width: 400px;
-  text-align: right;
 }
 
 h3 {
   text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.5em;
 }
 
 .modal-buttons {
-  width: 160px;
-  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.btn-left, .btn-right {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  max-width: 200px;
+  margin-bottom: 10px;
 }
 
 .btn-left {
-  float: left;
-  padding: 3px;
-  margin-left: 30px;
+  background-color: rgb(0, 123, 255);
+  color: white;
+}
+
+.btn-left:hover {
+  background-color: rgb(0, 105, 217);
 }
 
 .btn-right {
-  float: right;
-  padding: 3px;
-  margin-right: 30px;
+  background-color: rgb(220, 53, 69);
+  color: white;
+}
+
+.btn-right:hover {
+  background-color: rgb(200, 35, 50);
 }
 
 label {
   color: white;
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1em;
 }
 
 input {
-  width: 200px;
-  margin-right: 37px;
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   .modal-content, .popup-content {
-    width: 80%;
-    padding: 10px;
-  }
-
-  input {
-    width: 100%;
-    margin-right: 0;
-  }
-
-  .modal-buttons {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
+    width: 90%;
+    padding: 20px;
   }
 
   .btn-left, .btn-right {
-    margin: 0;
-    padding: 5px;
+    width: 100%;
+    margin-bottom: 10px;
   }
 }
 
 @media (max-width: 480px) {
   .modal-content, .popup-content {
-    width: 90%;
-    padding: 5px;
+    width: 95%;
+    padding: 15px;
   }
 
   h3 {
     font-size: 1.2em;
   }
 
-  .modal-buttons {
-    flex-direction: column;
-    align-items: center;
-  }
-
   .btn-left, .btn-right {
     width: 100%;
-    margin: 5px 0;
+    margin-bottom: 10px;
   }
 }
