@@ -125,7 +125,7 @@ const KmRecord = () => {
     return (
         <>
             <div>
-                <button className="home-btn" onClick={() => navigate("/admintest")}>
+                <button className="home-btn" onClick={() => navigate("/admin")}>
                     <IoHomeOutline /> Home
                 </button>
             </div>
