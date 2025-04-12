@@ -1,19 +1,36 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
+import Admin from './Pages/Admin';
+import Dashboard from "./Pages/Dashboard";
 
-function ProtectedRoute({ children, role}) {
+function ProtectedRoute({ children}) {
   const token = localStorage.getItem("DoRunToken"); // Prüfe Authentifizierung
+  const userRole = localStorage.getItem("DoRunRole");
 
   if (!token) {
-    // Wenn kein Token, leite zur Login-Seite weiter
     return <Navigate to="/" />;
   }
-  else if (role==="1" || role==="2") {
-    return <Navigate to="/Admin" />
+  else if (userRole==="1" || userRole==="2") {
+    if (children.type === Admin) {
+      return children;
+    }
+    else {
+      return <Navigate to="/admin" />
+    }
+  }
+  else if(userRole==="3") {
+    if (children.type === Dashboard) {
+      return children;
+    }
+    else {
+      return <Navigate to="/home" />
+    }
+  }
+  else {
+    alert("Default");
+    return <Navigate to="/" />;
   }
 
-  // Ansonsten zeige die geschützte Seite
-  return children;
 }
 
 export default ProtectedRoute;

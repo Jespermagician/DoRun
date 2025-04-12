@@ -250,9 +250,9 @@ class donationrecord(models.Model):
             "TotalDonations": TotalDonations,
             "TotalKilometers": TotalKilometers})
         
-        if (kilometers): 
+        #if (kilometers): 
             # Schleife durch die UserEntrys-Objekte
-            for obj in UserEntrys:
+        for obj in UserEntrys:
                 data.append({
                 "donoid" : obj.donationrecid,
                 "firstname": obj.firstname,
@@ -286,8 +286,9 @@ class donationrecord(models.Model):
             if (Super_row.fixedamount == True):
                 TDonoF += Super_row.donation
             else:
-                KM = Users.objects.raw("Select kilometers From api_users Where iduser = %s",[Super_row.iduser])
-                TDono = TDono + (Super_row.donation * KM)
+                UserData = Users.objects.raw("Select iduser, kilometers From api_users Where iduser = %s",[Super_row.iduser])
+                for user in UserData:
+                    TDono = TDono + (Super_row.donation * user.kilometers)
         
         for row in UserName:
             UserFirstname = row.firstname

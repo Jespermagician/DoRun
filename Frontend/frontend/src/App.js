@@ -18,8 +18,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />}/>
           <Route path="/register" element={<Register />}/>
-          <Route path="/homeTest" element={<Dashboard />}/>
-          <Route path="/adminTest" element={<Admin />}/>
+          {/* <Route path="/homeTest" element={<Dashboard />}/> */}
+          {/* <Route path="/adminTest" element={<Admin />}/> */}
           <Route 
             path="/home"
             element={
@@ -28,6 +28,14 @@ function App() {
               </ProtectedRoute>
             }
             />
+          <Route 
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <Admin />
+            </ProtectedRoute>
+          }
+          />
           <Route path="/auth/user/:UserID/:token/:TimeStamp" element={<VerifyUser />} />
           <Route path="/auth/don/:UserID/:token/:TimeStamp" element={<VerifyDon />} />
           <Route path="/km-record" element={<KmRecord />} />

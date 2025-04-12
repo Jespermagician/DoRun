@@ -19,12 +19,15 @@ const Dashboard = () => {
   const [error, setError] = useState(null); // State für Fehler
   const [user, setUser] = useState({});
   const [totalDonations, setTotalDonations] = useState(Number);
+  const [donoid, setDonoid] = useState(null);
 
   let isFetched = false;
 
   useEffect(() => {
+    setEntries([]);
     // setUserid(localStorage.getItem("userid"));
-    var userid = localStorage.getItem("RoRunUserid");
+    var userid = localStorage.getItem("DoRunUserid");
+    setUserid(userid);
     // alert(userid);
     const handleUserInfos = async (e) => {
       try {
@@ -81,7 +84,8 @@ const Dashboard = () => {
 
   const handleLogOut = () => {
     localStorage.removeItem("DoRunToken")
-    localStorage.removeItem("RoRunUserid");
+    localStorage.removeItem("DoRunUserid");
+    localStorage.removeItem("DoRunRole")
     navigate("/");
   };
   
@@ -107,6 +111,30 @@ const Dashboard = () => {
     setModalOpen(false); // Modal schließen
   };
 
+  const handleAddAndEditDonoEntries = async (updatedEntries) => {
+    try {
+      const csrfToken = await getCsrfToken();
+      
+      const response = await fetch("http://127.0.0.1:8000/api/UpdateDonations", { 
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        credentials: "include",
+        body: JSON.stringify(updatedEntries),
+      });
+      // const data = await response.json();
+      if (!response.ok) {
+        // throw new Error(data.message || "Fehler bei der Anmeldung");
+        // throw new Error(data.message);
+        return
+      }
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
   const handleModalSubmit2 = (newEntry) => {
     if (currentEntry) {
       // Bearbeiteten Eintrag aktualisieren
@@ -118,11 +146,38 @@ const Dashboard = () => {
       );
     } else {
       // Neuen Eintrag hinzufügen
-      // alert(currentEntry);
-      setEntries([...entries, { id: Date.now(), ...newEntry }]);
+      alert(newEntry.firstname);
+      setEntries([...entries, { id: userid, ...newEntry }]);
+      alert(entries.firstname);
+      handleAddAndEditDonoEntries();
     }
     setModalOpen(false); // Modal schließen
   }
+
+  const handleModalSubmit3 = (newEntry) => {
+    if (currentEntry) {
+      // Bearbeiteten Eintrag aktualisieren
+      setEntries((prevEntries) =>
+        prevEntries.map((entry) =>
+          entry.donoid === currentEntry.donoid ? { ...entry, ...newEntry } : entry
+        )
+      );
+    } else {
+      // Neuen Eintrag hinzufügen
+      setDonoid(null);
+      setEntries((prevEntries) => {
+        const updatedEntries = [...prevEntries, { Userid: userid, DonoID: donoid, ...newEntry }];
+        handleAddAndEditDonoEntries(updatedEntries); // Hier auf aktuellen Stand zugreifen
+        return updatedEntries;
+      });
+    }
+    setModalOpen(false); // Modal schließen
+  };
+
+  const handleDeleteEntry = (newEntry) => {
+    setEntries((prevEntries) => prevEntries.filter((entry) => entry.donoid !== newEntry.donoid));
+    handleAddAndEditDonoEntries();
+  };
 
   return (
     <div>
@@ -151,7 +206,8 @@ const Dashboard = () => {
                 setCurrentEntry(entry); // Zu bearbeitenden Eintrag setzen
                 setModalOpen(true); // Modal öffnen
               }}
-              handleDeleteEntry={(id) => setEntries(entries.filter((entry) => entry.id !== id))}
+              // handleDeleteEntry={(id) => setEntries(entries.filter((entry) => entry.id !== id))}
+              handleDeleteEntry={handleDeleteEntry}
             />
           </div>
         </div>
@@ -160,7 +216,7 @@ const Dashboard = () => {
         <EntryFormModal
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
-          onSubmit={handleModalSubmit}
+          onSubmit={handleModalSubmit3}
           initialData={currentEntry}
         />
       </div>

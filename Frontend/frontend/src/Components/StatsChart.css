@@ -1,3 +1,4 @@
+/* Container für das StatsChart */
 .stats-display {
   display: flex;
   flex-direction: column;
@@ -9,28 +10,54 @@
   padding: 40px;
   margin: 10px;
   margin-left: 0px;
-  width: 35%;
-  /* height: 100%; */
-  height: 430px;
+  width: 35%; /* Flexibel anpassbar */
+  height: 430px; /* Feste Höhe für das Chart */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* Header für das Chart */
 .stats-display h3 {
   margin: 0;
   font-size: 3rem;
   color: #333;
 }
 
+/* Anzeige der Spendenbeträge */
 .donations-amount {
   margin-top: 20px;
-  font-size: 5rem;
+  font-size: 5rem; /* Große Schrift für den Betrag */
   font-weight: bold;
   color: #27ae60;
 }
 
+/* Header für Gesamtspenden */
 .donation-Header {
   margin-right: 1000px;
   margin-top: 30px;
   color: #333;
   font-size: 35px;
+}
+
+/* Responsivität: Anpassung für kleine Bildschirme */
+@media (max-width: 768px) {
+  .stats-display {
+    width: 80%; /* Breite auf 80% setzen auf kleinen Bildschirmen */
+    height: auto; /* Höhe passt sich dem Inhalt an */
+    padding: 30px; /* Weniger Padding für kleinere Bildschirme */
+  }
+
+  .stats-display h3 {
+    font-size: 2rem; /* Kleinere Schriftgröße für den Header */
+  }
+
+  .donations-amount {
+    font-size: 3rem; /* Kleinere Schrift für den Betrag */
+  }
+
+  .donation-Header {
+    font-size: 24px; /* Kleinere Schriftgröße für den Header */
+    margin-right: 0; /* Kein Abstand mehr auf der rechten Seite */
+    text-align: center; /* Zentriert den Header */
+    margin-top: 10px; /* Weniger Abstand oben */
+  }
 }
