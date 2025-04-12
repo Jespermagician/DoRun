@@ -10,6 +10,7 @@ import ProtectedRoute from "./ProtectedRoute";
 
 import VerifyUser from "./Pages/auth/VerifyUser";
 import VerifyDon from "./Pages/auth/VerifyDon";
+import KmRecord from "./Pages/kmRecord";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
           />
           <Route path="/auth/user/:UserID/:token/:TimeStamp" element={<VerifyUser />} />
           <Route path="/auth/don/:UserID/:token/:TimeStamp" element={<VerifyDon />} />
+          <Route path="/km-record" element={<KmRecord />} />
           <Route path="*" element={<NotFound />}/>
         </Routes>
       </Router>

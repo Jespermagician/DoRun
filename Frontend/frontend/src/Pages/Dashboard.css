@@ -71,7 +71,13 @@
   float: right;
 }
 
+.goto-record-btn {
+  /* inherit the rest from .sendmails-btn*/
+  margin-right: 10px;
+}
 /* Mobile Anpassungen für Layout und Flexbox */
+
+/* Anpassen des Layouts bei kleinen Bildschirmen */
 @media (max-width: 768px) {
   /* Container und Flexbox-Styling */
   .dashboard-wrapper {
