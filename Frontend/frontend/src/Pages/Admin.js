@@ -1,6 +1,6 @@
 import "./Dashboard.css";
 import React, { useState, useEffect } from 'react';
-import { FaDoorOpen, FaMailBulk } from "react-icons/fa";
+import { FaDoorOpen, FaMailBulk, FaRunning } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import StatsChart from '../Components/StatsChart';
 import UserList from '../Components/UserList';
@@ -145,15 +145,18 @@ const Admin = () => {
         <button className="logout-btn" onClick={handleLogOut}>
           {<FaDoorOpen/>}  Logout
         </button>
-        <button className="sendmails-btn" onClick={handleSendMails}>
+        <button className="sendmails-btn " onClick={handleSendMails}>
           {<FaMailBulk/>} Send Donation Request
+        </button>
+        <button className="goto-record-btn sendmails-btn " onClick={() => navigate("/km-record")}>
+          {<FaRunning/>} Record KM
         </button>
       </div>
       <div className="dashboard-container">
         <div>
           <AdminInfos user={user}/>
         </div>
-        <div className="content-section">
+        <div className="page-section">
           {/* Infofeld für Gesamtspenden */}
           <div className="stats-section">
             <StatsChart totalDonations={entries.reduce((sum, entry) => sum + parseFloat(entry.donation || 0), 0)} />

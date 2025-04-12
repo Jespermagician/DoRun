@@ -12,5 +12,7 @@ urlpatterns = [
     path('resetpassword',views.resetpassword,name='ResetPassword'),
     path('DelDonoRec',views.DelDonoRec,name='DelDonoRec'),
     path('DelUser',views.DelUser,name='DelUser'),
-    path('csrf-token/',views.csrf_token_view)
+    path('csrf-token/',views.csrf_token_view),
+    path('get-users', views.get_users, name='get-users'), # get all details
+    path('set-km', views.set_km, name='set-km'), # get all details
 ]

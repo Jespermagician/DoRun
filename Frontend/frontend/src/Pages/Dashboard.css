@@ -70,6 +70,11 @@
   float: right;
 }
 
+.goto-record-btn {
+  /* inherit the rest from .sendmails-btn*/
+  margin-right: 10px;
+}
+
 /* Anpassen des Layouts bei kleinen Bildschirmen */
 @media (max-width: 768px) {
   .dashboard-wrapper {

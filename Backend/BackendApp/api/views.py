@@ -389,5 +389,51 @@ def DelDonoRec(request):
         
         donationrecord.objects.raw("Delete From api_users Where iduser = %s", [donoid])
 
+
+@csrf_protect
+def get_users(request):
+    #  beschränken auf aktive läufer
+    users = Users.objects.filter(roleid=3, verified=True)
+    userlist = []
+
+    for user in users:
+        user_dict = {
+            "iduser": user.iduser,
+            "firstname": user.firstname,
+            "lastname": user.lastname,
+            "email": user.email,
+            "roleid": user.roleid,
+            "verified": user.verified,
+            "kilometers": user.kilometers
+        }
+        userlist.append(user_dict)
+
+    return JsonResponse({"users": userlist})  # safe=True ist Standard
+
+@csrf_protect
+def set_km(request):
+    json_data = json.loads(request.body)
+    iduser_str = json_data["iduser"]
+    kilometer_str = json_data["kilometer"]  
+    kilometer = int(kilometer_str)
+    iduser = int(iduser_str)
+    print(kilometer)
+    print(type(kilometer))
+    print(iduser)
+    try:
+        Status, Message = Users.SetKilometer(kilometer, iduser);
+        
+        return JsonResponse(status=Status, data={"message":Message})
+    except:
+        Status = 401
+        Message = "Error occured, cant set kilometer!"
+        return JsonResponse(status=Status, data={"message":Message})
+    
+    
+    
+
+
+
+
 def csrf_token_view(request):
     return JsonResponse({"csrftoken": get_token(request)})  # Gibt den CSRF-Token als JSON zurück        

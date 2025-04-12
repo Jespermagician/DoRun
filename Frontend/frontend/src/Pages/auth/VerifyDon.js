@@ -12,7 +12,7 @@ const VerifyDon = () => {
 
   useEffect(() => {
     // Check if all necessary parameters are provided
-    if (!UserID || !token || !TimeStamp) {
+    if (!UserID || !token || !DonRecID) {
       setError("Fehlende Parameter");
       setLoading(false);
       return;
@@ -51,7 +51,7 @@ const VerifyDon = () => {
     };
 
     fetchData();
-  }, [UserID, token, TimeStamp]);
+  }, [UserID, token]);
 
   // Function to render content based on the verification message
   const renderContent = () => {

@@ -175,6 +175,26 @@ class Users(models.Model):
             
         return Status, Message
     
+    def SetKilometer(kilometer: int, iduser: int):
+        Message = ""
+        Status = 401
+        #Update the kilometers for the user
+        try:
+            sql = "UPDATE api_users SET kilometers = %s WHERE iduser = %s"
+            # Parameter
+            values = [kilometer, iduser]
+
+            # SQL ausführen
+            with connection.cursor() as cursor:
+                cursor.execute(sql, values)
+                
+            Message = "Kilometers changed succesfully"
+            Status = 200
+        except:
+            Message = "Cant set kilometers!"
+        
+        return Status, Message
+    
 class donationrecord(models.Model):
     donationrecid = models.IntegerField(primary_key=True, null=False)
     iduser = models.TextField(null=False)
