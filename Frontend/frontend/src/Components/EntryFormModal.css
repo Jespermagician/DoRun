@@ -1,10 +1,11 @@
+/* === Modal Overlay === */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,106 +13,137 @@
   color: white;
 }
 
+/* === Modal and Popup Content === */
 .modal-content, .popup-content {
-  background: rgb(55, 117, 197);
+  background: #3775c5;
   padding: 30px;
   border-radius: 15px;
   width: 90%;
   max-width: 500px;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(31, 28, 28, 0.75);
 }
 
 .popup-content {
-  background: rgb(13, 62, 125);
+  background: #0d3e7d;
 }
 
+/* === Headings === */
 h3 {
   text-align: center;
   margin-bottom: 20px;
   font-size: 1.5em;
 }
+.pop-header{
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  text-shadow: 1px 1px 2px black ;
+  font-weight: bold;
+  font-size: xx-large;
+}
 
-.modal-buttons {
+/* === Button Layouts === */
+.modal-buttons,
+.layout-buttons {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 20px;
 }
+
 .layout-buttons {
-  display: flex;
+  flex-direction: row;
   justify-content: space-between;
   width: 100%;
-  margin-top: 20px;
 }
 
-.btn-left, .btn-right {
+/* === Action Buttons === */
+.btn-left,
+.btn-right {
   padding: 10px 20px;
-  border: none;
+  border: rgba(27, 25, 25, 0.322) 1px solid;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   width: 100%;
   max-width: 200px;
   margin-bottom: 10px;
+  
 }
 
 .btn-left {
-  background-color: rgb(0, 123, 255);
+  /* background-color: #007bff; */
+  background-color: #4caf50;
   color: white;
 }
 
 .btn-left:hover {
-  background-color: rgb(0, 105, 217);
+  background-color: #45a049;
+  margin-bottom: 10px;
+  box-shadow: 5px 5px rgba(68, 65, 65, 0.089);
+  /* background-color: #0069d9; */
 }
 
 .btn-right {
-  background-color: rgb(220, 53, 69);
+  background-color: #dc3545;
   color: white;
+  box-shadow: 5px 5px rgba(68, 65, 65, 0.089);
 }
 
 .btn-right:hover {
-  background-color: rgb(200, 35, 50);
+  background-color: #c82333;
 }
 
+/* === Form and Inputs === */
 .message {
-  margin: -10px 0 -12px ;
-  color: lime; /* Dunklere Schriftfarbe für bessere Lesbarkeit */
+  margin: -10px 0 -12px;
+  color: lime;
 }
 
 label {
   color: white;
+  text-shadow: 1px 1px 2px black ;
+  font-weight: bold;
   display: block;
   margin-bottom: 10px;
   font-size: 1em;
-  text-align: left; /* Neu hinzugefügt */
+  text-align: left;
+
 }
+
 .form-group {
   margin-bottom: 15px;
   text-align: left;
 }
 
-
-
-input {
+input[type="text"],
+input[type="email"],
+input[type="number"] {
   width: calc(100% - 20px);
   padding: 10px;
   margin-bottom: 20px;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-size: 1em;
+  box-shadow: 5px 5px rgba(49, 47, 47, 0.1);
+}
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+  /* width: calc(100% - 80px); */
+  width: 6rem;
+  margin-left: 1rem;
 }
 
-/* Responsive Design */
+/* === Responsive Layout === */
 @media (max-width: 768px) {
   .modal-content, .popup-content {
-    width: 90%;
     padding: 20px;
   }
 
   .btn-left, .btn-right {
     width: 100%;
-    margin-bottom: 10px;
   }
 }
 
@@ -124,11 +156,126 @@ input {
   h3 {
     font-size: 1.2em;
   }
+}
 
-  .btn-left, .btn-right {
-    width: 100%;
-    margin-bottom: 10px;
-  }
+/* === Custom Toggle Button: Festbetrag / Pro KM === */
+.btn {
+  position: relative;
+  width: 207px; /* Enough width for both texts */
+  height: 45px;
+  margin: 0 auto;
+  overflow: hidden;
+  top: 50%;
+  transform: translateY(-22%);
+}
+
+.btn.btn-pill,
+.btn.btn-pill > .btn-bg {
+  border-radius: 100px;
+}
+
+.btn .btn-bg {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #d4edda; /* Default background */
+  transition: 0.3s ease all;
+  z-index: 1;
+}
+
+.checkbox {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.knob {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 2;
+}
+
+/* === Toggle Labels === */
+.btn .knob:before {
+  content: "Festbetrag";
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  padding: 9px 8px;
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  text-align: center;
+  background-color: #2846a7; /* Green */
+  border-radius: 50px;
+  transition: 0.3s ease all;
+}
+
+/* Checked state: switch text + position */
+.btn .checkbox:checked + .knob:before {
+  content: "Pro Kilometer";
+  left: 75px;
+  background-color: #38691b; /* Red */
+}
+
+/* Toggle background change when checked */
+.btn .checkbox:checked ~ .btn-bg {
+  background-color: #f8d7da;
+}
+
+#button-1 .checkbox:checked ~ .btn-bg {
+  background-color: #fcebeb;
+}
+
+#button-1 .knob,
+#button-1 .knob:before,
+#button-1 .btn-bg {
+  transition: 0.3s ease all;
+}
+
+/* Optional cleanup for toggle inside forms */
+.form-group .btn-pill {
+  background: transparent;
+  box-shadow: none;
+}
+.form-group > label {
+  margin-bottom: 5px;
 }
 
 
+/* === Betrag & Toggle Button nebeneinander === */
+.form-group.horizontal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.amount-input {
+  flex: 1;
+}
+
+/* === Infobox Styling === */
+.info-box {
+  background: #e3f2fd;
+  border: 2px solid #90caf9;
+  padding: 0px 20px;
+  height: 4rem;
+  border-radius: 10px;
+  color: #0d47a1;
+  font-weight: 500;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+
+.modal-scroll-wrapper {
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden; /* Notwendig, damit PerfectScrollbar funktioniert */
+}
+
+.modal-content {
+  max-height: 80vh;
+  overflow: auto;
+}
