@@ -28,6 +28,10 @@ function Register() {
       setError("Die Passwörter stimmen nicht überein.");
       return;
     }
+    const passwordCheck = pruefePasswort(password);
+    if (!passwordCheck.gueltig) {
+      setError(passwordCheck.nachrichten.join(" \n"));
+      return;}
 
     // Get the domain of the frontend and send it to the backend for user verification
     const domain = window.location.host;
@@ -139,6 +143,35 @@ function Register() {
       </div>
     </div>
   );
+}
+
+function pruefePasswort(passwort) {
+  const mindestLaenge = 8;
+  const hatBuchstabe = /[a-zA-Z]/.test(passwort);
+  const hatZahl = /\d/.test(passwort);
+  const hatSonderzeichen = /[!@#$%^&*(),.?":{}|<>\-_+=`~;']/.test(passwort);
+  const istLangGenug = passwort.length >= mindestLaenge;
+
+  const fehlerMeldungen = [];
+
+  if (!istLangGenug) {
+    fehlerMeldungen.push(`Das Passwort muss mindestens ${mindestLaenge} Zeichen lang sein.`);
+  }
+  if (!hatBuchstabe) {
+    fehlerMeldungen.push("Das Passwort muss mindestens einen Buchstaben enthalten.");
+  }
+  if (!hatZahl) {
+    fehlerMeldungen.push("Das Passwort muss mindestens eine Zahl enthalten.");
+  }
+  if (!hatSonderzeichen) {
+    fehlerMeldungen.push("Das Passwort muss mindestens ein Sonderzeichen enthalten (z.B. !@#$%...).");
+  }
+
+  if (fehlerMeldungen.length > 0) {
+    return { gueltig: false, nachrichten: fehlerMeldungen };
+  } else {
+    return { gueltig: true };
+  }
 }
 
 export default Register;
