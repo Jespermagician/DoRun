@@ -10,9 +10,11 @@ urlpatterns = [
     path('UpdateDonations',views.UpdateDonations,name='UpdatDonations'),   
     path('UpdateUsers',views.UpdateUsers,name='UpdateUsers'),
     path('resetpassword',views.resetpassword,name='ResetPassword'),
+    path('reset-user-pwd',views.resetUserPasswort,name='ResetUserPasswort'),
     path('DelDonoRec',views.DelDonoRec,name='DelDonoRec'),
     path('DelUser',views.DelUser,name='DelUser'),
     path('csrf-token/',views.csrf_token_view),
     path('get-users', views.get_users, name='get-users'), # get all details
     path('set-km', views.set_km, name='set-km'), # get all details
+    path('generate-pwd', views.generate_pwd, name='generate-pwd'), # get all details
 ]

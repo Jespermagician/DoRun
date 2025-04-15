@@ -12,12 +12,14 @@ from django.db.models import Sum
 from BackendApp.settings import logger
 from .mailSender import  MailSender
 
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+
 
 
 # implement interface for mail here
 
 # then implement class implemented by the interface
-
+@csrf_protect
 def sendUserVerifyMail(request, UserID, frontendDomain):
     user = get_object_or_404(Users, iduser=UserID)      # Bekomme einzelnen User anhand der ID
 
@@ -36,7 +38,7 @@ def sendUserVerifyMail(request, UserID, frontendDomain):
 
     return HttpResponse(f"Mail send to {user.lastname}, {user.firstname}")          # Http-Anwtort senden
 
-
+@csrf_protect
 def sendDonationVerifyMail(request, UserID, DonationId, frontendDomain):
     user = get_object_or_404(Users, iduser=UserID)      # Bekomme einzelnen User anhand der ID
     donRec = get_object_or_404(donationrecord, donationrecid=DonationId)        # Bekomme einzelnen Spendeneintrag anhand der ID
@@ -272,3 +274,20 @@ def sendRunnerInfo(request):
     return HttpResponse("Mail send!")
 
 
+
+def sendForgotPwd(request, email, frontendDomain):
+    mail = MailSender()     # Connect to Mail-Server and init class 
+
+    user = get_object_or_404(Users, email=email)      # Bekomme einzelnen User anhand der ID
+
+    # Absendung der Mail initiieren
+    mail.SendMail(
+        pReceiver=email, 
+        pSubject="Anmeldung Spendenlauf", 
+        pMailText=views.ForgotPwd_MailBody(request=request, user=user, frontendDomain=frontendDomain, email=email), 
+        # pAttachement=""
+        )
+    
+    mail.CloseConnection()      # Disconnect Server connection
+
+    return HttpResponse(f"Mail send to email: {email} to change pwd")          # Http-Anwtort senden

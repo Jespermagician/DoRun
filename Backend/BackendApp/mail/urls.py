@@ -23,4 +23,6 @@ urlpatterns = [
     # Sending the Info Mails to (almost) every user
     path("sponinfo", views.SendInfoMailsSponsors, name="send_Sponsor_info"),
     path("runinfo", views.SendInfoMailsRunners, name="send_Runner_info"),
+
+    path('send-new-pwd/<str:email>/<str:frontendDomain>', views.send_new_pwd, name='send-new-pwd'), # get all details
 ]

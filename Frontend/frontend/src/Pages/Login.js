@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css"; // CSS-Datei für das Styling und Slide-Effekt
 import SetAdminPPopup from "../Components/SetAdminPPopup";
+import HandleForgotPwd from "../Components/handleForgotPwd"; // Popup für Passwort vergessen
 import { getCsrfToken } from "../utils/csrf"; // Function for csrf
 
 function Login() {
@@ -12,6 +13,7 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [PopupOpen, setPopupOpen] = useState(false);
+  const [PopupForgotPwdOpen, setPopupForgotPwdOpen] = useState(false);
 
   // Beispiel für Handling mit API Backend Aufruf
   const handleLogin = async (e) => {
@@ -79,6 +81,10 @@ function Login() {
     navigate("/register");
   };
 
+  const handleForgorPwd = () => {
+    setPopupForgotPwdOpen(true);
+  }
+
   return (
     <div className="container login-mode">
       <div className="form-container">
@@ -111,6 +117,7 @@ function Login() {
                 required
               />
             </div>
+            <p className="pwd-forget" onClick={handleForgorPwd}><span>Passwort vergessen?</span></p>
             <button className="login-button" type="submit">Anmelden</button>
             <p className="switch-text">
               Noch kein Konto? <span onClick={handleRegister}>Registrieren</span>
@@ -123,6 +130,10 @@ function Login() {
           onClose={() => setPopupOpen(false)}
           password={password}
           email={email}
+        />
+      <HandleForgotPwd
+        isOpen={PopupForgotPwdOpen}
+        onClose={() => setPopupForgotPwdOpen(false)}
         />
     </div>
   );

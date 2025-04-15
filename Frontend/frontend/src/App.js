@@ -10,7 +10,9 @@ import ProtectedRoute from "./ProtectedRoute";
 
 import VerifyUser from "./Pages/auth/VerifyUser";
 import VerifyDon from "./Pages/auth/VerifyDon";
+import GenerateNewPwd from "./Pages/auth/GenerateNewPwd";
 import KmRecord from "./Pages/kmRecord";
+import UserSettings from "./Pages/userSettings";
 
 function App() {
   return (
@@ -29,6 +31,12 @@ function App() {
             }
             />
           <Route 
+            path="/user-settings"
+            element={
+              <UserSettings />
+            }
+            />
+          <Route 
           path="/admin"
           element={
             <ProtectedRoute>
@@ -36,9 +44,16 @@ function App() {
             </ProtectedRoute>
           }
           />
+          <Route 
+            path="/km-record" 
+            element={
+              <ProtectedRoute>
+                <KmRecord />
+              </ProtectedRoute>
+          } />
           <Route path="/auth/user/:UserID/:token/:TimeStamp" element={<VerifyUser />} />
           <Route path="/auth/don/:UserID/:token/:TimeStamp" element={<VerifyDon />} />
-          <Route path="/km-record" element={<KmRecord />} />
+          <Route path="/auth/pwd/:UserID/:token/:TimeStamp" element={<GenerateNewPwd />} />
           <Route path="*" element={<NotFound />}/>
         </Routes>
       </Router>

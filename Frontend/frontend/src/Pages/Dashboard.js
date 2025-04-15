@@ -1,6 +1,7 @@
 import "./Dashboard.css";
 import React, { useState, useEffect } from 'react';
 import { FaDoorOpen } from "react-icons/fa";
+import { CiSettings } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
 import StatsChart from '../Components/StatsChart';
 import EntryList from '../Components/EntryList';
@@ -88,6 +89,9 @@ const Dashboard = () => {
     localStorage.removeItem("DoRunRole")
     navigate("/");
   };
+  const openSettings = () => {
+    navigate("/user-settings"); 
+  }
   
   const handleAddEntry = () => {
     setCurrentEntry(null); // Kein aktueller Eintrag (Neuer Eintrag wird erstellt)
@@ -184,6 +188,9 @@ const Dashboard = () => {
       <div>
         <button className="logout-btn" onClick={handleLogOut}>
           {<FaDoorOpen/>}  Logout
+        </button>
+        <button className="sendmails-btn " onClick={openSettings}>
+          {<CiSettings/>} 
         </button>
       </div>
       <div className="dashboard-container">

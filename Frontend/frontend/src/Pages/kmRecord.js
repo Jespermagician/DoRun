@@ -208,14 +208,14 @@ const KmRecord = () => {
                     </div>
 
                     <div className="section-half right">
-  <div className="user-list-scroll">
-    <PerfectScrollbar>
-      {usersList && usersList.map((user) => (
-        <ListItemUserSelect key={user.iduser} user={user} />
-      ))}
-    </PerfectScrollbar>
-  </div>
-</div>
+                        <div className="user-list-scroll">
+                            <PerfectScrollbar>
+                            {usersList && usersList.map((user) => (
+                                <ListItemUserSelect key={user.iduser} user={user} />
+                            ))}
+                            </PerfectScrollbar>
+                        </div>
+                    </div>
 
                 </div>
             </div>

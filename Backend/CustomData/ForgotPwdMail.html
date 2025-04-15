@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Daten Beispiel</title>
+    <style>
+        body {
+            background-color: #f0e68c; /*Hintergrund farbe*/
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+        }
+        h2 {
+            color: #333;
+        }
+        p {
+            color: #555;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4caf50; /*Hintergrund farbe button */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #45a049; /* Button-Farbe beim Hover */
+        }
+        tr{
+            text-align: left;
+            border-color: black;
+            border-radius: 5px;
+            td{
+                margin: 5%;   
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Begrüßung  -->
+        <h2>Kennwort zurücksetzen!</h2> 
+        <p>Sie haben angefordert, ihr Passwort zu ändern</p>
+        <p>Wenn Sie folgenden Link drücken, wird Ihnen ein neues Passwort generiert. Dises können Sie in Ihren Einstellungen ändern</p>
+        <p><b>Achtung:</b> Der Link ist nur für kurze Zeit gültig!</p>
+        
+
+        <a href="{{ link_url }}" class="button">Passwort ändern</a>
+    </div>
+</body>
+</html>
