@@ -38,6 +38,12 @@ h3 {
   align-items: center;
   margin-top: 20px;
 }
+.layout-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 20px;
+}
 
 .btn-left, .btn-right {
   padding: 10px 20px;
@@ -68,12 +74,24 @@ h3 {
   background-color: rgb(200, 35, 50);
 }
 
+.message {
+  margin: -10px 0 -12px ;
+  color: lime; /* Dunklere Schriftfarbe für bessere Lesbarkeit */
+}
+
 label {
   color: white;
   display: block;
   margin-bottom: 10px;
   font-size: 1em;
+  text-align: left; /* Neu hinzugefügt */
 }
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+
 
 input {
   width: calc(100% - 20px);
@@ -112,3 +130,5 @@ input {
     margin-bottom: 10px;
   }
 }
+
+

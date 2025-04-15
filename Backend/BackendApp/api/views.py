@@ -1,7 +1,8 @@
 #Python default
 import json
 # from Backend.BackendApp.mail import mail_handle
-import mail.mail_handle  as mail_handle
+from mail  import mail_handle
+from mail.views import generateToken
 from datetime import date
 
 #Django
@@ -15,12 +16,15 @@ from django.middleware.csrf import get_token
 
 
 #Rest
-from .models import Users, donationrecord
+from .models import Users, donationrecord, CheckPassword, Generate_secure_password, PasswordHashing, convertSaltAndHash
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 from .serializers import UserSerializer
 from django.http import JsonResponse  # Importiere JsonResponse
 from django.http import HttpResponse  # Importiere HttpResponse
+
+from django.shortcuts import get_object_or_404
+from datetime import datetime, timedelta
 
 # Create ur views here
 class CreateUserView(generics.CreateAPIView):
@@ -155,13 +159,31 @@ def resetpassword(request):
     #Convert from string
     try:
         Status, Message = Users.SetPassword(email,Password)
-        
         return JsonResponse(status=Status, data={"message":Message})
         
     except:
         Status = 401
         Message = "Error, cant change password!"
         return JsonResponse(status=Status, data={"message":Message})
+    
+# This is a addutional funtion, to get the user with the user-id and to just change the pwd not the salt
+@csrf_protect
+def resetUserPasswort(request):
+    json_data = json.loads(request.body)
+    iduser_str = json_data["iduser"]
+    oldPwd_entry = json_data["oldPwd"]  
+    newPwd = json_data["newPwd"]  
+    iduser = int(iduser_str)
+
+    try:
+        user = Users.objects.all().get(iduser=iduser)
+        if CheckPassword(EnteredPwd=oldPwd_entry, salt=user.salt, password=user.password_hash) == False:
+            return JsonResponse(status=401, data={"message":"Das alte Passwort ist falsch!"})
+        Status, Message = Users.SetJustPasswordWith_iduser(iduser, newPwd)
+    except:
+        Status = 401
+        Message = "Error, cant change password!"
+    return JsonResponse(status=Status, data={"message":Message})
         
 @csrf_protect
 def adminhome(request):
@@ -431,9 +453,49 @@ def set_km(request):
         Status = 401
         Message = "Error occured, cant set kilometer!"
         return JsonResponse(status=Status, data={"message":Message})
-    
-    
-    
+
+
+
+@csrf_protect
+def generate_pwd(request):
+    # Parse JSON from request body
+    json_data = json.loads(request.body)
+    iduser = int(json_data["iduser"])  
+    token = json_data["token"]
+    timeStamp = json_data["timestamp"]
+
+    # Get user by ID
+    user = get_object_or_404(Users, iduser=iduser)
+
+    # Convert hexadecimal timestamp to epoch time (milliseconds)
+    epoch_time_back = int(timeStamp, 16)
+    timestamp_verification = datetime.fromtimestamp(epoch_time_back / 1000)
+
+    # Check if the timestamp is not older than 20 minutes
+    if datetime.now() - timestamp_verification > timedelta(minutes=20):
+        return JsonResponse({"message": "EXPIRED"}, status=401)
+
+    # Generate token to compare
+    compared_token = generateToken(user.salt, pEMail='-'.join(user.email))
+
+    # Compare the provided token with the generated one
+    if compared_token == token:
+        # If token is valid, proceed with password generation
+        if not user.verified:
+            user.verified = True
+
+        # Generate new secure password
+        new_pwd = Generate_secure_password(9)
+        new_pwd_hash, salt = PasswordHashing(new_pwd)
+
+        # Store updated hash and salt
+        user.salt, user.password_hash = convertSaltAndHash(salt, new_pwd_hash)
+        user.save()
+
+        return JsonResponse({"new": new_pwd}, status=200)
+    else:
+        # Token mismatch ; status has to be 401!
+        return JsonResponse({"message": "INVALID"}, status=401)
 
 
 

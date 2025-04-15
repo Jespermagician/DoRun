@@ -160,6 +160,16 @@ body {
     cursor: pointer;
     text-decoration: underline;
   }
+  .pwd-forget {
+    margin-top: -20px;
+    font-size: 0.9em;
+    color: cornflowerblue;
+    font-style: italic;
+    cursor: pointer;
+  }
+  .pwd-forget:hover {
+    text-decoration: underline;
+  }
 
   /* Mobile Ansicht (max-width: 768px) */
 @media (max-width: 768px) {

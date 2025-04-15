@@ -4,7 +4,7 @@ from pathlib import Path
 from hashlib import sha256
 from django.shortcuts import get_object_or_404
 from api.models import Users, donationrecord
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from . import mail_handle
 from datetime import datetime
 
@@ -12,7 +12,7 @@ from datetime import datetime
 # The base directory for the "DoRun" project
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
-@csrf_exempt
+@csrf_protect
 def SendInfoMailsSponsors(request):
     if request.method == 'POST':
 
@@ -25,7 +25,7 @@ def SendInfoMailsSponsors(request):
     
         return HttpResponse("Mails Send to Sponsors", status=200)
     
-@csrf_exempt
+@csrf_protect
 def SendInfoMailsRunners(request):
     if request.method == 'POST':
 
@@ -39,13 +39,14 @@ def SendInfoMailsRunners(request):
 
 
 # A simple index view that returns a plain text response
+@csrf_protect
 def indexMail(request):
     return HttpResponse("Hello... ")
 
 # Function to generate a secure token using SHA-256
 def generateToken(pSalt, pEMail):
     token = sha256(str(str(pEMail) + str(pSalt)).encode('utf-8')).hexdigest()
-    print("token: ", token)  # Debug: print the generated token
+    # print("token: ", token)  # Debug: print the generated token
     return token
 
 def RenderMailText(context, template_name, request):
@@ -131,6 +132,36 @@ def DonRecAuth(request, UserID: int, user, DonRecID: int, DonRec, frontendDomain
     return RenderMailText(context, template_name, request);
 
 
+def ForgotPwd_MailBody(request, email, frontendDomain: str, user):
+   # Path to the template file
+    template_name = "ForgotPwdMail.html"
+
+    # Generate a token for the user. conacte both mails (otherwise the token isn`t unique)
+    token = generateToken(user.salt, '-'.join(email))
+
+    # generate Timstamp, so the token has a ttl later
+    dt_timestamp = datetime.strptime(str(datetime.now()), "%Y-%m-%d %H:%M:%S.%f")
+    epoch_time = int(dt_timestamp.timestamp() * 1000)  # Millisekunden-Genauigkei
+    
+    # Convert to Base-16 (Hexadecimal)
+    compressed = format(epoch_time, 'x')  # Beispiel: "1944bc7a51"
+
+    target_link = f"https://{frontendDomain}/auth/pwd/{user.iduser}/{token}/{compressed}"  # Append the path with UserID and token
+
+    # old way to get the domain
+    # domain = request.build_absolute_uri('/')[:-1]  # Get the domain without trailing slash
+    # target_link = f"{domain}/mail/auth/don/{UserID}/{DonRecID}/{token}"  # Append the path with UserID and token
+
+    print("target_link: ", target_link)  # Debug: print the generated link
+
+    # Context for rendering the email template
+    context = {
+        'link_url': target_link  # Authentication link
+    }
+    return RenderMailText(context, template_name, request);
+
+
+@csrf_protect
 def verify_user(request, UserID, token, TimeStamp):
     # Suche nach dem Benutzer mit der ID
     user = get_object_or_404(Users, iduser=UserID)
@@ -181,3 +212,15 @@ def verify_donRec(requst, UserID, DonRecID, token):
         return JsonResponse({"message": "VERIFIED"}, status=200)
     else:
         return JsonResponse({"message": "INVALID"}, status=400)
+    
+
+    
+@csrf_protect
+def send_new_pwd(request, email, frontendDomain):
+    if request.method == 'POST':
+        try:
+            mail_handle.sendForgotPwd(request=request, email=email, frontendDomain=frontendDomain)
+        except: 
+            return HttpResponse("Mail could not be send to the User", status=401)
+
+    return HttpResponse("Mail Send to Change Pwd", status=200)

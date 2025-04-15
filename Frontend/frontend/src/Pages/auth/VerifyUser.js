@@ -9,7 +9,8 @@ const VerifyUser = () => {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  let isFetched = false; 
+  
   useEffect(() => {
     // Check if all necessary parameters are provided
     if (!UserID || !token || !TimeStamp) {
@@ -50,7 +51,10 @@ const VerifyUser = () => {
       }
     };
 
-    fetchData();
+    if (!isFetched) {
+      isFetched = true;
+      fetchData();
+    }
   }, [UserID, token, TimeStamp]);
 
   // Function to render content based on the verification message

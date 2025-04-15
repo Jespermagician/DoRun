@@ -20,14 +20,28 @@ const EntryFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     <div className="modal-overlay">
       <div className="modal-content">
         <h3>{initialData ? "Eintrag bearbeiten" : "Neuer Eintrag"}</h3>
-        <label>Vorname: <input type="text" name="firstname" value={formData.firstname} onChange={handleChange} /></label>
+        <div className="form-group">
+          <label>Vorname: <input type="text" name="firstname" value={formData.firstname} onChange={handleChange} /></label>
+        </div>
         <label>Nachname: <input type="text" name="lastname" value={formData.lastname} onChange={handleChange} /></label>
-        <label>Email: <input type="email" name="email" value={formData.email} onChange={handleChange} /></label>
-        <label>Straße: <input type="text" name="street" value={formData.street} onChange={handleChange} /></label>
-        <label>Haus Nr.: <input type="text" name="houseNr" value={formData.houseNr} onChange={handleChange} /></label>
-        <label>PLZ: <input type="text" name="Plz" value={formData.Plz} onChange={handleChange} /></label>
-        <label>Betrag: <input type="number" name="DonoAmount" value={formData.DonoAmount} onChange={handleChange} /></label>
-        <label>Festbetrag: <input type="checkbox" name="FixedAmount" checked={formData.FixedAmount} onChange={handleChange} /></label>
+          <div className="form-group">
+          <label>Email: <input type="email" name="email" value={formData.email} onChange={handleChange} /></label>
+        </div>
+          <div className="form-group">
+          <label>Straße: <input type="text" name="street" value={formData.street} onChange={handleChange} /></label>
+        </div>
+          <div className="form-group">
+          <label>Haus Nr.: <input type="text" name="houseNr" value={formData.houseNr} onChange={handleChange} /></label>
+        </div>
+          <div className="form-group">
+          <label>PLZ: <input type="text" name="Plz" value={formData.Plz} onChange={handleChange} /></label>
+        </div>
+          <div className="form-group">
+          <label>Betrag: <input type="number" name="DonoAmount" value={formData.DonoAmount} onChange={handleChange} /></label>
+        </div>
+          <div className="form-group">
+          <label>Festbetrag: <input type="checkbox" name="FixedAmount" checked={formData.FixedAmount} onChange={handleChange} /></label>
+        </div>
         <div className="modal-buttons">
           <button className="btn-left" onClick={handleSubmit}>Speichern</button>
           <button className="btn-right" onClick={onClose}>Abbrechen</button>
