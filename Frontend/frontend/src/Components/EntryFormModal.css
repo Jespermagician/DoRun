@@ -35,6 +35,7 @@ h3 {
   margin-bottom: 20px;
   font-size: 1.5em;
 }
+
 .pop-header{
   text-align: center;
   margin-bottom: 20px;
@@ -102,7 +103,7 @@ h3 {
   color: lime;
 }
 
-label {
+.modal-content label {
   color: white;
   text-shadow: 1px 1px 2px black ;
   font-weight: bold;
@@ -110,7 +111,6 @@ label {
   margin-bottom: 10px;
   font-size: 1em;
   text-align: left;
-
 }
 
 .form-group {
@@ -118,9 +118,9 @@ label {
   text-align: left;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="number"] {
+.modal-content input[type="text"],
+.modal-content input[type="email"],
+.modal-content input[type="number"] {
   width: calc(100% - 20px);
   padding: 10px;
   margin-bottom: 20px;
@@ -129,7 +129,7 @@ input[type="number"] {
   font-size: 1em;
   box-shadow: 5px 5px rgba(49, 47, 47, 0.1);
 }
-input[type="number"] {
+.modal-content input[type="number"] {
   -moz-appearance: textfield; /* Firefox */
   /* width: calc(100% - 80px); */
   width: 6rem;
