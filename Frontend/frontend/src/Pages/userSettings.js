@@ -104,9 +104,9 @@ const UserSettings = () => {
         <div className="pwd-change-section">
           <div className="form-section">
             <h3>Passwort ändern</h3>
-            <form onSubmit={handlePasswordChange}>
+            <form className="form-change-pwd" onSubmit={handlePasswordChange}>
               <div>
-                <label>Altes Passwort:</label>
+                <label className="form-label">Altes Passwort:</label>
                 <input 
                   type="password" 
                   required 
@@ -115,7 +115,7 @@ const UserSettings = () => {
                 />
               </div>
               <div>
-                <label>Neues Passwort:</label>
+                <label className="form-label">Neues Passwort:</label>
                 <input 
                   type="password" 
                   required 
@@ -124,7 +124,7 @@ const UserSettings = () => {
                 />
               </div>
               <div>
-                <label>Neues Passwort wiederholen:</label>
+                <label className="form-label">Neues Passwort wiederholen:</label>
                 <input 
                   type="password" 
                   required 
@@ -134,7 +134,7 @@ const UserSettings = () => {
               </div>
               {message && <p className="message">{message}</p>} {/* Conditionally render the message */}
               {message_success && <p className="message-success">{message_success}</p>} {/* Conditionally render the message */}
-              <button type="submit">Ändern</button>
+              <button className="pwd-submit-button" type="submit">Ändern</button>
             </form>
           </div>
           <div className="entry-list-section">

@@ -369,7 +369,7 @@ def UpdateUsers(request):
             Status = 200
             Message= "Daten wurden geupdated"
         except e:
-            Message = "Der SQL-Befehl lifert folgendes zurueck: " + str(e)
+            Message = "Der SQL-Befehl liefert folgendes zurueck: " + str(e)
         
     return JsonResponse({"message": Message}, status=Status)
 
