@@ -26,6 +26,13 @@ class Users(models.Model):
     logintrys = models.IntegerField(default=0)
     
     def RegisterUser(first_name,last_name,email,password):
+
+        # Password validation
+        validation = checkPwdConstraints(password)
+        if (validation != 1):
+            print("Password is not valid")
+            return None
+        
         #1. Set UserID
         #Check if email already exists
         double = False
@@ -86,7 +93,7 @@ class Users(models.Model):
                 roleid=RoleID,
                 verified=VerifiedUser, 
                 kilometers=Kilometers)
-            return NewUser;
+            return NewUser
             # try:
             # except:
             #     print("Error, user can't be added to DB!")
