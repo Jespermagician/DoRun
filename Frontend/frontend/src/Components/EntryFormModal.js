@@ -28,6 +28,8 @@ const EntryFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   };
 
   const handleSubmit = (e) => {
+    // The button is inverted, so the value has to be flipped
+    formData.FixedAmount = !formData.FixedAmount 
     e.preventDefault();
     onSubmit(formData);
     onClose();

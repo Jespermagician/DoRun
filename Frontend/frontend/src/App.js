@@ -52,7 +52,7 @@ function App() {
               </ProtectedRoute>
           } />
           <Route path="/auth/user/:UserID/:token/:TimeStamp" element={<VerifyUser />} />
-          <Route path="/auth/don/:UserID/:token/:TimeStamp" element={<VerifyDon />} />
+          <Route path="/auth/don/:UserID/:DonRecID/:token/" element={<VerifyDon />} />
           <Route path="/auth/pwd/:UserID/:token/:TimeStamp" element={<GenerateNewPwd />} />
           <Route path="*" element={<NotFound />}/>
         </Routes>

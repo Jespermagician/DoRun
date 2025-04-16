@@ -4,7 +4,7 @@ import { getCsrfToken } from "../../utils/csrf";
 
 const VerifyDon = () => {
   // Extract parameters from the URL
-  const { UserID, token, DonRecID } = useParams();
+  const { UserID, DonRecID, token } = useParams();
   const navigate = useNavigate();
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);

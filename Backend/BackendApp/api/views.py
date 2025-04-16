@@ -22,6 +22,7 @@ from rest_framework.permissions import AllowAny
 from .serializers import UserSerializer
 from django.http import JsonResponse  # Importiere JsonResponse
 from django.http import HttpResponse  # Importiere HttpResponse
+from django.db.models import Max
 
 from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
@@ -235,26 +236,47 @@ def UpdateDonations(request):
             #Erstelle neuen Datensatz 
             CreatedAt = date.today()
             
-            MaxDoID = donationrecord.objects.raw("Select Max( donationrecid ) From api_donationrecord")
+            MaxDoID = donationrecord.objects.aggregate(Max('donationrecid'))['donationrecid__max']
+            # MaxDoID = donationrecord.objects.raw(f"Select Max( donationrecid ) From api_donationrecord")
             try: 
                 MaxDoID = MaxDoID + 1
             except:
                 MaxDoID = 1
 
             try:
-                donationrecord.objects.create(donationrecid= MaxDoID,
-                                              iduser = UserID,
+                if(street == None):
+                    street = ""
+                if(housenr == None):
+                    housenr = ""
+                if(Plz == None):
+                    Plz = ""
+                print("MaxDoID: ", MaxDoID)
+                print("UserID: ", UserID)
+                print("firstname: ", firstname)
+                print("lastname: ", lastname) 
+                print("email: ", email)
+                print("street: ", street)
+                print("housenr: ", housenr)
+                print("Plz: ", Plz)
+                print("DonoAmount: ", DonoAmount)
+                print("FixedAmount: ", FixedAmount)
+                
+                newDonRec = donationrecord(donationrecid= int(MaxDoID),
+                                              iduser = int(UserID),
                                               firstname = firstname,
                                               lastname = lastname,
                                               email = email,
                                               street = street,
                                               housenr = housenr,
                                               postcode = Plz,
-                                              donation = DonoAmount,
-                                              fixedamount = FixedAmount,
-                                              createdat = CreatedAt,
+                                              donation = int(DonoAmount),
+                                              fixedamount = bool(FixedAmount),
+                                            #   createdat = CreatedAt,
                                               verified = False)
-
+                # donationrecord.add(newDonRec)
+                print("tessdfsdf")
+                newDonRec.save()
+                print("tessdfsdf")
                 Status = 200
                 Message = "Neuer Datensatz angelegt"
             except:
@@ -304,6 +326,8 @@ def UpdateDonations(request):
                 Message = "Der SQL-Befehl lifert folgendes zurueck: "
         
     return JsonResponse({"message": Message}, status=Status)
+
+
         
 @csrf_protect
 def UpdateUsers(request):

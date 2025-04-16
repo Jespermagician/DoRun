@@ -73,8 +73,12 @@ class SponsData:
         self.kilometer = pKm
         self.FixedDonation = pFixedDon
         self.Donation = pDon
+        # Check if its fixed or not
         if(pFixedDon):
-            self.DonationTotal = pDon
+            # if it is fixed, then the the runner needs at least one km to earn the money
+            self.DonationTotal = 0
+            if(pKm > 0):
+                self.DonationTotal = pDon
         else:
             self.DonationTotal = pDon * pKm
         
