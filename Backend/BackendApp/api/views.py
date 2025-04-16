@@ -220,12 +220,18 @@ def UpdateDonations(request):
         lastname = entry.get("lastname")
         email = entry.get("email")
         street = entry.get("street")
-        housenr = entry.get("HouseNr")
+        housenr = entry.get("houseNr")
         Plz = entry.get("Plz")
         DonoAmount = entry.get("DonoAmount")
         FixedAmount = entry.get("FixedAmount")
-
         Dono = donationrecord.objects.raw("Select * From api_donationrecord Where iduser=%s",[donationid])
+
+        #Daten in für DB umwandeln
+        if (FixedAmount == "on"):
+            FixedAmount = True
+        else:
+            FixedAmount = False
+
         for row in Dono:
             DB_data = row
             break
@@ -235,14 +241,21 @@ def UpdateDonations(request):
             #Erstelle neuen Datensatz 
             CreatedAt = date.today()
             
-            MaxDoID = donationrecord.objects.raw("Select Max( donationrecid ) From api_donationrecord")
-            try: 
-                MaxDoID = MaxDoID + 1
-            except:
-                MaxDoID = 1
+
+            #Get current highest DonoID
+            query = "Select donationrecid From api_donationrecord Where donationrecid = (Select Max(donationrecid) From api_donationrecord)"
+            DonoID = donationrecord.objects.raw(query)
+
+            #Chech if the new user is the first then id = 1 else max id + 1
+            for row in DonoID:
+                if (row.donationrecid != None):
+                    DonoID = row.donationrecid
+                    DonoID = DonoID + 1
+                elif (row.donationrecid == None):
+                    DonoID = 1
 
             try:
-                donationrecord.objects.create(donationrecid= MaxDoID,
+                donationrecord.objects.create(donationrecid = DonoID,
                                               iduser = UserID,
                                               firstname = firstname,
                                               lastname = lastname,
@@ -258,7 +271,8 @@ def UpdateDonations(request):
                 Status = 200
                 Message = "Neuer Datensatz angelegt"
             except:
-                break
+                Message = "Datensatz konnte nicht angelegt werden"
+                Status = 401
         else:
             #Eintrag aktualisieren
             if (firstname==None):
@@ -434,27 +448,6 @@ def get_users(request):
         userlist.append(user_dict)
 
     return JsonResponse({"users": userlist})  # safe=True ist Standard
-
-@csrf_protect
-def set_km(request):
-    json_data = json.loads(request.body)
-    iduser_str = json_data["iduser"]
-    kilometer_str = json_data["kilometer"]  
-    kilometer = int(kilometer_str)
-    iduser = int(iduser_str)
-    print(kilometer)
-    print(type(kilometer))
-    print(iduser)
-    try:
-        Status, Message = Users.SetKilometer(kilometer, iduser);
-        
-        return JsonResponse(status=Status, data={"message":Message})
-    except:
-        Status = 401
-        Message = "Error occured, cant set kilometer!"
-        return JsonResponse(status=Status, data={"message":Message})
-
-
 
 @csrf_protect
 def generate_pwd(request):
