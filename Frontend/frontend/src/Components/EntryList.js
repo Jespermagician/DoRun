@@ -7,11 +7,14 @@ import { getCsrfToken } from "../utils/csrf";
 import "./EntryList.css";
 import InfoPopUp from "../Components/infoPopUp";
 import { getBackEndDomain } from "../utils/backend-domain";
+import ChoicePopUp from "../Components/ChoicePopUp"
 
-const EntryList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry, iduser }) => {
+const EntryList = ({ entries, handleEditEntry, handleDeleteEntryApi, handleAddEntry, iduser }) => {
   const [cooldown, setCooldown] = useState({});
   const [infoPopUpdOpen, setInfoPopUpdOpen] = useState(false); // State für Info-Feld
   const [infoPopUpMessage, setInfoPopUpMessage] = useState(""); // State für Info-Feld-Nachricht
+  const [confirmDeleteOpen, setconfirmDeleteOpen] = useState(false);
+  const [choosenDelEntry, setChoosenDelEntry] = useState({});
 
   const handleRemind = async (entry) => {
     setCooldown(prev => ({
@@ -43,6 +46,11 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry
       // setMessage hier NICHT nochmal nötig, weil es oben bereits gesetzt wurde
     }
   };
+
+  const handleDelEntry = (entry) => {
+    setChoosenDelEntry(entry);
+    setconfirmDeleteOpen(true);
+  }
   
   const isCooldownActive = (entryId) => {
     return !cooldown[entryId] || cooldown[entryId] < Date.now();
@@ -85,8 +93,8 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry
                       <MdMailOutline />
                     </button>
                   )}
-                  <button className="edit-btn"  title="Eintrag löschen "onClick={() => handleEditEntry(entry)}><FaEdit/></button>
-                  <button className="delete-btn" title="Eintrag bearbeiten" onClick={() => handleDeleteEntry(entry.id)}><FaTrash/></button>
+                  <button className="edit-btn"  title="Eintrag bearbeiten" onClick={() => handleEditEntry(entry)}><FaEdit/></button>
+                  <button className="delete-btn" title="Eintrag löschen" onClick={() => handleDelEntry(entry)}><FaTrash/></button>
                 </div>
               </li>
             ))
@@ -101,6 +109,18 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry
       isOpen={infoPopUpdOpen}
       onClose={() => setInfoPopUpdOpen(false)}
       message={infoPopUpMessage} />
+      <ChoicePopUp
+        isOpen={confirmDeleteOpen}
+        message={
+          `Wollen Sie den Eintrag von ${choosenDelEntry.firstname} ${choosenDelEntry.lastname} löschen?`
+        }
+        onClose={(choice) => {
+          if (choice) {
+            handleDeleteEntryApi(choosenDelEntry.donoid);
+          }
+          setconfirmDeleteOpen(false)
+        }}
+      />
     </div>
   );
 };

@@ -233,8 +233,6 @@ def UpdateDonations(request):
         else:
             FixedAmount = False
 
-        print("1234")
-        print("1234")
 
         donationid = int(donationid)
         # Create a new donation record if no ID was provided
@@ -284,7 +282,6 @@ def UpdateDonations(request):
                 donRec.donation = DonoAmount or donRec.donation
                 donRec.fixedamount = FixedAmount if FixedAmount is not None else donRec.fixedamount
                 donRec.verified = False  # Mark as unverified after any update
-
                 donRec.save()
 
             except Exception as e:
@@ -390,6 +387,7 @@ def DelUser(request):
             iduser = Users.objects.raw("Select iduser From api_users Where email = %s",[email])    
 
             if (iduser != None):
+                # raw funktioniert scheinbar nur für select statements
                 Users.objects.raw("Delete From api_users Where iduser = %s", [iduser])
         
 @csrf_protect
@@ -407,8 +405,11 @@ def DelDonoRec(request):
     # Über die Liste in der JSON-Datenstruktur iterieren
     for entry in data:
         donoid = entry.get("donoid")
-        
-        donationrecord.objects.raw("Delete From api_users Where iduser = %s", [donoid])
+        print("donoid löschen:  ", donoid)
+        donationrecord.objects.filter(donationrecid=donoid).delete()
+
+    
+    return JsonResponse({"message": "Successfully deleted"}, status=200)
 
 
 @csrf_protect
