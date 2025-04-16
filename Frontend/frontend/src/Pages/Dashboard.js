@@ -9,6 +9,7 @@ import InfoField from '../Components/InfoField';
 import InfoPopUp from "../Components/infoPopUp";
 import EntryFormModal from '../Components/EntryFormModal';
 import { getCsrfToken } from "../utils/csrf"; // Function for csrf
+import { getBackEndDomain } from "../utils/backend-domain";
 
 const Dashboard = () => {
   const [entries, setEntries] = useState([]);
@@ -48,8 +49,9 @@ const Dashboard = () => {
     try {
       // Get CSRF-Token and cookie 
       const csrfToken = await getCsrfToken();
+      const backEndDomain = await getBackEndDomain();
       console.log("userids asdasdis: ", pUserid);
-      const response = await fetch("http://127.0.0.1:8000/api/home", { 
+      const response = await fetch(backEndDomain + "/api/home", { 
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -133,8 +135,8 @@ const Dashboard = () => {
   const handleAddAndEditDonoEntries = async (updatedEntries) => {
     try {
       const csrfToken = await getCsrfToken();
-      
-      const response = await fetch("http://127.0.0.1:8000/api/UpdateDonations", { 
+      const backEndDomain = await getBackEndDomain();
+      const response = await fetch(backEndDomain + "/UpdateDonations", { 
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

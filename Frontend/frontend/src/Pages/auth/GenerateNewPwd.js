@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCsrfToken } from "../../utils/csrf";
+import { getBackEndDomain } from "../../utils/backend-domain";
 
 const GenerateNewPwd = () => {
   // Extract parameters from the URL
@@ -25,7 +26,8 @@ const GenerateNewPwd = () => {
     const fetchData = async () => {
       try {
         const csrfToken = await getCsrfToken();
-        const response = await fetch("http://127.0.0.1:8000/api/generate-pwd", {
+        const backEndDomain = await getBackEndDomain();
+        const response = await fetch(backEndDomain + "/api/generate-pwd", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

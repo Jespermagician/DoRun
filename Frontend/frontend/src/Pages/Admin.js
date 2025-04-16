@@ -6,6 +6,7 @@ import StatsChart from '../Components/StatsChart';
 import UserList from '../Components/UserList';
 import AdminInfos from "../Components/AdminInfos";
 import { getCsrfToken } from "../utils/csrf"; // Function for csrf
+import { getBackEndDomain } from "../utils/backend-domain";
 
 const Admin = () => {
   const [entries, setEntries] = useState([]);
@@ -31,8 +32,8 @@ const Admin = () => {
       try {
         // Get CSRF-Token and cookie 
         const csrfToken = await getCsrfToken();
-
-        const response = await fetch("http://127.0.0.1:8000/api/adminhome", { 
+        const backEndDomain = await getBackEndDomain();
+        const response = await fetch(backEndDomain + "/api/adminhome", { 
           method: "POST",
           headers: { 
             "Content-Type": "application/json",
@@ -81,8 +82,8 @@ const Admin = () => {
     try {
       // Get CSRF-Token and cookie 
       const csrfToken = await getCsrfToken();
-
-      const response = await fetch("http://127.0.0.1:8000/mail/runinfo", { 
+      const backEndDomain = await getBackEndDomain();
+      const response = await fetch(backEndDomain + "/mail/runinfo", { 
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
@@ -106,8 +107,8 @@ const Admin = () => {
     try {
       // Get CSRF-Token and cookie 
       const csrfToken = await getCsrfToken();
-
-      const response = await fetch("http://127.0.0.1:8000/mail/sponinfo", { 
+      const backEndDomain = await getBackEndDomain();
+      const response = await fetch(backEndDomain + "/mail/sponinfo", { 
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

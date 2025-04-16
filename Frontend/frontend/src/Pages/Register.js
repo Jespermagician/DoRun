@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css"; // CSS-Datei für das Styling und Slide-Effekt
 import { getCsrfToken } from "../utils/csrf"; // Function for csrf
+import { getBackEndDomain } from "../utils/backend-domain";
 
 function Register() {
   const [firstname, setFirstName] = useState("");
@@ -41,8 +42,8 @@ function Register() {
 
     // Get CSRF-Token and cookie 
     const csrfToken = await getCsrfToken();
-
-      const response = await fetch("http://127.0.0.1:8000/api/register/", {
+    const backEndDomain = await getBackEndDomain();
+      const response = await fetch(backEndDomain + "/api/register/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -6,6 +6,7 @@ import PageHeader from "../Components/PageHeader";
 import { getCsrfToken } from "../utils/csrf";
 import ListItemUserSelect from "../Components/ListItemUserSelect";
 import PerfectScrollbar from "react-perfect-scrollbar";
+import { getBackEndDomain } from "../utils/backend-domain";
 
 const KmRecord = () => {
     const navigate = useNavigate();
@@ -46,7 +47,8 @@ const KmRecord = () => {
     const getUsers = async () => {
         try {
             const csrfToken = await getCsrfToken();
-            const response = await fetch("http://127.0.0.1:8000/api/get-users", {
+            const backEndDomain = await getBackEndDomain();
+            const response = await fetch(backEndDomain + "/api/get-users", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -94,7 +96,8 @@ const KmRecord = () => {
 
         try {
             const csrfToken = await getCsrfToken();
-            const response = await fetch("http://127.0.0.1:8000/api/UpdateUsers", {
+            const backEndDomain = await getBackEndDomain();
+            const response = await fetch(backEndDomain + "/api/UpdateUsers", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

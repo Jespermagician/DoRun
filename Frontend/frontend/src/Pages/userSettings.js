@@ -4,6 +4,7 @@ import { IoHomeOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import PageHeader from "../Components/PageHeader";
 import { getCsrfToken } from "../utils/csrf";
+import { getBackEndDomain } from "../utils/backend-domain";
 
 const UserSettings = () => {
   const [userid, setUserid] = useState(Number);
@@ -27,7 +28,8 @@ const UserSettings = () => {
   const changePassword = async (e) => {
     try {
       const csrfToken = await getCsrfToken();
-      const response = await fetch("http://127.0.0.1:8000/api/reset-user-pwd", {
+      const backEndDomain = await getBackEndDomain();
+      const response = await fetch(backEndDomain + "/api/reset-user-pwd", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

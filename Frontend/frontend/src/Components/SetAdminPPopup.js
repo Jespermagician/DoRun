@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './EntryFormModal.css'; // Modal Styles
 import { getCsrfToken } from "../utils/csrf"; // Function for csrf
+import { getBackEndDomain } from "../utils/backend-domain";
 
 const SetAdminPPopup = ({ isOpen, onClose, password, email}) => {
     
@@ -20,8 +21,8 @@ const SetAdminPPopup = ({ isOpen, onClose, password, email}) => {
     try {
       // Get CSRF-Token and cookie 
       const csrfToken = await getCsrfToken();
-      
-      const response = await fetch("http://127.0.0.1:8000/api/resetpassword", { 
+      const backEndDomain = await getBackEndDomain();
+      const response = await fetch(backEndDomain + "/api/resetpassword", { 
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

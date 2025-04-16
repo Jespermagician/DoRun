@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './EntryFormModal.css'; // Modal Styles
 import { getCsrfToken } from "../utils/csrf"; // Function for csrf
+import { getBackEndDomain } from "../utils/backend-domain";
 
 const HandleForgotPwd = ({ isOpen, onClose }) => {
   const [email, setEMail] = useState("");
@@ -15,9 +16,9 @@ const HandleForgotPwd = ({ isOpen, onClose }) => {
     try {
 
     // Get CSRF-Token and cookie 
-    const csrfToken = await getCsrfToken();
-
-      const response = await fetch(`http://127.0.0.1:8000/mail/send-new-pwd/${email}/${domain}`, {
+      const csrfToken = await getCsrfToken();
+      const backEndDomain = await getBackEndDomain();
+      const response = await fetch(`${backEndDomain}/mail/send-new-pwd/${email}/${domain}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

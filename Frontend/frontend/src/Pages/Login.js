@@ -4,6 +4,7 @@ import "./Login.css"; // CSS-Datei für das Styling und Slide-Effekt
 import SetAdminPPopup from "../Components/SetAdminPPopup";
 import HandleForgotPwd from "../Components/handleForgotPwd"; // Popup für Passwort vergessen
 import { getCsrfToken } from "../utils/csrf"; // Function for csrf
+import { getBackEndDomain } from "../utils/backend-domain";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -25,8 +26,8 @@ function Login() {
     try {
       // Get CSRF-Token and cookie 
       const csrfToken = await getCsrfToken();
-      
-      const response = await fetch("http://127.0.0.1:8000/api/login/", { 
+      const backEndDomain = await getBackEndDomain();
+      const response = await fetch(backEndDomain + "/api/login/", { 
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

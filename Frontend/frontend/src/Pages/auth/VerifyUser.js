@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCsrfToken } from "../../utils/csrf";
+import { getBackEndDomain } from "../../utils/backend-domain";
 
 const VerifyUser = () => {
   // Extract parameters from the URL
@@ -26,10 +27,11 @@ const VerifyUser = () => {
         if (!csrfToken) {
           throw new Error("CSRF Token konnte nicht abgerufen werden.");
         }
+        const backEndDomain = await getBackEndDomain();
 
         // Make a GET request to verify user
         const response = await fetch(
-          `http://localhost:8000/mail/auth/${UserID}/${token}/${TimeStamp}`,
+          `${backEndDomain}/mail/auth/${UserID}/${token}/${TimeStamp}`,
           {
             method: "GET",
             credentials: "include",

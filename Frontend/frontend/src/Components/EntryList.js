@@ -6,6 +6,7 @@ import "react-perfect-scrollbar/dist/css/styles.css";
 import { getCsrfToken } from "../utils/csrf";
 import "./EntryList.css";
 import InfoPopUp from "../Components/infoPopUp";
+import { getBackEndDomain } from "../utils/backend-domain";
 
 const EntryList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry, iduser }) => {
   const [cooldown, setCooldown] = useState({});
@@ -20,8 +21,9 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry
 
     try {
       const csrfToken = await getCsrfToken();
+      const backEndDomain = await getBackEndDomain();
       const domain = window.location.host;
-      const response = await fetch(`http://127.0.0.1:8000/mail/sendmail/don/${iduser}/${entry.donoid}/${domain}`, {
+      const response = await fetch(`${backEndDomain}/mail/sendmail/don/${iduser}/${entry.donoid}/${domain}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

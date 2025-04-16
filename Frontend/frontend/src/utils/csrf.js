@@ -1,4 +1,6 @@
-  // Read cookies 
+import { getBackEndDomain } from "../utils/backend-domain";
+
+// Read cookies 
   export function getCookie(name) {
     const cookieString = document.cookie;
     const cookies = cookieString.split('; ');
@@ -13,7 +15,8 @@
 
   // Ask for CSRF-Cookie and token from django
   export async function getCsrfToken() {
-      const response = await fetch(`http://127.0.0.1:8000/api/csrf-token/`, {
+    const backEndDomain = await getBackEndDomain();
+      const response = await fetch(backEndDomain + `/api/csrf-token/`, {
         credentials: 'include',
       });
     const data = await response.json();
