@@ -186,10 +186,6 @@ class Users(models.Model):
     def SetJustPasswordWith_iduser(iduser,Password):
         Message = ""
         Status = 401
-        if (len(Password) < 8):
-            Message = "Password muss mindestens 8 Zeichen lang sein!"
-            Status = 401
-            return Status, Message
     
         match checkPwdConstraints(Password):
             case -1:
@@ -221,26 +217,6 @@ class Users(models.Model):
         except:
             Message = "Cant set password!"
             
-        return Status, Message
-    
-    def SetKilometer(kilometer: int, iduser: int):
-        Message = ""
-        Status = 401
-        #Update the kilometers for the user
-        try:
-            sql = "UPDATE api_users SET kilometers = %s WHERE iduser = %s"
-            # Parameter
-            values = [kilometer, iduser]
-
-            # SQL ausführen
-            with connection.cursor() as cursor:
-                cursor.execute(sql, values)
-                
-            Message = "Kilometers changed succesfully"
-            Status = 200
-        except:
-            Message = "Cant set kilometers!"
-        
         return Status, Message
     
 class donationrecord(models.Model):
