@@ -145,10 +145,9 @@ const Dashboard = () => {
       });
       // const data = await response.json();
       if (!response.ok) {
-        // throw new Error(data.message || "Fehler bei der Anmeldung");
-        // throw new Error(data.message);
         return
       }
+      await handleUserInfos(userid);
     } catch (error) {
       setError(error.message);
     }
@@ -249,7 +248,6 @@ const Dashboard = () => {
         <InfoPopUp
           isOpen={infoPopUpdOpen}
           onClose={() => {
-            handleUserInfos(userid);
             setInfoPopUpdOpen(false)}
           }
           message={infoPopUpMessage} />

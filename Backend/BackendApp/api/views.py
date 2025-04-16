@@ -228,10 +228,10 @@ def UpdateDonations(request):
         Dono = donationrecord.objects.raw("Select * From api_donationrecord Where iduser=%s",[donationid])
 
         #Daten in für DB umwandeln
-        if (FixedAmount == "on"):
-            FixedAmount = True
-        else:
+        if FixedAmount == "false":
             FixedAmount = False
+        else:
+            FixedAmount = True
 
         for row in Dono:
             DB_data = row
