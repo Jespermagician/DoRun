@@ -22,7 +22,7 @@ const Dashboard = () => {
   const [error, setError] = useState(null); // State für Fehler
   const [user, setUser] = useState({});
   const [userData, setUserData] = useState({});
-  const [totalDonations, setTotalDonations] = useState(Number);
+  // const [totalDonations, setTotalDonations] = useState(Number);
   const [donoid, setDonoid] = useState(null);
   const [infoPopUpdOpen, setInfoPopUpdOpen] = useState(false); // State für Info-Feld
   const [infoPopUpMessage, setInfoPopUpMessage] = useState(""); // State für Info-Feld-Nachricht
@@ -69,7 +69,7 @@ const Dashboard = () => {
       // alert(data.entries[0].UserFirstname);
       setUserData(data.entries[0]);
       setUser({name:(data.entries[0].UserFirstname + " " + data.entries[0].UserLastname), email:data.entries[0].UserEmail});
-      setTotalDonations(data.totalDonations);
+      // setTotalDonations(data.totalDonations);
       if (data.entries.length === 1) {
         // alert("Nur der User Eintrag ist vorhanden!")
       }
@@ -171,9 +171,27 @@ const Dashboard = () => {
     setModalOpen(false); // Modal schließen
   };
 
-  const handleDeleteEntry = (newEntry) => {
-    setEntries((prevEntries) => prevEntries.filter((entry) => entry.donoid !== newEntry.donoid));
-    handleAddAndEditDonoEntries();
+  const handleDeleteEntry = async (newEntryID) => {
+    try {
+      const csrfToken = await getCsrfToken();
+      const backEndDomain = await getBackEndDomain();
+      const response = await fetch(backEndDomain + "/api/DelDonoRec", { 
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        credentials: "include",
+        body: JSON.stringify([{donoid: newEntryID}]),
+      });
+      
+      if (!response.ok) {
+        return
+      }
+      handleUserInfos(userid);
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   return (
@@ -219,8 +237,7 @@ const Dashboard = () => {
                 setCurrentEntry(temp); // Zu bearbeitenden Eintrag setzen
                 setModalOpen(true); // Modal öffnen
               }}
-              // handleDeleteEntry={(id) => setEntries(entries.filter((entry) => entry.id !== id))}
-              handleDeleteEntry={handleDeleteEntry}
+              handleDeleteEntryApi={(donId) => handleDeleteEntry(donId)}
               iduser={userid}
             />
           </div>
