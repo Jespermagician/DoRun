@@ -62,29 +62,29 @@ const VerifyDon = () => {
         return (
           <>
             <p>Der Verifizierungs Link ist abgelaufen.</p>
-            <button onClick={() => navigate("/")} className="mt-4 bg-gray-500 text-white py-2 px-4 rounded">Home</button>
-            <button onClick={() => navigate("/")} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Link neu senden</button>
+            {/* <button onClick={() => navigate("/")} className="mt-4 bg-gray-500 text-white py-2 px-4 rounded">Home</button> */}
+            {/* <button onClick={() => navigate("/")} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Link neu senden</button> */}
           </>
         );
       case "INVALID":
         return (
           <>
             <p>Link ist ungültig.</p>
-            <button onClick={() => navigate("/")} className="mt-4 bg-gray-500 text-white py-2 px-4 rounded">Home</button>
+            {/* <button onClick={() => navigate("/")} className="mt-4 bg-gray-500 text-white py-2 px-4 rounded">Home</button> */}
           </>
         );
       case "VERIFIED":
         return (
           <>
             <p>Vielen Dank. Sie haben sich als Sponsor verifiziert!</p>
-            <button onClick={() => navigate("/")} className="mt-4 bg-green-500 text-white py-2 px-4 rounded">Anmelden</button>
+            {/* <button onClick={() => navigate("/")} className="mt-4 bg-green-500 text-white py-2 px-4 rounded">Anmelden</button> */}
           </>
         );
       case "ALREADY":
         return (
           <>
             <p>Sponsor wurde bereits verifiziert!</p>
-            <button onClick={() => navigate("/")} className="mt-4 bg-green-500 text-white py-2 px-4 rounded">Anmelden</button>
+            {/* <button onClick={() => navigate("/")} className="mt-4 bg-green-500 text-white py-2 px-4 rounded">Anmelden</button> */}
           </>
         );
       default:

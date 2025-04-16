@@ -26,6 +26,7 @@ const Dashboard = () => {
   const [donoid, setDonoid] = useState(null);
   const [infoPopUpdOpen, setInfoPopUpdOpen] = useState(false); // State für Info-Feld
   const [infoPopUpMessage, setInfoPopUpMessage] = useState(""); // State für Info-Feld-Nachricht
+  // const [newEntry, setNewEntry] = useState([])
 
   let isFetched = false;
 
@@ -115,24 +116,7 @@ const Dashboard = () => {
     setModalOpen(true); // Modal zum Hinzufügen eines Eintrags öffnen
   };
 
-  const handleModalSubmit = (newEntry) => {
-    if (currentEntry) {
-      // Bearbeiteten Eintrag aktualisieren
-      // alert(currentEntry.id);
-      setEntries(
-        entries.map((entry) =>
-          entry.id === currentEntry.id ? { ...entry, ...newEntry } : entry
-        )
-      );
-    } else {
-      // Neuen Eintrag hinzufügen
-      // alert(currentEntry);
-      setEntries([...entries, { id: Date.now(), ...newEntry }]);
-    }
-    setModalOpen(false); // Modal schließen
-  };
-
-  const handleAddAndEditDonoEntries = async (updatedEntries) => {
+  const handleAddAndEditDonoEntries = async (updatedEntries, email) => {
     try {
       const csrfToken = await getCsrfToken();
       const backEndDomain = await getBackEndDomain();
@@ -149,48 +133,38 @@ const Dashboard = () => {
       if (!response.ok) {
         return
       }
+      setInfoPopUpMessage(`E-Mail wurde an ${email} versendet, um den Eintrag zu verifizieren`)
+      setInfoPopUpdOpen(true)
       await handleUserInfos(userid);
     } catch (error) {
       setError(error.message);
     }
   };
 
-  const handleModalSubmit2 = (newEntry) => {
+  const handleModalSubmit = (newEntry) => {
+    console.log("current entry " + currentEntry)
+    const frontendDomain = window.location.host;
     if (currentEntry) {
-      // Bearbeiteten Eintrag aktualisieren
-      // alert(currentEntry.id);
-      setEntries(
-        entries.map((entry) =>
-          entry.id === currentEntry.id ? { ...entry, ...newEntry } : entry
-        )
-      );
-    } else {
-      // Neuen Eintrag hinzufügen
-      alert(newEntry.firstname);
-      setEntries([...entries, { id: userid, ...newEntry }]);
-      alert(entries.firstname);
-      handleAddAndEditDonoEntries();
-    }
-    setModalOpen(false); // Modal schließen
-  }
+      
+      console.log("new entry hier: " + newEntry)
+      console.log("new entry hier:DonoAmount: " + newEntry.DonoAmount)
 
-  const handleModalSubmit3 = (newEntry) => {
-    if (currentEntry) {
-      // Bearbeiteten Eintrag aktualisieren
-      setEntries((prevEntries) =>
-        prevEntries.map((entry) =>
-          entry.donoid === currentEntry.donoid ? { ...entry, ...newEntry } : entry
-        )
-      );
+      const updatedEntries = [
+        { Userid: userid, 
+          ...newEntry,
+          verified: false,
+          frontendDomain: frontendDomain, 
+        }
+      ];
+      handleAddAndEditDonoEntries(updatedEntries, newEntry.email);
     } else {
       // Neuen Eintrag hinzufügen
       setDonoid(null);
       setEntries((prevEntries) => {
         // prevEntries gives errors and is shit 
-        const updatedEntries = [{ Userid: userid, DonoID: donoid, ...newEntry }];
-        handleAddAndEditDonoEntries(updatedEntries); // Hier auf aktuellen Stand zugreifen
-        setInfoPopUpMessage(`E-Mail wurde an ${newEntry.email} versendet, um den Eintrag zu verifizieren`)
-        setInfoPopUpdOpen(true)
+        const updatedEntries = [{ Userid: userid, DonoID: donoid, ...newEntry, frontendDomain: frontendDomain, }];
+        handleAddAndEditDonoEntries(updatedEntries, newEntry.email); // Hier auf aktuellen Stand zugreifen
+        
         return updatedEntries;
       });
     }
@@ -230,7 +204,19 @@ const Dashboard = () => {
               entries={entries}
               handleAddEntry={handleAddEntry}
               handleEditEntry={(entry) => {
-                setCurrentEntry(entry); // Zu bearbeitenden Eintrag setzen
+                const temp = {
+                  firstname: entry.firstname,
+                  lastname: entry.lastname,
+                  email: entry.email,
+                  street: entry.street,
+                  houseNr: entry.housenr,
+                  Plz: entry.postcode,
+                  DonoAmount: entry.donation,
+                  FixedAmount: entry.FixedAmount,
+                  DonoID: entry.donoid
+                }
+                console.log("emrty temp: ", temp);
+                setCurrentEntry(temp); // Zu bearbeitenden Eintrag setzen
                 setModalOpen(true); // Modal öffnen
               }}
               // handleDeleteEntry={(id) => setEntries(entries.filter((entry) => entry.id !== id))}
@@ -244,7 +230,11 @@ const Dashboard = () => {
         <EntryFormModal
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
-          onSubmit={handleModalSubmit3}
+          onSubmit={(_newEntry) => {
+            console.log("_newEntry")
+            console.log(_newEntry)
+            handleModalSubmit(_newEntry)
+          }}
           initialData={currentEntry}
         />
         <InfoPopUp

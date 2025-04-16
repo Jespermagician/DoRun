@@ -201,20 +201,21 @@ def adminhome(request):
     else:
         return JsonResponse({'message': 'User ist nicht Authorisiert!'}, status=401)
     
+
+# bitte nur für das änern von einem eintrag nutzen, was anderers macht auch keinen sinn
 @csrf_protect
 def UpdateDonations(request):
-#Lege Return Werte fest
-    Status = 401
-    Message = "Unerwarteter Fehler"
-    
-     # JSON aus dem Request-Body lesen
+    if request.method != "POST":
+        return JsonResponse({"error": "Only POST requests are allowed"}, status=405)
+
     try:
-        data = json.loads(request.body)  # JSON-Daten in ein Python-Objekt parsen
-    except json.JSONDecodeError as e:
-        return JsonResponse({"error": "Invalid JSON"}, status=400)
-    
-    # Über die Liste in der JSON-Datenstruktur iterieren
+        # Parse JSON body into Python list/dict
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON format"}, status=400)
+
     for entry in data:
+        # Extract fields from the entry
         UserID = entry.get("Userid")
         donationid = entry.get("DonoID")
         firstname = entry.get("firstname")
@@ -225,37 +226,30 @@ def UpdateDonations(request):
         Plz = entry.get("Plz")
         DonoAmount = entry.get("DonoAmount")
         FixedAmount = entry.get("FixedAmount")
-        Dono = donationrecord.objects.raw("Select * From api_donationrecord Where iduser=%s",[donationid])
+        frontendDomain = entry.get("frontendDomain")
 
-        #Daten in für DB umwandeln
-        if FixedAmount == "false":
-            FixedAmount = False
-        else:
+        if FixedAmount == "true":
             FixedAmount = True
+        else:
+            FixedAmount = False
 
-        for row in Dono:
-            DB_data = row
-            break
+        print("1234")
+        print("1234")
 
-        # Neuer Eintrag
-        if (donationid == None):
-            #Erstelle neuen Datensatz 
-            CreatedAt = date.today()
-            
-
-
-            #Get current highest DonoID
+        donationid = int(donationid)
+        # Create a new donation record if no ID was provided
+        if (donationid == -1):
             # query = "Select donationrecid From api_donationrecord Where donationrecid = (Select Max(donationrecid) From api_donationrecord)"
             # DonoID = donationrecord.objects.raw(query)
             MaxDoID = donationrecord.objects.aggregate(Max('donationrecid'))['donationrecid__max']
 
             #Chech if the new user is the first then id = 1 else max id + 1
-            DonoID = 1
+            donationid = 1
             if MaxDoID != None:
-                DonoID = MaxDoID + 1
+                donationid = MaxDoID + 1
 
             try:
-                newDonRec = donationrecord(donationrecid = int(DonoID),
+                newDonRec = donationrecord(donationrecid = int(donationid),
                                               iduser = UserID,
                                               firstname = firstname,
                                               lastname = lastname,
@@ -273,55 +267,38 @@ def UpdateDonations(request):
                 print("tessdfsdf")
                 Status = 200
                 Message = "Neuer Datensatz angelegt"
-            except:
-                Message = "Datensatz konnte nicht angelegt werden"
-                Status = 401
+            except Exception as e:
+                return JsonResponse({"message": f"Failed to create record: {str(e)}"}, status=500)
         else:
-            #Eintrag aktualisieren
-            if (firstname==None):
-                firstname = DB_data.firstname
-        
-            if (lastname==None):
-                lastname = DB_data.lastname
-            
-            if (email==None):
-                email = DB_data.email
-        
-            if (street==None):
-                street = DB_data.street
-
-            if (housenr==None):
-                housenr = DB_data.housenr
-        
-            if (Plz==None):
-                Plz = DB_data.postcode
-
-            if (DonoAmount==None):
-                DonoAmount = DB_data.donation
-        
-            if (FixedAmount==None):
-                FixedAmount = DB_data.fixedamount
-        
-            #Schicke E-Mail raus um Spendenbeleg zu verifizieren @Jesper
-            #Code goes here    
-            verified = DB_data.verified
-        
-            # SQL-Abfrage
-            sql = "UPDATE api_users SET donationredid = %s, iduser= %s, firstname = %s, lastname = %s, email = %s, street = %s, housenr = %s, postcode %s, donation = %s,fixedamount = %s, createdat=%s, verified=%s WHERE iduser = %s"
-            # Parameter
-            values = [donationid,UserID,firstname,lastname,email,street,housenr,Plz,DonoAmount,FixedAmount,CreatedAt,verified]
-
-            # SQL ausführen
+            # Update existing record
             try:
-                with connection.cursor() as cursor:
-                    cursor.execute(sql, values)
-                Message = "Daten wurden geupdated"
-                Status = 200
-            except:
-                Message = "Der SQL-Befehl lifert folgendes zurueck: "
-        
-    return JsonResponse({"message": Message}, status=Status)
+                donRec = get_object_or_404(donationrecord, donationrecid=int(donationid))
 
+                # Update only if new values are provided, else keep existing ones
+                donRec.firstname = firstname or donRec.firstname
+                donRec.lastname = lastname or donRec.lastname
+                donRec.email = email or donRec.email
+                donRec.street = street or donRec.street
+                donRec.housenr = housenr or donRec.housenr
+                donRec.postcode = Plz or donRec.postcode
+                donRec.donation = DonoAmount or donRec.donation
+                donRec.fixedamount = FixedAmount if FixedAmount is not None else donRec.fixedamount
+                donRec.verified = False  # Mark as unverified after any update
+
+                donRec.save()
+
+            except Exception as e:
+                return JsonResponse({"message": f"Failed to update record: {str(e)}"}, status=500)
+            
+        try:
+            print("mail sender")
+            print(int(UserID))
+            print(int(donationid))
+            print(frontendDomain)
+            mail_handle.sendDonationVerifyMail(request, int(UserID), int(donationid), frontendDomain)
+        except:
+            return JsonResponse({"message": "Donations updated successfully, but the mail wasnt send"}, status=200)
+        return JsonResponse({"message": "Donations updated successfully"}, status=200)
 
         
 @csrf_protect

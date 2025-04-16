@@ -5,20 +5,21 @@ const StatsChart = ({ totalDonations, totalKilometer, entries }) => {
   const calcTotalMoneyPerKm = () => {
     let rate = 0;
     entries.forEach((entry) => {
-      if (!entry.FixedAmount) {
+      if (!entry.FixedAmount && entry.verified) {
         rate += entry.donation;
       }
     })
-    return rate ? rate : 0;
+    return rate ? parseFloat(rate.toFixed(2)) : 0;
 };
-  const calcTotalMoneyFixxed = () => {
-    let rate = 0;
-    entries.forEach((entry) => {
-      if (entry.FixedAmount) {
-        rate += entry.donation;
-      }
-    })
-    return rate ? rate : 0;
+const calcTotalMoneyFixxed = () => {
+  let rate = 0;
+  entries.forEach((entry) => {
+    if (entry.FixedAmount && entry.verified) {
+      rate += entry.donation;
+    }
+  });
+  // Rundung auf zwei Nachkommastellen
+  return rate ? parseFloat(rate.toFixed(2)) : 0;
 };
   return (
     <div className="stats-chart-container">
