@@ -10,6 +10,10 @@ body {
     align-items: center;
     height: 100vh;
     color: #ffffff;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Zentriert das Element */
   }
   
   .container {
