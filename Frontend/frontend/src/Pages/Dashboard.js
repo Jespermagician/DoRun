@@ -136,7 +136,7 @@ const Dashboard = () => {
     try {
       const csrfToken = await getCsrfToken();
       const backEndDomain = await getBackEndDomain();
-      const response = await fetch(backEndDomain + "/UpdateDonations", { 
+      const response = await fetch(backEndDomain + "/api/UpdateDonations", { 
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
