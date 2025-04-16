@@ -4,7 +4,7 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
 
 const EntryFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
-  const [formData, setFormData] = useState(initialData || {
+  const empty_data = {
     firstname: "",
     lastname: "",
     email: "",
@@ -12,10 +12,18 @@ const EntryFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     houseNr: "",
     Plz: "",
     DonoAmount: "",
-    FixedAmount: false
-  });
-
+    FixedAmount: false,
+    DonoID: -1
+  }
+  const [formData, setFormData] = useState(initialData || empty_data);
   const [infoMessage, setInfoMessage] = useState("");
+
+  // Update formData whenever the modal is opened
+  useEffect(() => {
+    if (isOpen) {
+      setFormData(initialData || empty_data);
+    }
+  }, [isOpen, initialData]);
 
   useEffect(() => {
     changeInfoMessage(formData.FixedAmount);
@@ -26,13 +34,20 @@ const EntryFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     const updatedValue = name === "DonoAmount" ? value.replace(",", ".") : value;
     setFormData({ ...formData, [name]: updatedValue });
   };
+  const handleClose = () => {
+    setFormData(empty_data);
+    onClose();
+  }
 
   const handleSubmit = (e) => {
     // The button is inverted, so the value has to be flipped
     formData.FixedAmount = !formData.FixedAmount 
     e.preventDefault();
+    console.log("formData")
+    console.log(formData)
     onSubmit(formData);
-    onClose();
+    changeInfoMessage(formData.FixedAmount);
+    handleClose();
   };
 
   const changeInfoMessage = (toggle) => {
@@ -87,11 +102,12 @@ const EntryFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
                 <input
                   type="number"
                   name="DonoAmount"
-                  min="0.00"
+                  min={0.01}
+                  max={10000}
                   placeholder="z. B. 5.00 €"
                   value={formData.DonoAmount}
                   onChange={handleChange}
-                  step={1.00}
+                  step={0.01}
                   required
                 />
                 <div className="btn btn-pill">
@@ -120,7 +136,7 @@ const EntryFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
             {/* Buttons */}
             <div className="modal-buttons">
               <button className="btn-left" type="submit">Speichern</button>
-              <button className="btn-right" type="button" onClick={onClose}>Abbrechen</button>
+              <button className="btn-right" type="button" onClick={handleClose}>Abbrechen</button>
             </div>
           </div>
         {/* </PerfectScrollbar> */}
