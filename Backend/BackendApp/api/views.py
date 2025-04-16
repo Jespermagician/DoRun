@@ -245,19 +245,17 @@ def UpdateDonations(request):
 
 
             #Get current highest DonoID
-            query = "Select donationrecid From api_donationrecord Where donationrecid = (Select Max(donationrecid) From api_donationrecord)"
-            DonoID = donationrecord.objects.raw(query)
+            # query = "Select donationrecid From api_donationrecord Where donationrecid = (Select Max(donationrecid) From api_donationrecord)"
+            # DonoID = donationrecord.objects.raw(query)
+            MaxDoID = donationrecord.objects.aggregate(Max('donationrecid'))['donationrecid__max']
 
             #Chech if the new user is the first then id = 1 else max id + 1
-            for row in DonoID:
-                if (row.donationrecid != None):
-                    DonoID = row.donationrecid
-                    DonoID = DonoID + 1
-                elif (row.donationrecid == None):
-                    DonoID = 1
+            DonoID = 1
+            if MaxDoID != None:
+                DonoID = MaxDoID + 1
 
             try:
-                donationrecord.objects.create(donationrecid = DonoID,
+                newDonRec = donationrecord(donationrecid = int(DonoID),
                                               iduser = UserID,
                                               firstname = firstname,
                                               lastname = lastname,
@@ -265,7 +263,7 @@ def UpdateDonations(request):
                                               street = street,
                                               housenr = housenr,
                                               postcode = Plz,
-                                              donation = int(DonoAmount),
+                                              donation = float(DonoAmount),
                                               fixedamount = bool(FixedAmount),
                                             #   createdat = CreatedAt,
                                               verified = False)

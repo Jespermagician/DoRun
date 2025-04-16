@@ -149,7 +149,6 @@ const Dashboard = () => {
         // throw new Error(data.message);
         return
       }
-      handleUserInfos(userid);
     } catch (error) {
       setError(error.message);
     }
@@ -249,7 +248,10 @@ const Dashboard = () => {
         />
         <InfoPopUp
           isOpen={infoPopUpdOpen}
-          onClose={() => setInfoPopUpdOpen(false)}
+          onClose={() => {
+            handleUserInfos(userid);
+            setInfoPopUpdOpen(false)}
+          }
           message={infoPopUpMessage} />
       </div>
     </div>
