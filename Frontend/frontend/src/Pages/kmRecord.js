@@ -94,17 +94,17 @@ const KmRecord = () => {
 
         try {
             const csrfToken = await getCsrfToken();
-            const response = await fetch("http://127.0.0.1:8000/api/set-km", {
+            const response = await fetch("http://127.0.0.1:8000/api/UpdateUsers", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRFToken": csrfToken,
                 },
                 credentials: "include",
-                body: JSON.stringify({
-                    iduser: sel_user.iduser,
-                    kilometer: set_km,
-                }),
+                body: JSON.stringify([{
+                    Userid: sel_user.iduser,
+                    Kilometer: set_km,
+                }]),
             });
 
             if (!response.ok) {
