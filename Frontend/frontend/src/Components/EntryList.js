@@ -60,7 +60,7 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntryApi, handleAddEn
   return (
     <div className="entry-list-container">
       <h3>Spendeneinträge</h3>
-      <li className="entry-item">
+      <li className="entry-info">
             <div className="entry-details">
               <span className="span-indent">ID</span>
               <span className="span-indent">Name</span>

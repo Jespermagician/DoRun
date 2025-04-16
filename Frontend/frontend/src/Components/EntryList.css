@@ -39,6 +39,14 @@
   border: 1px solid #e0e0e0;
 }
 
+.entry-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border: 1px solid #e0e0e0;
+}
+
 .green-left{
   border-left: solid 4px green;
 }
@@ -47,6 +55,11 @@
 }
 
 /* Details der Einträge */
+.entry-item span {
+  margin-right: 16px;
+  font-size: 14px;
+}
+
 .entry-details span {
   margin-right: 16px;
   font-size: 14px;
@@ -105,16 +118,28 @@
   /* Container auf mobilen Geräten */
   .entry-list-container {
     width: 100%; /* Volle Breite auf kleineren Geräten */
-    height: 390px; /* Höhe automatisch anpassen */
+    /* height: 390px; Höhe automatisch anpassen */
+    height: 370px; /* Höhe automatisch anpassen */
     margin-top: 0; /* Kein negativer Abstand mehr */
     padding: 10px; /* Weniger Padding */
     margin-left: 20px;
     margin-right: -10px;
   }
 
+  .entry-list-container h3 {
+    font-size: 20px; /* Größere Schrift auf mobilen Geräten */
+    margin: 0px; /* Mehr Abstand nach unten */
+  }
+
   /* Flexbox für Einträge anpassen */
   .entry-item {
     flex-direction: column; /* Stapele die Details untereinander */
+    gap: 8px;
+    padding: 12px 0; /* Etwas mehr Padding */
+  }
+
+  .entry-info {
+    flex-direction: row; /* Stapele die Details untereinander */
     gap: 8px;
     padding: 12px 0; /* Etwas mehr Padding */
   }
@@ -146,9 +171,23 @@
     font-size: 16px; /* Größere Schrift */
   }
 
-  .span-indent::after {
+  .entry-item .span-indent::after {
     margin-left: 110px;
     content: '\A';
     white-space: pre;
+  }
+
+  .entry-info .span-indent {
+    display: inline-block; /* Inline-Block für bessere Lesbarkeit */
+    font-size: 60%;
+    flex-direction: row; /* Stapele die Details nebeneinander */
+    margin: 0; /* Kein Abstand mehr */
+    margin-inline-end: 25px;
+    margin-left: 3px;
+  }
+
+  .entry-info .entry-details {
+    display: flex; /* Block-Element für bessere Lesbarkeit */
+    max-width: 54px; /* Maximale Breite für Details */
   }
 }

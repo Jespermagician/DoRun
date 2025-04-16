@@ -22,7 +22,7 @@ const calcTotalMoneyFixxed = () => {
   return rate ? parseFloat(rate.toFixed(2)) : 0;
 };
   return (
-    <div className="stats-chart-container">
+    <div>
       <h3 className="donation-Header">Gesamtspenden</h3>
       <div className="stats-display">
         <div className="donations-amount">
