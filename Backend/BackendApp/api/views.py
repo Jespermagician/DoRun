@@ -22,6 +22,7 @@ from rest_framework.permissions import AllowAny
 from .serializers import UserSerializer
 from django.http import JsonResponse  # Importiere JsonResponse
 from django.http import HttpResponse  # Importiere HttpResponse
+from django.db.models import Max
 
 from django.shortcuts import get_object_or_404
 from datetime import datetime, timedelta
@@ -242,6 +243,7 @@ def UpdateDonations(request):
             CreatedAt = date.today()
             
 
+
             #Get current highest DonoID
             query = "Select donationrecid From api_donationrecord Where donationrecid = (Select Max(donationrecid) From api_donationrecord)"
             DonoID = donationrecord.objects.raw(query)
@@ -263,11 +265,14 @@ def UpdateDonations(request):
                                               street = street,
                                               housenr = housenr,
                                               postcode = Plz,
-                                              donation = DonoAmount,
-                                              fixedamount = FixedAmount,
-                                              createdat = CreatedAt,
+                                              donation = int(DonoAmount),
+                                              fixedamount = bool(FixedAmount),
+                                            #   createdat = CreatedAt,
                                               verified = False)
-
+                # donationrecord.add(newDonRec)
+                print("tessdfsdf")
+                newDonRec.save()
+                print("tessdfsdf")
                 Status = 200
                 Message = "Neuer Datensatz angelegt"
             except:
@@ -318,6 +323,8 @@ def UpdateDonations(request):
                 Message = "Der SQL-Befehl lifert folgendes zurueck: "
         
     return JsonResponse({"message": Message}, status=Status)
+
+
         
 @csrf_protect
 def UpdateUsers(request):

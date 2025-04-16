@@ -74,6 +74,20 @@ h3 {
   
 }
 
+.btn-okay {
+  border: rgba(27, 25, 25, 0.322) 1px solid;
+  background-color: #4caf50;
+  color: white;
+  box-shadow: 5px 5px rgba(68, 65, 65, 0.089);
+  margin-bottom: 10px;
+  max-width: 8rem;
+}
+.btn-okay:hover {
+  background-color: #45a049;
+  box-shadow: 5px 5px rgba(68, 65, 65, 0.089);
+  margin-bottom: 10px;
+}
+
 .btn-left {
   /* background-color: #007bff; */
   background-color: #4caf50;

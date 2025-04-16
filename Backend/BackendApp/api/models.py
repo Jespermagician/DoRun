@@ -221,7 +221,7 @@ class Users(models.Model):
     
 class donationrecord(models.Model):
     donationrecid = models.IntegerField(primary_key=True, null=False)
-    iduser = models.TextField(null=False)
+    iduser = models.IntegerField(null=False)
     firstname = models.TextField(null=False)
     lastname = models.TextField(null=False)
     email = models.EmailField(unique=False, null=False)
@@ -257,9 +257,11 @@ class donationrecord(models.Model):
             for row in UserEntrys:
                 #Calculate total Donations 
                 if (row.fixedamount == True):
-                    TotalDonations += row.donation
+                    # only add up the fixed dons if the user has atleast on km
+                    if (kilometers > 0):
+                        TotalDonations += row.donation
                 else:
-                    TotalDonations = TotalDonations + (row.donation * kilometers)
+                    TotalDonations += (row.donation * kilometers)
             
                 TotalKilometers += kilometers
         except:
@@ -307,10 +309,13 @@ class donationrecord(models.Model):
         TDonoF = 0
         TDono = 0
         for Super_row in Super_Data:
+            UserData = Users.objects.raw("Select iduser, kilometers From api_users Where iduser = %s",[Super_row.iduser])
             if (Super_row.fixedamount == True):
-                TDonoF += Super_row.donation
+                # only add up the fixed dons if the user has atleast on km
+                for user in UserData:
+                    if user.kilometers > 0:
+                        TDonoF += Super_row.donation
             else:
-                UserData = Users.objects.raw("Select iduser, kilometers From api_users Where iduser = %s",[Super_row.iduser])
                 for user in UserData:
                     TDono = TDono + (Super_row.donation * user.kilometers)
         

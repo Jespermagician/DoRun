@@ -113,7 +113,7 @@ def DonRecAuth(request, UserID: int, user, DonRecID: int, DonRec, frontendDomain
     # Generate a token for the user. conacte both mails (otherwise the token isn`t unique)
     token = generateToken(user.salt, '-'.join(user.email + DonRec.email))
 
-    target_link = f"https://{frontendDomain}/mail/auth/don/{UserID}/{DonRecID}/{token}"  # Append the path with UserID and token
+    target_link = f"https://{frontendDomain}/auth/don/{UserID}/{DonRecID}/{token}"  # Append the path with UserID and token
 
     # old way to get the domain
     # domain = request.build_absolute_uri('/')[:-1]  # Get the domain without trailing slash

@@ -39,6 +39,13 @@
   border: 1px solid #e0e0e0;
 }
 
+.green-left{
+  border-left: solid 4px green;
+}
+.red-left{
+  border-left: solid 4px rgba(199, 16, 16, 0.726);
+}
+
 /* Details der Einträge */
 .entry-details span {
   margin-right: 16px;

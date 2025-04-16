@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import StatsChart from '../Components/StatsChart';
 import EntryList from '../Components/EntryList';
 import InfoField from '../Components/InfoField';
+import InfoPopUp from "../Components/infoPopUp";
 import EntryFormModal from '../Components/EntryFormModal';
 import { getCsrfToken } from "../utils/csrf"; // Function for csrf
 
@@ -13,72 +14,86 @@ const Dashboard = () => {
   const [entries, setEntries] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentEntry, setCurrentEntry] = useState(null);
-  const [userid, setUserid] = useState(Number);
+  const [userid, setUserid] = useState(0);
   const navigate = useNavigate();
   const [info, setInfo] = useState(null); // State für Info-Daten
   const [loading, setLoading] = useState(true); // State für Ladeanzeige
   const [error, setError] = useState(null); // State für Fehler
   const [user, setUser] = useState({});
+  const [userData, setUserData] = useState({});
   const [totalDonations, setTotalDonations] = useState(Number);
   const [donoid, setDonoid] = useState(null);
+  const [infoPopUpdOpen, setInfoPopUpdOpen] = useState(false); // State für Info-Feld
+  const [infoPopUpMessage, setInfoPopUpMessage] = useState(""); // State für Info-Feld-Nachricht
 
   let isFetched = false;
 
   useEffect(() => {
-    setEntries([]);
-    // setUserid(localStorage.getItem("userid"));
-    var userid = localStorage.getItem("DoRunUserid");
-    setUserid(userid);
-    // alert(userid);
-    const handleUserInfos = async (e) => {
-      try {
-        // Get CSRF-Token and cookie 
-        const csrfToken = await getCsrfToken();
-
-        const response = await fetch("http://127.0.0.1:8000/api/home", { 
-          method: "POST",
-          headers: { 
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrfToken,
-          },
-          credentials: "include",
-          body: JSON.stringify({userid}),
-        });
-        const data = await response.json();
-        if (!response.ok) {
-          // throw new Error(data.message || "Fehler bei der Anmeldung");
-          throw new Error("Fehler beim erhalten der User Daten!");
-        }
-        // alert(data.entries[0].UserFirstname);
-        setUser({name:(data.entries[0].UserFirstname + " " + data.entries[0].UserLastname), email:data.entries[0].UserEmail});
-        setTotalDonations(data.totalDonations);
-        if (data.entries.length === 1) {
-          // alert("Nur der User Eintrag ist vorhanden!")
-        }
-        else {
-          const remainingEntries = data.entries.slice(1);
-          setEntries((prevEntries) => [
-            ...prevEntries,
-            ...remainingEntries.map((entry) => ({ id: entry.email, ...entry })),
-          ]);
-        }
-        // alert(data.totalDonations);
-        // alert(totalDonations);
-        // Speichere das Token (optional)
-        // localStorage.setItem("token", data.token);
-  
-        // Weiterleitung zum Dashboard
-        // navigate("/home");
-      } catch (error) {
-        // setError(error.message);
-      }
-    };
+    const initFetech = async () => {
+      setEntries([]);
+      const id = parseInt(localStorage.getItem("DoRunUserid"))
+      console.log("userid is: ", id);
+      setUserid(id);
+      await handleUserInfos(id); // Falls handleUserInfos async ist
+    }
 
     if (!isFetched) {
-      handleUserInfos();
+      initFetech();
       isFetched = true;
     }
+  
   }, []);
+
+  const handleUserInfos = async (pUserid) => {
+    try {
+      // Get CSRF-Token and cookie 
+      const csrfToken = await getCsrfToken();
+      console.log("userids asdasdis: ", pUserid);
+      const response = await fetch("http://127.0.0.1:8000/api/home", { 
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        credentials: "include",
+        body: JSON.stringify({userid: pUserid}),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        // throw new Error(data.message || "Fehler bei der Anmeldung");
+        throw new Error("Fehler beim erhalten der User Daten!");
+      }
+      // alert(data.entries[0].UserFirstname);
+      setUserData(data.entries[0]);
+      setUser({name:(data.entries[0].UserFirstname + " " + data.entries[0].UserLastname), email:data.entries[0].UserEmail});
+      setTotalDonations(data.totalDonations);
+      if (data.entries.length === 1) {
+        // alert("Nur der User Eintrag ist vorhanden!")
+      }
+      else {
+        const remainingEntries = data.entries.slice(1); 
+        setEntries(() => [
+          ...remainingEntries.map((entry) => ({
+              id: entry.email, 
+              donation: parseFloat(entry.donation),
+              firstname: entry.firstname,
+              lastname: entry.lastname,
+              email: entry.email,
+              donoid: parseInt(entry.donoid),
+              verified: Boolean(entry.verified),
+              FixedAmount: Boolean(entry.fixedamount),
+              createdat: entry.createdat,
+              housenr: entry.housenr,
+              street: entry.street,
+              postcode: entry.postcode
+            })),
+          ]);
+          console.log("Entries: ", entries);
+      }
+    } catch (error) {
+      // setError(error.message);;
+    }
+  };
 
 
   // const user = {name:data.firstname, email:"jannikschweitzer.js@gmail.com"};
@@ -134,6 +149,7 @@ const Dashboard = () => {
         // throw new Error(data.message);
         return
       }
+      handleUserInfos(userid);
     } catch (error) {
       setError(error.message);
     }
@@ -170,8 +186,11 @@ const Dashboard = () => {
       // Neuen Eintrag hinzufügen
       setDonoid(null);
       setEntries((prevEntries) => {
-        const updatedEntries = [...prevEntries, { Userid: userid, DonoID: donoid, ...newEntry }];
+        // prevEntries gives errors and is shit 
+        const updatedEntries = [{ Userid: userid, DonoID: donoid, ...newEntry }];
         handleAddAndEditDonoEntries(updatedEntries); // Hier auf aktuellen Stand zugreifen
+        setInfoPopUpMessage(`E-Mail wurde an ${newEntry.email} versendet, um den Eintrag zu verifizieren`)
+        setInfoPopUpdOpen(true)
         return updatedEntries;
       });
     }
@@ -200,7 +219,8 @@ const Dashboard = () => {
         <div className="content-section">
           {/* Infofeld für Gesamtspenden */}
           <div className="stats-section">
-            <StatsChart totalDonations={entries.reduce((sum, entry) => sum + parseFloat(entry.donation || 0), 0)} />
+            {/* <StatsChart totalDonations={entries.reduce((sum, entry) => sum + parseFloat(entry.donation || 0), 0)} /> */}
+            <StatsChart totalDonations={userData.totalDonations} totalKilometer={userData.totalKilometer} entries={entries}/>
             {/* <StatsChart totalDonations={totalDonations} /> */}
           </div>
 
@@ -215,6 +235,7 @@ const Dashboard = () => {
               }}
               // handleDeleteEntry={(id) => setEntries(entries.filter((entry) => entry.id !== id))}
               handleDeleteEntry={handleDeleteEntry}
+              iduser={userid}
             />
           </div>
         </div>
@@ -226,6 +247,10 @@ const Dashboard = () => {
           onSubmit={handleModalSubmit3}
           initialData={currentEntry}
         />
+        <InfoPopUp
+          isOpen={infoPopUpdOpen}
+          onClose={() => setInfoPopUpdOpen(false)}
+          message={infoPopUpMessage} />
       </div>
     </div>
   );
