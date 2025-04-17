@@ -117,7 +117,7 @@ class Users(models.Model):
                 if (str(p.password_hash) == test):
                     print(p.password_hash, test)
                     print("No password for User")
-                    return -99
+                    return -101
                 
                 # Enter the entered password encrypt it with the salt and compare it with the pwhash from the db
                 Password_correct = CheckPassword(password, p.password_hash, p.salt)
@@ -138,24 +138,26 @@ class Users(models.Model):
                             with connection.cursor() as cursor:
                                 cursor.execute(sql, values)
                         except:
-                            return -100
+                            return -101
                         return p
                     else:
                         return -100
-                
-                elif (Password_correct == False):
+                    
+                else:
                     logintrys = logintrys + 1
                     sql = "UPDATE api_users SET logintrys = %s WHERE email = %s"
                     # Parameter
                     values = [logintrys,email]
-
+                    
                     # SQL ausführen
                     try:
                         with connection.cursor() as cursor:
                             cursor.execute(sql, values)
-                        return -100
+                        if (logintrys > 5):
+                            return -100
+                        return -101
                     except:
-                        return -100
+                        return -101
                     
         except:
             print("Error")

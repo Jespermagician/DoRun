@@ -13,6 +13,7 @@
   color: white;
 }
 
+
 /* === Modal and Popup Content === */
 .modal-content, .popup-content {
   background: #3775c5;
@@ -71,6 +72,14 @@ h3 {
   width: 100%;
   max-width: 200px;
   margin-bottom: 10px;
+  
+}
+
+.center-btns
+{
+  /* align-items: center; */
+  justify-content: space-between;
+  display: flex;
   
 }
 
@@ -170,6 +179,10 @@ h3 {
   h3 {
     font-size: 1.2em;
   }
+
+  .modal-buttons {
+    max-width: 10rem;
+  }
 }
 
 /* === Custom Toggle Button: Festbetrag / Pro KM === */
@@ -254,10 +267,14 @@ h3 {
   background: transparent;
   box-shadow: none;
 }
-.form-group > label {
-  margin-bottom: 5px;
+.form-group-black > label {
+  color: white;
+  text-align: center;
 }
 
+.form-group input{
+  max-width: 90%;
+}
 
 /* === Betrag & Toggle Button nebeneinander === */
 .form-group.horizontal {

@@ -77,7 +77,7 @@ const Dashboard = () => {
         const remainingEntries = data.entries.slice(1); 
         setEntries(() => [
           ...remainingEntries.map((entry) => ({
-              id: entry.email, 
+              // id: entry.email, 
               donation: parseFloat(entry.donation),
               firstname: entry.firstname,
               lastname: entry.lastname,
@@ -222,7 +222,7 @@ const Dashboard = () => {
               entries={entries}
               handleAddEntry={handleAddEntry}
               handleEditEntry={(entry) => {
-                const temp = {
+                const generateEntry = {
                   firstname: entry.firstname,
                   lastname: entry.lastname,
                   email: entry.email,
@@ -233,8 +233,7 @@ const Dashboard = () => {
                   FixedAmount: entry.FixedAmount,
                   DonoID: entry.donoid
                 }
-                console.log("emrty temp: ", temp);
-                setCurrentEntry(temp); // Zu bearbeitenden Eintrag setzen
+                setCurrentEntry(generateEntry); // Zu bearbeitenden Eintrag setzen
                 setModalOpen(true); // Modal öffnen
               }}
               handleDeleteEntryApi={(donId) => handleDeleteEntry(donId)}

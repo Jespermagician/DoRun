@@ -85,23 +85,33 @@ def cust_login(request):
         data = json.loads(request.body)
         username = data.get('email')
         password = data.get('password')
+        status = 200
+        
 
         # Versuche den Benutzer anzumelden
         user = Users.LoginUser(username,password)
+        # -99 = no pwd
+        # -100 = to many dries
+        # -101 = another error
         
         #Controlls messages
         try:
             if (user.verified == False):
+                status = 400
                 message = "Der User ist noch nicht verifiziert!"
             elif (user.verified == True):
                 message = "Login erfolgreich"
             else:
                 message = "Login nicht erfolgreich"
         except:
+            print("user")
+            print(user)
             if (user == -99):
                 return JsonResponse(status=200, data={"userid": -99,"UserIsAuth": False, 'message': 'Login nicht erfolgreich', "Role": False})
             elif (user == -100):
+                status=400
                 message = "Zu viele Fehlversuche. Benutzer wurde gesperrt!"
+                return JsonResponse({'message': message}, status=401)
             else:
                 message = "Unbekannter User"
         
@@ -128,7 +138,7 @@ def cust_login(request):
                 "Role": user.roleid,
             }
             messages.success(request, 'Erfolgreich eingeloggt!')
-            return JsonResponse(data=User_Data, status=200)   # Nach erfolgreichem Login weiterleiten (zu einer Seite namens "home")
+            return JsonResponse(data=User_Data, status=status)   # Nach erfolgreichem Login weiterleiten (zu einer Seite namens "home")
         else:
             # Fehlgeschlagene anmeldung
             # Setzt für die session die anmeldung auf false(Verwendung um Seiten für nicht Nutzer zu blockieren)
@@ -228,7 +238,7 @@ def UpdateDonations(request):
         FixedAmount = entry.get("FixedAmount")
         frontendDomain = entry.get("frontendDomain")
 
-        if FixedAmount == "true":
+        if FixedAmount == "true" or FixedAmount == True:
             FixedAmount = True
         else:
             FixedAmount = False
@@ -466,6 +476,7 @@ def generate_pwd(request):
 
         # Store updated hash and salt
         user.salt, user.password_hash = convertSaltAndHash(salt, new_pwd_hash)
+        user.logintrys = 0
         user.save()
 
         return JsonResponse({"new": new_pwd}, status=200)

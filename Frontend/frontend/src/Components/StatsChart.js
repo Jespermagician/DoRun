@@ -1,41 +1,23 @@
-import React from "react";
+import React, { useMemo } from "react";
 import "./StatsChart.css";
 
+
 const StatsChart = ({ totalDonations, totalKilometer, entries }) => {
-  const calcTotalMoneyPerKm = () => {
-    let rate = 0;
-    entries.forEach((entry) => {
-      if (!entry.FixedAmount && entry.verified) {
-        rate += entry.donation;
-      }
-    })
-    return rate ? parseFloat(rate.toFixed(2)) : 0;
-};
-const calcTotalMoneyFixxed = () => {
-  let rate = 0;
-  entries.forEach((entry) => {
-    if (entry.FixedAmount && entry.verified) {
-      rate += entry.donation;
-    }
-  });
-  // Rundung auf zwei Nachkommastellen
-  return rate ? parseFloat(rate.toFixed(2)) : 0;
-};
+
   return (
     <div>
-      <h3 className="donation-Header">Gesamtspenden</h3>
+      <h3 className="donation-Header">Gesamtspenden / Kilometer</h3>
       <div className="stats-display">
         <div className="donations-amount">
-          <span>{totalDonations ? totalDonations : 0} €</span> 
-          <span> {totalKilometer ? totalKilometer : 0} km</span> 
-          <hr/>
-          {entries && <span> {calcTotalMoneyPerKm()} € pro KM</span>}
-          <hr/>
-          {entries && <span> {calcTotalMoneyFixxed()} € ab 1 km</span>}
-       </div>
+          <span>{(totalDonations ?? 0).toFixed(2)} €</span>
+          <br/>
+          <span>{(totalKilometer ?? 0).toFixed(2)} km</span>
+        </div>
       </div>
     </div>
-  )
+  );
+  
 };
+
 
 export default StatsChart;
