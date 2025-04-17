@@ -7,6 +7,7 @@ import UserList from '../Components/UserList';
 import AdminInfos from "../Components/AdminInfos";
 import { getCsrfToken } from "../utils/csrf"; // Function for csrf
 import { getBackEndDomain } from "../utils/backend-domain";
+import ChoicePopUp from "../Components/ChoicePopUp";
 
 const Admin = () => {
   const [entries, setEntries] = useState([]);
@@ -19,6 +20,7 @@ const Admin = () => {
   const [user, setUser] = useState({});
   const [roleid, setRoleid] = useState({});
   const [kilometers, setKilometers] = useState({});
+  const [choicePopUpData, setchoicePopUpData] = useState({isopen: false, message: ""})
 
   let isFetched = false;
   var userid = localStorage.getItem("DoRunUserid");
@@ -127,6 +129,9 @@ const Admin = () => {
     }
   };
 
+  const handleSendMailsInit = () => {
+    setchoicePopUpData({isopen: true, message: "Wollen Sie wirklich allen Läufern und Sponsoren eine Infomail schicken um den Lauf zu beenden?"})
+  }
   const handleSendMails = () => {
     handleUserMails();
     handleDonatorMails();
@@ -168,7 +173,7 @@ const Admin = () => {
         <button className="logout-btn" onClick={handleLogOut}>
           {<FaDoorOpen/>}  Logout
         </button>
-        <button className="sendmails-btn " onClick={handleSendMails}>
+        <button className="sendmails-btn " onClick={handleSendMailsInit}>
           {<FaMailBulk/>} Send Donation Request
         </button>
         <button className="goto-record-btn sendmails-btn " onClick={() => navigate("/km-record")}>
@@ -199,6 +204,16 @@ const Admin = () => {
           </div>
         </div>
       </div>
+      <ChoicePopUp
+        isOpen={choicePopUpData.isopen}
+        message={choicePopUpData.message}
+        onClose={(choice) => {
+          setchoicePopUpData({istopen: false, message: ""})
+          if(choice) {
+            handleSendMails();
+          }
+        }}
+        />
     </div>
   );
 };

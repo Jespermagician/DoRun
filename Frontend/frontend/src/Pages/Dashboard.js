@@ -22,7 +22,7 @@ const Dashboard = () => {
   const [error, setError] = useState(null); // State für Fehler
   const [user, setUser] = useState({});
   const [userData, setUserData] = useState({});
-  // const [totalDonations, setTotalDonations] = useState(Number);
+  const [totalDonations, setTotalDonations] = useState(Number);
   const [donoid, setDonoid] = useState(null);
   const [infoPopUpdOpen, setInfoPopUpdOpen] = useState(false); // State für Info-Feld
   const [infoPopUpMessage, setInfoPopUpMessage] = useState(""); // State für Info-Feld-Nachricht
@@ -67,6 +67,8 @@ const Dashboard = () => {
         throw new Error("Fehler beim erhalten der User Daten!");
       }
       // alert(data.entries[0].UserFirstname);
+      data.entries[0].TotalKilometers = parseInt(data.entries[0].TotalKilometers)
+      data.entries[0].TotalDonations = parseFloat(data.entries[0].TotalDonations)
       setUserData(data.entries[0]);
       setUser({name:(data.entries[0].UserFirstname + " " + data.entries[0].UserLastname), email:data.entries[0].UserEmail});
       // setTotalDonations(data.totalDonations);
@@ -212,7 +214,7 @@ const Dashboard = () => {
           {/* Infofeld für Gesamtspenden */}
           <div className="stats-section">
             {/* <StatsChart totalDonations={entries.reduce((sum, entry) => sum + parseFloat(entry.donation || 0), 0)} /> */}
-            <StatsChart totalDonations={userData.totalDonations} totalKilometer={userData.totalKilometer} entries={entries}/>
+            <StatsChart totalDonations={userData.TotalDonations} totalKilometer={userData.TotalKilometers} entries={entries}/>
             {/* <StatsChart totalDonations={totalDonations} /> */}
           </div>
 

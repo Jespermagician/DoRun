@@ -43,7 +43,7 @@ class Users(models.Model):
                 double = True
         except:
             double = False
-        print(double)
+        print("double " + str(double))
         try:
             if (double == False):
                 #Get current highest iduser
@@ -59,7 +59,7 @@ class Users(models.Model):
                         UserID = UserID + 1
                     elif (p.iduser == None):
                         UserID = 1
-                print(test)
+                print("test " + str(test))
                 
         except:
             print("Unexpected error ocurred!")
@@ -80,6 +80,8 @@ class Users(models.Model):
         
         NewUser = None
         #Creat new DB entry if values are filled    
+        print("UserID")
+        print(UserID)
         if (UserID != None and first_name != None and last_name != None and email != None and Password_hash != None and Salt != None and CreatedAt != None and RoleID != None):
             print("Creating new User with ID: " + str(UserID))
             NewUser = Users.objects.create(
