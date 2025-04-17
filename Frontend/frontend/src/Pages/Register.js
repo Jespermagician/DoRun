@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useRoutes } from "react-router-dom";
 import "./Login.css"; // CSS-Datei für das Styling und Slide-Effekt
 import { getCsrfToken } from "../utils/csrf"; // Function for csrf
 import { getBackEndDomain } from "../utils/backend-domain";
+import InfoPopUp from "../Components/infoPopUp";
+
 
 function Register() {
   const [firstname, setFirstName] = useState("");
@@ -11,7 +13,9 @@ function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [infoPopUp, setInfoPopUp] = useState({isopen: false, message: ""})
   const navigate = useNavigate();
+
 
   // Beispiel für Handling mit API Backend Aufruf
   const handleLogin = () => {
@@ -60,8 +64,8 @@ function Register() {
       }
 
       // Weiterleitung zum Dashboard
-      navigate("/");
-      alert("Email zu Verifizierung wurde an " + email + " gesendet");
+
+      setInfoPopUp({isopen: true, message: `E-Mail zur Verifizierung wurde an ${email} gesendet. Diese muss vor der Anmeldung bestätigt werden!`})
     } catch (error) {
       setError(error.message);
     }
@@ -142,6 +146,14 @@ function Register() {
           </form>
         </div>
       </div>
+        <InfoPopUp
+          isOpen={infoPopUp.isopen}
+          message={infoPopUp.message}
+          onClose={() => {
+            setInfoPopUp({isopen: false, message: ""})
+            navigate("/");
+          }}
+          />
     </div>
   );
 }

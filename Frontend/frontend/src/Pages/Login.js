@@ -39,6 +39,7 @@ function Login() {
       const data = await response.json();
       if (!response.ok) {
         // throw new Error(data.message || "Fehler bei der Anmeldung");
+        setError(data.message);
         throw new Error(data.message);
       }
       else if (data.userid===-99) {

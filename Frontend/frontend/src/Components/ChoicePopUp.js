@@ -12,8 +12,10 @@ const ChoicePopUp = ({ isOpen, onClose, message }) => {
     <div className="modal-overlay">
       <div className="popup-content">
         <h3>{message}</h3>
-        <button className="modal-buttons btn-left" onClick={() => handle(true)}>OK!</button>
-        <button className="modal-buttons btn-right" onClick={() => handle(false)}>Abbrechen</button>
+        <div className='center-btns'>
+          <button className="modal-buttons btn-left" onClick={() => handle(true)}>OK!</button> /
+          <button className="modal-buttons btn-right" onClick={() => handle(false)}>Abbrechen</button>
+        </div>
       </div>
     </div>
   );

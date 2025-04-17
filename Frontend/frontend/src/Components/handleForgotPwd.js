@@ -51,7 +51,7 @@ const HandleForgotPwd = ({ isOpen, onClose }) => {
         <h3>Geben Sie ihre E-Mail an um Ihr Passwort zu ändern!</h3>
         {error && <p className="error">{error}</p>}
         {success && <p className="success">{success}</p>}
-        <form onSubmit={handleMailSubmit}>
+        <form className='form-group-black' onSubmit={handleMailSubmit}>
           <label>
             E-Mail-Adresse: 
             <input
@@ -64,13 +64,9 @@ const HandleForgotPwd = ({ isOpen, onClose }) => {
             />
           </label>
           {message && <p className="message">{message}</p>} {/* Conditionally render the message */}
-          <div className='layout-buttons'>
-            <div className="modal-buttons btn-left">
-              <button type="submit">Senden</button>
-            </div>
-            <div className="modal-buttons btn-right">
-              <button onClick={onClose}>Abbrechen</button>
-            </div>
+          <div className='center-btns'>
+              <button className="modal-buttons btn-left" type="submit">Senden</button>
+              <button className="modal-buttons btn-right" onClick={onClose}>Abbrechen</button>
           </div>
         </form>
       </div>

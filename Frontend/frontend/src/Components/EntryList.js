@@ -1,7 +1,8 @@
-import React, { useState, useEffect }  from "react";
+import React, { useState, useEffect, useMemo }  from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { FaEdit, FaTrash} from "react-icons/fa";
 import { MdMailOutline } from "react-icons/md";
+import { IoRefreshOutline } from "react-icons/io5";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import { getCsrfToken } from "../utils/csrf";
 import "./EntryList.css";
@@ -57,19 +58,39 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntryApi, handleAddEn
   };
   const isVerified = (verified) => {return verified ? "green-left" : "red-left"};
 
+  const totalPerKm = useMemo(() => {
+    let rate = 0;
+    entries.forEach((entry) => {
+      if (!entry.FixedAmount && entry.verified) {
+        rate += entry.donation;
+      }
+    });
+    return parseFloat(rate.toFixed(2)) || 0;
+  }, [entries]);
+
+  const totalFixed = useMemo(() => {
+    let rate = 0;
+    entries.forEach((entry) => {
+      if (entry.FixedAmount && entry.verified) {
+        rate += entry.donation;
+      }
+    });
+    return parseFloat(rate.toFixed(2)) || 0;
+  }, [entries]);
+
   return (
     <div className="entry-list-container">
       <h3>Spendeneinträge</h3>
       <li className="entry-info">
-            <div className="entry-details">
-              <span className="span-indent">ID</span>
-              <span className="span-indent">Name</span>
-              <span className="span-indent">Mail</span>
-              <span className="span-indent">Spende</span>
-              <span className="span-indent"> Spendenart</span>
-              <span className="span-indent">Verifiziert</span>
-            </div>
-        </li>
+        <div className="entry-details">
+          <span className="span-indent">Name</span>
+          <span className="span-indent">Mail</span>
+          <span className="span-indent">Spende</span>
+          <span className="span-indent">Spendenart</span>
+          <span className="span-indent">Verifiziert</span>
+        </div>
+      </li>
+
       <PerfectScrollbar>
         <ul className="entry-list">
           {entries.length === 0 ? (
@@ -78,12 +99,12 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntryApi, handleAddEn
             </li>
           ) : (
             entries.map((entry) => (
-              <li key={entry.id} className={`entry-item ${isVerified(entry.verified)}`}>
+              <li key={entry.donoid} className={`entry-item ${isVerified(entry.verified)}`}>
                 <div className="entry-details">
-                  <span className="span-indent">{entry.donoid}</span>
+                  {/* <span className="span-indent">{entry.donoid}</span> */}
                   <span className="span-indent">{entry.firstname} {entry.lastname}</span>
                   <span className="span-indent">{entry.email}</span>
-                  <span className="span-indent">{entry.donation} €</span>
+                  <span className="span-indent">{entry.donation.toFixed(2) ?? 0} €</span>
                   <span className="span-indent">{entry.FixedAmount? "Festbetrag" : "Pro Kilometer"}</span>
                   <span className="span-indent">{entry.verified? "Ja": "Nein"}</span>
                 </div>
@@ -101,6 +122,12 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntryApi, handleAddEn
           )}
         </ul>
       </PerfectScrollbar>
+      <li className="entry-info">
+        <div className="entry-details">
+          <span className="span-indent">Festbetrag Insgesamt: {totalFixed.toFixed(2)} €</span>
+          <span className="span-indent">Pro KM Insgesamt: {totalPerKm.toFixed(2)} €</span>
+        </div>
+      </li>
       {/* Der Button bleibt immer sichtbar */}
       <button className="add-entry-btn" onClick={handleAddEntry}>
         Neuen Eintrag hinzufügen
