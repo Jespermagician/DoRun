@@ -259,13 +259,14 @@ class donationrecord(models.Model):
         
         try:
             for row in UserEntrys:
-                #Calculate total Donations 
-                if (row.fixedamount == True):
-                    # only add up the fixed dons if the user has atleast on km
-                    if (kilometers > 0):
-                        TotalDonations += row.donation
-                else:
-                    TotalDonations += (row.donation * kilometers)
+                if row.verified == True:
+                    #Calculate total Donations 
+                    if (row.fixedamount == True):
+                        # only add up the fixed dons if the user has atleast on km
+                        if (kilometers > 0):
+                            TotalDonations += row.donation
+                    else:
+                        TotalDonations += (row.donation * kilometers)
             
         except:
             print("Can't calculate without data")
