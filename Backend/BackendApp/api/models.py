@@ -265,7 +265,6 @@ class donationrecord(models.Model):
                 else:
                     TotalDonations += (row.donation * kilometers)
             
-                TotalKilometers += kilometers
         except:
             print("Can't calculate without data")
         
@@ -276,7 +275,7 @@ class donationrecord(models.Model):
             "UserLastname": UserLastname,
             "UserEmail": UserEmail,
             "TotalDonations": TotalDonations,
-            "TotalKilometers": TotalKilometers})
+            "TotalKilometers": kilometers})
         
         #if (kilometers): 
             # Schleife durch die UserEntrys-Objekte
