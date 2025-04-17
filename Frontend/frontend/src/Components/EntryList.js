@@ -104,7 +104,7 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntryApi, handleAddEn
                   {/* <span className="span-indent">{entry.donoid}</span> */}
                   <span className="span-indent">{entry.firstname} {entry.lastname}</span>
                   <span className="span-indent">{entry.email}</span>
-                  <span className="span-indent">{entry.donation.toFixed(2) ?? 0} €</span>
+                  <span className="span-indent">{(entry.donation ?? 0).toFixed(2)} €</span>
                   <span className="span-indent">{entry.FixedAmount? "Festbetrag" : "Pro Kilometer"}</span>
                   <span className="span-indent">{entry.verified? "Ja": "Nein"}</span>
                 </div>
