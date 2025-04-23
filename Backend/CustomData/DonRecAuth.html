@@ -52,10 +52,10 @@
     <div class="container">
         <!-- Begrüßung  -->
         <h2>Hallo, {{ name }}</h2> 
-        <h3>Vielen Dank, dass sie sich als Spender bereit erklären!</h3>
+        <h3>Vielen Dank, dass Sie sich als Sponsor*in bereit erklären!</h3>
         <table>
             <tr>
-                <td>Läufer: </td>
+                <td>Läufer*in: </td>
                 <td>{{ RunnerName }}</td>
             </tr>
             
@@ -72,9 +72,14 @@
         
 
         <!-- Aufforderung  -->
-        <h3>Bitte verifizieren Sie, über den Knopf, ihre Spendenbereitschaft</h3>
-        <p>Sollten Sie nicht Spenden wollen oder sollte es sich um ein Missverständinis Handeln, ignorrieren sie bitte die Mail!</p>
+        <h3>Bitte verifizieren Sie, über den Knopf/Link, ihre Spendenbereitschaft!</h3>
+        
+        <p>
+            Ja, mit meiner Verifizierung als Sponsor*in über den Knopf/Link 
+            <strong>erkläre ich mich damit einverstanden</strong>, 
+            dass meine Daten zur Erstellung der Spendenbescheinigung und zum Nachvollziehen der Spendeneingänge an die Allianzmission weiter gegeben werden.</p>
         <a href="{{ link_url }}" class="button">Verifizieren</a>
+        <p style="font-size: 13px;">Sollten Sie nicht Spenden wollen oder sollte es sich um ein Missverständinis Handeln, ignorieren Sie bitte diese E-Mail!</p>
     </div>
 </body>
 </html>

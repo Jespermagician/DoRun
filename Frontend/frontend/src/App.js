@@ -7,6 +7,7 @@ import Dashboard from './Pages/Dashboard';
 import Register from './Pages/Register';
 import Admin from './Pages/Admin';
 import ProtectedRoute from "./ProtectedRoute";
+import Info from "./Pages/Info";
 
 import VerifyUser from "./Pages/auth/VerifyUser";
 import VerifyDon from "./Pages/auth/VerifyDon";
@@ -20,6 +21,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />}/>
           <Route path="/register" element={<Register />}/>
+          <Route path="/info" element={<Info />}/>
           {/* <Route path="/homeTest" element={<Dashboard />}/> */}
           {/* <Route path="/adminTest" element={<Admin />}/> */}
           <Route 

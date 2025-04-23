@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo }  from "react";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { FaEdit, FaTrash} from "react-icons/fa";
 import { MdMailOutline } from "react-icons/md";
+import { FaCircleInfo } from "react-icons/fa6";
 import { IoRefreshOutline } from "react-icons/io5";
 import "react-perfect-scrollbar/dist/css/styles.css";
 import { getCsrfToken } from "../utils/csrf";
@@ -9,6 +10,7 @@ import "./EntryList.css";
 import InfoPopUp from "../Components/infoPopUp";
 import { getBackEndDomain } from "../utils/backend-domain";
 import ChoicePopUp from "../Components/ChoicePopUp"
+import { useNavigate } from "react-router-dom";
 
 const EntryList = ({ entries, handleEditEntry, handleDeleteEntryApi, handleAddEntry, iduser }) => {
   const [cooldown, setCooldown] = useState({});
@@ -16,6 +18,7 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntryApi, handleAddEn
   const [infoPopUpMessage, setInfoPopUpMessage] = useState(""); // State für Info-Feld-Nachricht
   const [confirmDeleteOpen, setconfirmDeleteOpen] = useState(false);
   const [choosenDelEntry, setChoosenDelEntry] = useState({});
+  const navigate = useNavigate();
 
   const handleRemind = async (entry) => {
     setCooldown(prev => ({
@@ -80,7 +83,7 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntryApi, handleAddEn
 
   return (
     <div className="entry-list-container">
-      <h3>Spendeneinträge</h3>
+      <h3>Sponsoreneinträge</h3>
       <li className="entry-info">
         <div className="entry-details">
           <span className="span-indent">Name</span>
@@ -128,10 +131,15 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntryApi, handleAddEn
           <span className="span-indent">Pro KM Insgesamt: {totalPerKm.toFixed(2)} €</span>
         </div>
       </li>
-      {/* Der Button bleibt immer sichtbar */}
-      <button className="add-entry-btn" onClick={handleAddEntry}>
-        Neuen Eintrag hinzufügen
-      </button>
+      <div className="button-format-dash">
+        {/* Der Button bleibt immer sichtbar */}
+        <button className="add-entry-btn" onClick={handleAddEntry}>
+          Neuen Eintrag hinzufügen
+        </button>
+        <button className="extra-info-btn" onClick={() => navigate("/info")}>
+          <FaCircleInfo />
+        </button>
+      </div>
       <InfoPopUp
       isOpen={infoPopUpdOpen}
       onClose={() => setInfoPopUpdOpen(false)}

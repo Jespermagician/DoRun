@@ -101,6 +101,29 @@
     transition: border-color 0.3s;
   }
 
+  .check-agb {
+    display: flex;
+    align-items: center;       /* Für vertikale Ausrichtung */
+    gap: 0.5rem;               /* Abstand zwischen Checkbox und Text */
+    height: auto;
+    margin: -4px 0px 5px;
+  }
+  
+  .check-agb input {
+    width: auto;
+    height: auto;
+    padding: 1px;
+  }
+  
+  .check-agb label {
+    font-size: 12px;
+    color: black;
+    margin: 5px 0;
+    cursor: pointer;
+  }
+  
+  
+
   .login-input {
     width: 100%;
     padding: 10px;

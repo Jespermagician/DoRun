@@ -237,6 +237,7 @@ def UpdateDonations(request):
         DonoAmount = entry.get("DonoAmount")
         FixedAmount = entry.get("FixedAmount")
         frontendDomain = entry.get("frontendDomain")
+        isCertReq = entry.get("iscertreq")
 
         if FixedAmount == "true" or FixedAmount == True:
             FixedAmount = True
@@ -268,7 +269,8 @@ def UpdateDonations(request):
                                               donation = float(DonoAmount),
                                               fixedamount = bool(FixedAmount),
                                             #   createdat = CreatedAt,
-                                              verified = False)
+                                              verified = False,
+                                              iscertreq = isCertReq)
                 # donationrecord.add(newDonRec)
                 print("tessdfsdf")
                 newDonRec.save()
@@ -292,6 +294,7 @@ def UpdateDonations(request):
                 donRec.donation = DonoAmount or donRec.donation
                 donRec.fixedamount = FixedAmount if FixedAmount is not None else donRec.fixedamount
                 donRec.verified = False  # Mark as unverified after any update
+                donRec.iscertreq = isCertReq
                 donRec.save()
 
             except Exception as e:
