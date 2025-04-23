@@ -90,7 +90,8 @@ const Dashboard = () => {
               createdat: entry.createdat,
               housenr: entry.housenr,
               street: entry.street,
-              postcode: entry.postcode
+              postcode: entry.postcode,
+              iscertreq: entry.iscertreq
             })),
           ]);
           console.log("Entries: ", entries);
@@ -224,6 +225,7 @@ const Dashboard = () => {
               entries={entries}
               handleAddEntry={handleAddEntry}
               handleEditEntry={(entry) => {
+                console.log(entry.iscertreq)
                 const generateEntry = {
                   firstname: entry.firstname,
                   lastname: entry.lastname,
@@ -233,7 +235,8 @@ const Dashboard = () => {
                   Plz: entry.postcode,
                   DonoAmount: entry.donation,
                   FixedAmount: entry.FixedAmount,
-                  DonoID: entry.donoid
+                  DonoID: entry.donoid,
+                  iscertreq: entry.iscertreq,
                 }
                 setCurrentEntry(generateEntry); // Zu bearbeitenden Eintrag setzen
                 setModalOpen(true); // Modal öffnen

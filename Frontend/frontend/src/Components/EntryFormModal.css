@@ -159,6 +159,32 @@ h3 {
   margin-left: 1rem;
 }
 
+.check-don-cert {
+  display: flex;
+  align-items: center;       /* Für vertikale Ausrichtung */
+  gap: 0.5rem;               /* Abstand zwischen Checkbox und Text */
+  height: auto;
+  margin: 8px 5px 5px;
+  text-align: left;
+  
+}
+
+.check-don-cert input {
+  width: auto;
+  height: auto;
+  padding: 1px;
+}
+
+.check-don-cert label {
+  text-shadow: none;
+  font-weight: bold;
+  font-size: 17px;
+  color: white;
+  margin: 5px 0;
+  cursor: pointer;
+}
+  
+
 /* === Responsive Layout === */
 @media (max-width: 768px) {
   .modal-content, .popup-content {

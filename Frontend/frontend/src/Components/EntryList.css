@@ -103,6 +103,26 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.button-format-dash {
+  justify-content: left;
+  display: flex;
+}
+
+.extra-info-btn {
+  width: 3rem;
+  display: block;
+  margin-left: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  background-color: #3367b6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .add-entry-btn:hover {

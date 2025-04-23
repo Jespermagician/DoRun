@@ -14,6 +14,7 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [infoPopUp, setInfoPopUp] = useState({isopen: false, message: ""})
+  const [is_agb_accepted, setIs_agb_accepted] = useState(false)
   const navigate = useNavigate();
 
 
@@ -27,6 +28,10 @@ function Register() {
     e.preventDefault();
     if (email === "" || password === "" || confirmPassword === "") {
       setError("Bitte alle Felder ausfüllen.");
+      return;
+    }
+    if(is_agb_accepted == false) {
+      setError("Aktzeptiere bitte die AGB")
       return;
     }
     if (password !== confirmPassword) {
@@ -138,6 +143,14 @@ function Register() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
+            </div>
+            <div className="check-agb"> 
+              <input type="checkbox" id="agb-check"  
+                checked={is_agb_accepted}
+                onChange={(e) => setIs_agb_accepted(e.target.checked)}
+                required
+              />
+              <label htmlFor="agb-check">Akzeptieren Sie bitte die AGBs!</label>
             </div>
             <button type="submit">Registrieren</button>
             <p className="switch-text">

@@ -236,6 +236,7 @@ class donationrecord(models.Model):
     fixedamount = models.BooleanField(null=True)
     createdat = models.DateTimeField(auto_now_add=True, null=False)
     verified = models.BooleanField(null=True)
+    iscertreq = models.BooleanField(null=False)
     
     def GetUserStats(Userid):
         #Get Userdata for Welcome Screen 
@@ -296,6 +297,7 @@ class donationrecord(models.Model):
                 "createdat": date.today(),
                 "verified": obj.verified,
                 "Kilometer": kilometers,
+                "iscertreq": obj.iscertreq,
                 })
 
         #return JSON 
