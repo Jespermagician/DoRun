@@ -29,7 +29,7 @@ def sendUserVerifyMail(request, UserID, frontendDomain):
     # Absendung der Mail initiieren
     mail.SendMail(
         pReceiver=user.email, 
-        pSubject="Anmeldung Spendenlauf", 
+        pSubject="Läuferanmeldung Spendenlauf | Hungerlauf 2025", # hier später vars einfügen welche sich durch eine config ändern lassen global 
         pMailText=views.UserAuth(request=request, UserID=UserID, user=user, frontendDomain=frontendDomain), 
         # pAttachement=""
         )
@@ -48,7 +48,7 @@ def sendDonationVerifyMail(request, UserID, DonationId, frontendDomain):
     # Absendung der Mail initiieren
     mail.SendMail(
         pReceiver=donRec.email, 
-        pSubject=f"Sponsoranmeldung für {user.lastname}, {user.firstname}", 
+        pSubject=f"Sponsorenanmeldung für {user.lastname}, {user.firstname} | Hungerlauf 2025", 
         # pIsAttachement=False, 
         pMailText=views.DonRecAuth(request=request, UserID=UserID, user=user, DonRecID=DonationId,DonRec=donRec, frontendDomain=frontendDomain), 
         # pAttachement=""

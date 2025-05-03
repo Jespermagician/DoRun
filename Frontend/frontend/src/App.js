@@ -8,12 +8,14 @@ import Register from './Pages/Register';
 import Admin from './Pages/Admin';
 import ProtectedRoute from "./ProtectedRoute";
 import Info from "./Pages/Info";
-
+import Impressum from "./Pages/impressum";
 import VerifyUser from "./Pages/auth/VerifyUser";
 import VerifyDon from "./Pages/auth/VerifyDon";
 import GenerateNewPwd from "./Pages/auth/GenerateNewPwd";
 import KmRecord from "./Pages/kmRecord";
 import UserSettings from "./Pages/userSettings";
+import DataSec from "./Pages/datasec";
+
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
           <Route path="/" element={<Login />}/>
           <Route path="/register" element={<Register />}/>
           <Route path="/info" element={<Info />}/>
+          <Route path="/impressum" element={<Impressum />}/>
+          <Route path="/datenschutz" element={<DataSec />}/>
           {/* <Route path="/homeTest" element={<Dashboard />}/> */}
           {/* <Route path="/adminTest" element={<Admin />}/> */}
           <Route 
