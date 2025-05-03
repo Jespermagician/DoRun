@@ -98,7 +98,7 @@ def cust_login(request):
         try:
             if (user.verified == False):
                 status = 400
-                message = "Der User ist noch nicht verifiziert!"
+                message = "Der User ist noch nicht verifiziert! Bitte überprüfen Sie Ihre E-Mails. Oder ändern Sie Ihr Passwort!"
             elif (user.verified == True):
                 message = "Login erfolgreich"
             else:
@@ -110,7 +110,7 @@ def cust_login(request):
                 return JsonResponse(status=200, data={"userid": -99,"UserIsAuth": False, 'message': 'Login nicht erfolgreich', "Role": False})
             elif (user == -100):
                 status=400
-                message = "Zu viele Fehlversuche. Benutzer wurde gesperrt!"
+                message = "Zu viele Fehlversuche. Benutzer wurde gesperrt! Passwort zurücksetzen!"
                 return JsonResponse({'message': message}, status=401)
             else:
                 message = "Unbekannter User"

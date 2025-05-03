@@ -29,7 +29,7 @@
   }
 
   .container.login-mode {
-    height: 400px;
+    height: 430px;
   }
 
   .container.register-mode {
@@ -121,6 +121,19 @@
     margin: 5px 0;
     cursor: pointer;
   }
+
+  .agb-link:link {
+    color: #0055aa;
+    }
+  .agb-link:hover {
+    color: rgb(41, 219, 74);
+  }
+  .agb-link:visited {
+    color: #0055aa;
+  }
+  .agb-link:active {
+    color: #0055aa;
+  }
   
   
 
@@ -144,6 +157,20 @@
     text-align: center;
     margin-bottom: 15px;
   }
+
+  .impressum-login {
+    color: black;
+    text-align: center;
+    font-size: small;
+    margin: 0px;
+  }
+  .impressum-login-link:hover  {
+    cursor: pointer;
+    text-decoration: underline; /* Unterstreichen beim Hover */
+    color: #272424af; /* Farbe ändern beim Hover */
+    transition: color 0.3s ease; /* Für sanfte Übergänge */
+  }
+  
   
   button {
     width: 100%;
@@ -214,12 +241,13 @@
   }
 
   .container.login-mode {
-    height: 380px;
+    height: 400px;
   }
 
   .container.register-mode {
     height: 100%;
   }
+  
   
   .form-container {
     display: flex;
@@ -239,6 +267,8 @@
     width: 50%;
     padding: 40px;
     margin: 0;
+    /* margin-bottom: 40px;
+    padding-bottom: 60px; */
     box-sizing: border-box;
     transition: opacity 0.3s ease;
   }
@@ -350,5 +380,9 @@
     color: cornflowerblue;
     cursor: pointer;
     text-decoration: underline;
+  }
+
+  .impressum-login {
+    margin: 10px;
   }
 }

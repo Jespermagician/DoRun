@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,11 +42,18 @@
 </head>
 <body>
     <div class="container">
+        
+
         {% comment %} Begrüßung {% endcomment %}
+        {% comment %} Begrüßung {% endcomment %}
+
         <h2>Vielen Dank für die Anmeldung {{ name }}</h2> 
+        <p>Die Anmeldung gilt für bereitgestellte Software und ist nicht verbindlich für den Spendenlauf.</p> 
         {% comment %} Aufforderung {% endcomment %}
-        <p>Bitte verifizieren Sie Ihre Anmeldung.</p>
+        <p>Bitte verifizieren Sie Ihre Anmeldung, um das Nutzerkonto Nutzen zu können.</p>
         <a href="{{ link_url }}" class="button">Verifizieren</a>
+        <br />
+        <p>Weitere Informationen finden Sie hier: <a href="https://www.evangelischegemeinschaftluetzel.de/unser-hungerlauf/">Infos Hungerlauf</a></p>
     </div>
 </body>
 </html>

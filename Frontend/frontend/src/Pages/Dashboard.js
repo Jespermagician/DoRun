@@ -198,74 +198,84 @@ const Dashboard = () => {
   };
 
   return (
-    <div>
-      <div>
-        <button className="logout-btn" onClick={handleLogOut}>
-          {<FaDoorOpen/>}  Logout
-        </button>
-        <button className="sendmails-btn " onClick={openSettings}>
-          {<CiSettings/>} 
-        </button>
-      </div>
-      <div className="dashboard-container">
-        <div>
-          <InfoField user={user}/>
-        </div>
-        <div className="content-section">
-          {/* Infofeld für Gesamtspenden */}
-          <div className="stats-section">
-            {/* <StatsChart totalDonations={entries.reduce((sum, entry) => sum + parseFloat(entry.donation || 0), 0)} /> */}
-            <StatsChart totalDonations={userData.TotalDonations} totalKilometer={userData.TotalKilometers} entries={entries}/>
-            {/* <StatsChart totalDonations={totalDonations} /> */}
+    <>
+      <div className="dashboard-wrapper-outer-outer">
+        <div className="dashboard-wrapper-outer">
+          <div>
+            <button className="logout-btn" onClick={handleLogOut}>
+              {<FaDoorOpen/>}  Logout
+            </button>
+            <button className="sendmails-btn " onClick={openSettings}>
+              {<CiSettings/>} 
+            </button>
           </div>
+          <div className="dashboard-container">
+            <div>
+              <InfoField user={user}/>
+            </div>
+            <div className="content-section">
+              {/* Infofeld für Gesamtspenden */}
+              <div className="stats-section">
+                {/* <StatsChart totalDonations={entries.reduce((sum, entry) => sum + parseFloat(entry.donation || 0), 0)} /> */}
+                <StatsChart totalDonations={userData.TotalDonations} totalKilometer={userData.TotalKilometers} entries={entries}/>
+                {/* <StatsChart totalDonations={totalDonations} /> */}
+              </div>
 
-          {/* Eintragsliste */}
-          <div className="entry-list-section">
-            <EntryList
-              entries={entries}
-              handleAddEntry={handleAddEntry}
-              handleEditEntry={(entry) => {
-                console.log(entry.iscertreq)
-                const generateEntry = {
-                  firstname: entry.firstname,
-                  lastname: entry.lastname,
-                  email: entry.email,
-                  street: entry.street,
-                  houseNr: entry.housenr,
-                  Plz: entry.postcode,
-                  DonoAmount: entry.donation,
-                  FixedAmount: entry.FixedAmount,
-                  DonoID: entry.donoid,
-                  iscertreq: entry.iscertreq,
-                }
-                setCurrentEntry(generateEntry); // Zu bearbeitenden Eintrag setzen
-                setModalOpen(true); // Modal öffnen
+              {/* Eintragsliste */}
+              <div className="entry-list-section">
+                <EntryList
+                  entries={entries}
+                  handleAddEntry={handleAddEntry}
+                  handleEditEntry={(entry) => {
+                    console.log(entry.iscertreq)
+                    const generateEntry = {
+                      firstname: entry.firstname,
+                      lastname: entry.lastname,
+                      email: entry.email,
+                      street: entry.street,
+                      houseNr: entry.housenr,
+                      Plz: entry.postcode,
+                      DonoAmount: entry.donation,
+                      FixedAmount: entry.FixedAmount,
+                      DonoID: entry.donoid,
+                      iscertreq: entry.iscertreq,
+                    }
+                    setCurrentEntry(generateEntry); // Zu bearbeitenden Eintrag setzen
+                    setModalOpen(true); // Modal öffnen
+                  }}
+                  handleDeleteEntryApi={(donId) => handleDeleteEntry(donId)}
+                  iduser={userid}
+                />
+              </div>
+            </div>
+            
+            
+            {/* Formular Modal zum Bearbeiten/Hinzufügen von Einträgen */}
+            <EntryFormModal
+              isOpen={modalOpen}
+              onClose={() => setModalOpen(false)}
+              onSubmit={(_newEntry) => {
+                console.log("_newEntry")
+                console.log(_newEntry)
+                handleModalSubmit(_newEntry)
               }}
-              handleDeleteEntryApi={(donId) => handleDeleteEntry(donId)}
-              iduser={userid}
+              initialData={currentEntry}
             />
+            <InfoPopUp
+              isOpen={infoPopUpdOpen}
+              onClose={() => {
+                setInfoPopUpdOpen(false)}
+              }
+              message={infoPopUpMessage} />
+          </div>
+          <div className="impressum">
+            <a className="impressum-link" title="impressum" onClick={() => navigate("/impressum")}>Impressum</a>
+              &nbsp;|&nbsp; 
+            <a className="impressum-link" title="datenschutz" onClick={() => navigate("/datenschutz")}>Datenschutz</a>
           </div>
         </div>
-        
-        {/* Formular Modal zum Bearbeiten/Hinzufügen von Einträgen */}
-        <EntryFormModal
-          isOpen={modalOpen}
-          onClose={() => setModalOpen(false)}
-          onSubmit={(_newEntry) => {
-            console.log("_newEntry")
-            console.log(_newEntry)
-            handleModalSubmit(_newEntry)
-          }}
-          initialData={currentEntry}
-        />
-        <InfoPopUp
-          isOpen={infoPopUpdOpen}
-          onClose={() => {
-            setInfoPopUpdOpen(false)}
-          }
-          message={infoPopUpMessage} />
       </div>
-    </div>
+    </>
   );
 };
 

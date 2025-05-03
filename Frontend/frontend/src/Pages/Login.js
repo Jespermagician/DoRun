@@ -124,7 +124,13 @@ function Login() {
             <p className="switch-text">
               Noch kein Konto? <span onClick={handleRegister}>Registrieren</span>
             </p>
+            <div className="impressum-login">
+              <a className="impressum-login-link" title="impressum" onClick={() => navigate("/impressum")}>Impressum</a>
+              &nbsp;|&nbsp; 
+              <a className="impressum-login-link" title="datenschutz" onClick={() => navigate("/datenschutz")}>Datenschutz</a>
+            </div>
           </form>
+          <br/>
         </div>
       </div>
       <SetAdminPPopup
@@ -137,6 +143,7 @@ function Login() {
         isOpen={PopupForgotPwdOpen}
         onClose={() => setPopupForgotPwdOpen(false)}
         />
+      
     </div>
   );
 }

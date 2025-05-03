@@ -150,12 +150,19 @@ function Register() {
                 onChange={(e) => setIs_agb_accepted(e.target.checked)}
                 required
               />
-              <label htmlFor="agb-check">Akzeptieren Sie bitte die AGBs!</label>
+              <label htmlFor="agb-check">Akzeptieren Sie bitte die&nbsp;
+                <a className="agb-link" href="https://www.ev-jugend-westfalen.de/footer-menu-fullsize/rechtliches-infos-material-shop/agb-mit-kundeninformationen/" title="agb">AGB!</a> 
+              </label>
             </div>
             <button type="submit">Registrieren</button>
             <p className="switch-text">
               Bereits ein Konto? <span onClick={handleLogin}>Anmelden</span>
             </p>
+            <div className="impressum-login">
+              <a className="impressum-login-link" title="impressum" onClick={() => navigate("/impressum")}>Impressum</a>
+                &nbsp;|&nbsp; 
+              <a className="impressum-login-link" title="datenschutz" onClick={() => navigate("/datenschutz")}>Datenschutz</a>
+            </div>
           </form>
         </div>
       </div>
@@ -167,7 +174,7 @@ function Register() {
             navigate("/");
           }}
           />
-    </div>
+      </div>
   );
 }
 
