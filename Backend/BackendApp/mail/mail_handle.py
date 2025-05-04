@@ -286,20 +286,22 @@ def sendRunnerInfo(request):
 
 
 
-def sendForgotPwd(request, email, frontendDomain):
-    mail = MailSender()     # Connect to Mail-Server and init class 
 
-    user = get_object_or_404(Users, email=email)      # Bekomme einzelnen User anhand der ID
+def sendForgotPwd(request, email, frontendDomain):
+    mail = MailSender()  # Connect to Mail-Server and init class
+
+    # Konvertiere Email zu lowercase für case-insensitive Vergleich
+    user = get_object_or_404(Users, email__iexact=email)
 
     # Absendung der Mail initiieren
     mail.SendMail(
-        pReceiver=email, 
-        pSubject="Hungerlauf 2025 | Nutzeranmeldung", 
-        pMailText=views.ForgotPwd_MailBody(request=request, user=user, frontendDomain=frontendDomain, email=email), 
+        pReceiver=email,
+        pSubject="Hungerlauf 2025 | Nutzeranmeldung",
+        pMailText=views.ForgotPwd_MailBody(request=request, user=user, frontendDomain=frontendDomain, email=email),
         pPlainText="",
         # pAttachement=""
-        )
-    
-    mail.CloseConnection()      # Disconnect Server connection
+    )
 
-    return HttpResponse(f"Mail send to email: {email} to change pwd")          # Http-Anwtort senden
+    mail.CloseConnection()  # Disconnect Server connection
+
+    return HttpResponse(f"Mail sent to email: {email} to change pwd")
