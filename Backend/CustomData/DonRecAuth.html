@@ -1,87 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Django Daten Beispiel</title>
+    <title>Sponsoring-Bestätigung</title>
     <style>
         body {
-            background-color: #f0e68c; /*Hintergrund farbe*/
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            background-color: #f9f9f9;
             font-family: Arial, sans-serif;
-            text-align: center;
+            margin: 0;
+            padding: 20px;
+            color: #333;
         }
         .container {
             max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
         }
         h2 {
-            color: #333;
+            color: #2c3e50;
         }
-        p {
+        p, td {
             color: #555;
-            margin: 20px 0;
+            font-size: 16px;
         }
         .button {
             display: inline-block;
-            padding: 10px 20px;
-            background-color: #4caf50; /*Hintergrund farbe button */
+            margin-top: 20px;
+            padding: 12px 25px;
+            background-color: #4caf50;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 16px;
-            transition: background-color 0.3s;
         }
         .button:hover {
-            background-color: #45a049; /* Button-Farbe beim Hover */
+            background-color: #45a049;
         }
-        tr{
+        table {
+            width: 100%;
+            margin: 20px 0;
+            border-spacing: 0 10px;
+        }
+        td {
+            padding: 5px 0;
             text-align: left;
-            border-color: black;
-            border-radius: 5px;
-            td{
-                margin: 5%;   
-            }
+        }
+        small {
+            font-size: 13px;
+            color: #888;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Begrüßung  -->
-        <h2>Hallo, {{ name }}</h2> 
-        <h3>Vielen Dank, dass Sie sich als Sponsor*in bereit erklären!</h3>
+        <h1 style="color: #1e3a8a; font-size: 26px; margin-bottom: 10px;">Hungerlauf 2025</h1>
+        <h2>Hallo {{ name }},</h2>
+        <p>herzlichen Dank, dass Sie als Sponsor*in beim Hungerlauf mitwirken möchten!</p>
+
         <table>
             <tr>
-                <td>Läufer*in: </td>
+                <td><strong>Läufer*in:</strong></td>
                 <td>{{ RunnerName }}</td>
             </tr>
-            
             <tr>
                 {% if FixesDonation %}
-                    <td>FesteSpende von :</td>
+                    <td><strong>Fester Spendenbetrag:</strong></td>
                     <td>{{ Donation }} €</td>
-                {% else %}  
-                    <td>Spende pro Kilometer: </td>
-                    <td>{{ Donation }}</td>
+                {% else %}
+                    <td><strong>Spende pro Kilometer:</strong></td>
+                    <td>{{ Donation }} €</td>
                 {% endif %}
             </tr>
         </table>
-        
 
-        <!-- Aufforderung  -->
-        <h3>Bitte verifizieren Sie, über den Knopf/Link, ihre Spendenbereitschaft!</h3>
-        
-        <p>
-            "Ja, mit meiner Verifizierung als Sponsor*in über den Knopf/Link 
-            <strong>erkläre ich mich damit einverstanden</strong>, 
-            dass meine Daten zur Erstellung der Spendenbescheinigung und zum Nachvollziehen der Spendeneingänge an die Allianzmission weiter gegeben werden."</p>
-        <a href="{{ link_url }}" class="button">Verifizieren</a>
-        <p style="font-size: 13px;">Sollten Sie nicht Spenden wollen oder sollte es sich um ein Missverständinis Handeln, ignorieren Sie bitte diese E-Mail!</p>
-        <p>Weitere Informationen finden Sie hier: <a href="https://www.evangelischegemeinschaftluetzel.de/unser-hungerlauf/">Infos Hungerlauf</a></p>
-        
+        <p>Zur Bestätigung Ihrer Unterstützung klicken Sie bitte auf den folgenden Button:</p>
+        <a href="{{ link_url }}" class="button">Spende bestätigen</a>
+
+        <p style="margin-top: 30px;">
+            Mit dem Klick auf den Bestätigungslink erlauben Sie uns, Ihre Angaben zum Zweck der Spendenverwaltung an die Allianzmission weiterzugeben – ausschließlich im Rahmen dieses Projekts.
+        </p>
+
+        <small>Falls Sie diese Nachricht irrtümlich erhalten haben oder nicht spenden möchten, können Sie diese E-Mail einfach ignorieren.</small>
+
+        <p style="margin-top: 20px;">
+            Mehr Informationen zum Hungerlauf finden Sie unter:<br>
+            <a href="https://www.evangelischegemeinschaftluetzel.de/unser-hungerlauf/">evangelischegemeinschaftluetzel.de</a>
+        </p>
     </div>
 </body>
 </html>

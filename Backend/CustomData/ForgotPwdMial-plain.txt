@@ -1,0 +1,9 @@
+Kennwort zurücksetzen
+
+Sie haben angefordert, Ihr Passwort zu ändern.
+Wenn Sie auf den folgenden Link klicken, wird ein neues Passwort generiert.
+Dieses können Sie später in Ihrem Profil individuell anpassen.
+
+Wichtig: Der Link ist nur für kurze Zeit gültig!
+
+[Passwort ändern]({{ link_url }})

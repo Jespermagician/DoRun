@@ -1,0 +1,13 @@
+Hungerlauf 2025
+
+Danke für deine Anmeldung, {{ name }}!
+
+Deine Registrierung zur Software ist erfolgreich bei uns eingegangen.
+Bitte bestätige jetzt deine Anmeldung, um dein Nutzerkonto freizuschalten.
+
+[Anmeldung bestätigen]({{ link_url }})
+
+Diese Anmeldung verpflichtet noch nicht zur Teilnahme am Spendenlauf. Du kannst alle Informationen in Ruhe prüfen und dich später entscheiden.
+
+Mehr zum Hungerlauf findest du hier:
+[Infos zum Hungerlauf](https://www.evangelischegemeinschaftluetzel.de/unser-hungerlauf/)

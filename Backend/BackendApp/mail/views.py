@@ -72,7 +72,8 @@ def RenderMailText(context, template_name, request):
 def UserAuth(request, UserID: int, user, frontendDomain: str):
     
     # Path to the template file
-    template_name = "UserAuth.html"
+    template_name_html = "UserAuth.html"
+    template_name_plain = "UserAuth-plain.txt"
 
     # generate Timstamp, so the token has a ttl later
     dt_timestamp = datetime.strptime(str(datetime.now()), "%Y-%m-%d %H:%M:%S.%f")
@@ -102,13 +103,15 @@ def UserAuth(request, UserID: int, user, frontendDomain: str):
         'name': f"{user.firstname} {user.lastname}",  # User's full name
         'link_url': target_link  # Authentication link
     }
-    return RenderMailText(context, template_name, request);
+    return RenderMailText(context, template_name_html, request), RenderMailText(context, template_name_plain, request);
 
 
 def DonRecAuth(request, UserID: int, user, DonRecID: int, DonRec, frontendDomain: str):
     
     # Path to the template file
-    template_name = "DonRecAuth.html"
+    template_name_html = "DonRecAuth.html"
+    template_name_plain = "DonRec-plain.txt"
+    
 
     # Generate a token for the user. conacte both mails (otherwise the token isn`t unique)
     token = generateToken(user.salt, '-'.join(user.email + DonRec.email))
@@ -129,7 +132,7 @@ def DonRecAuth(request, UserID: int, user, DonRecID: int, DonRec, frontendDomain
         'FixesDonation': DonRec.fixedamount,  # Authentication link
         'link_url': target_link  # Authentication link
     }
-    return RenderMailText(context, template_name, request);
+    return RenderMailText(context, template_name_html, request), RenderMailText(context, template_name_plain, request);
 
 
 def ForgotPwd_MailBody(request, email, frontendDomain: str, user):
