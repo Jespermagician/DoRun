@@ -14,7 +14,6 @@ from BackendApp.settings import logger
 # please read in the doku, how to set up the mail server connection !!!!!#
 ##########################################################################
 
-
 class getServerData:
     sender_email: str
     password: str
@@ -45,14 +44,19 @@ class MailSender():
         self.Server.starttls()                                                          # Aktiviert den TLS-Schlüssel
         self.Server.login(user=self.SD.sender_email, password=self.SD.password)         # Authentifizierung
 
-    def SendMail(self, pReceiver: str, pSubject: str, pMailText: str,  pAttachement=None):
+    def SendMail(self, pReceiver: str, pSubject: str, pMailText: str, pPlainText: str, pAttachement=None):
         msg = MIMEMultipart()                               # Erstellt eine  Nachricht 
         msg['Subject'] = pSubject                           # Betreff
         msg['From'] = self.SD.sender_email                  # Absenderadresse
         msg['To'] = pReceiver                               # Empfängeradresse
-        msg.attach(MIMEText(pMailText, 'html', 'utf-8'))    # Fügt den Nachrichtentext hinzu (HTML-formatiert)
         
-        # Check if thera are Attachment set
+        # HTML-Version
+        msg.attach(MIMEText(pMailText, 'html', 'utf-8'))    # Fügt den HTML-Nachrichtentext hinzu
+        
+        # Text-Version
+        # msg.attach(MIMEText(pPlainText, 'plain', 'utf-8'))  
+        
+        # Überprüfen, ob Anhänge gesetzt sind
         if pAttachement != None:
             logger.print("There is an attachment set. But no action will follow!")
 
@@ -67,7 +71,6 @@ class MailSender():
     def CloseConnection(self):
         self.Server.quit()
         set.logger.print("Disconnected from Mail Server")
-
 
 
 ###########Create Mail Interface############

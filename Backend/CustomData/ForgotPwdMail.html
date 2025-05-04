@@ -1,62 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Django Daten Beispiel</title>
+    <title>Kennwort zurücksetzen</title>
     <style>
         body {
-            background-color: #f0e68c; /*Hintergrund farbe*/
+            background-color: #fff8dc;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px 15px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            text-align: center;
         }
         .container {
+            background-color: #ffffff;
+            padding: 30px;
             max-width: 600px;
+            width: 100%;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
         }
-        h2 {
-            color: #333;
+        h1 {
+            color: #1e3a8a;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
         p {
             color: #555;
-            margin: 20px 0;
+            font-size: 16px;
+            line-height: 1.6;
         }
         .button {
             display: inline-block;
-            padding: 10px 20px;
-            background-color: #4caf50; /*Hintergrund farbe button */
+            margin-top: 30px;
+            padding: 12px 25px;
+            background-color: #4caf50;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 16px;
             transition: background-color 0.3s;
         }
         .button:hover {
-            background-color: #45a049; /* Button-Farbe beim Hover */
-        }
-        tr{
-            text-align: left;
-            border-color: black;
-            border-radius: 5px;
-            td{
-                margin: 5%;   
-            }
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Begrüßung  -->
-        <h2>Kennwort zurücksetzen!</h2> 
-        <p>Sie haben angefordert, Ihr Passwort zu ändern</p>
-        <p>Wenn Sie folgenden Link drücken, wird Ihnen ein neues Passwort generiert. Dises können Sie in Ihren Einstellungen ändern.</p>
-        <p><b>Achtung:</b> Der Link ist nur für kurze Zeit gültig!</p>
-        
-
+        <h1>Kennwort zurücksetzen</h1>
+        <p>Sie haben angefordert, Ihr Passwort zu ändern.</p>
+        <p>Wenn Sie auf den folgenden Link klicken, wird ein neues Passwort generiert.<br>
+        Dieses können Sie später in Ihrem Profil individuell anpassen.</p>
+        <p><strong>Wichtig:</strong> Der Link ist nur für kurze Zeit gültig!</p>
         <a href="{{ link_url }}" class="button">Passwort ändern</a>
     </div>
 </body>

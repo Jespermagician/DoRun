@@ -3,57 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Django Daten Beispiel</title>
+    <title>Hungerlauf Anmeldung</title>
     <style>
         body {
-            background-color: #f0e68c; /*Hintergrund farbe*/
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            background-color: #f9f9f9;
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
             text-align: center;
         }
         .container {
             max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1e3a8a;
+            margin-bottom: 10px;
+            font-size: 26px;
         }
         h2 {
-            color: #333;
+            color: #2c3e50;
+            font-size: 22px;
         }
         p {
             color: #555;
             margin: 20px 0;
+            font-size: 16px;
         }
         .button {
             display: inline-block;
-            padding: 10px 20px;
-            background-color: #4caf50; /* Zufällige Button-Farbe (Grün) */
+            padding: 12px 25px;
+            background-color: #4caf50;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 16px;
-            transition: background-color 0.3s;
+            margin-top: 15px;
         }
         .button:hover {
-            background-color: #45a049; /* Button-Farbe beim Hover */
+            background-color: #45a049;
+        }
+        small {
+            font-size: 13px;
+            color: #888;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        
+        <h1>Hungerlauf 2025</h1>
 
-        {% comment %} Begrüßung {% endcomment %}
-        {% comment %} Begrüßung {% endcomment %}
+        <h2>Danke für deine Anmeldung, {{ name }}!</h2> 
 
-        <h2>Vielen Dank für die Anmeldung {{ name }}</h2> 
-        <p>Die Anmeldung gilt für bereitgestellte Software und ist nicht verbindlich für den Spendenlauf.</p> 
-        {% comment %} Aufforderung {% endcomment %}
-        <p>Bitte verifizieren Sie Ihre Anmeldung, um das Nutzerkonto Nutzen zu können.</p>
-        <a href="{{ link_url }}" class="button">Verifizieren</a>
-        <br />
-        <p>Weitere Informationen finden Sie hier: <a href="https://www.evangelischegemeinschaftluetzel.de/unser-hungerlauf/">Infos Hungerlauf</a></p>
+        <p>Deine Registrierung zur Software ist erfolgreich bei uns eingegangen.</p>
+        <p>Bitte bestätige jetzt deine Anmeldung, um dein Nutzerkonto freizuschalten.</p>
+
+        <a href="{{ link_url }}" class="button">Anmeldung bestätigen</a>
+
+        <p style="margin-top: 30px;">
+            <small>
+                Diese Anmeldung verpflichtet noch nicht zur Teilnahme am Spendenlauf. Du kannst alle Informationen in Ruhe prüfen und dich später entscheiden.
+            </small>
+        </p>
+
+        <p style="margin-top: 20px;">
+            Mehr zum Hungerlauf findest du hier:<br>
+            <a href="https://www.evangelischegemeinschaftluetzel.de/unser-hungerlauf/">Infos zum Hungerlauf</a>
+        </p>
     </div>
 </body>
 </html>

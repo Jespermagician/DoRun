@@ -1,130 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Django Daten Beispiel</title>
+    <title>Hungerlauf – Spendenübersicht</title>
     <style>
         body {
-            background-color: #f0e68c; /*Hintergrund farbe*/
+            background-color: #f9f9dc;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px 15px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            margin-top: 15%;
-            margin-bottom: 15%;
         }
         .container {
-            max-width: 600px;
+            background-color: #fff;
+            padding: 30px;
+            max-width: 700px;
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
         }
-        h2 {
+        h1, h2, h3, h4 {
             color: #333;
+            margin-bottom: 10px;
         }
         p {
             color: #555;
-            margin: 20px 0;
+            line-height: 1.6;
         }
         table {
-            margin-bottom: 5%;
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
         }
-        tr {
+        th, td {
             text-align: left;
-            border-color: black;
-            border-radius: 5px;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
         }
-        th {
-            padding-right: 15px;
-        }
-        td {
-            margin: 5%;   
+        .total {
+            font-weight: bold;
+            margin-top: 20px;
         }
         .button {
             display: inline-block;
-            padding: 10px 20px;
-            background-color: #4caf50; /*Hintergrund farbe button */
+            margin-top: 30px;
+            padding: 12px 20px;
+            background-color: #4caf50;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 16px;
             transition: background-color 0.3s;
         }
         .button:hover {
-            background-color: #45a049; /* Button-Farbe beim Hover */
+            background-color: #45a049;
+        }
+        hr {
+            margin: 40px 0 20px;
+            border: none;
+            border-top: 1px solid #ccc;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Begrüßung  -->
-        <h2>Hallo, {{ name }}</h2> 
-        <h3>Der Spendenlauf ist zu ende!</h3> 
-        <p>Wir sind Ihnen sehr dankbar, dass Sie als Sponsor*in teilgenommen haben!</p>
-        <p>Ihre {{ Amount }} Läufer*innen:</p> 
-        
+        <h1>Hungerlauf 2025 – Spendenübersicht</h1>
+
+        <h2>Hallo {{ name }},</h2>
+        <p>der Spendenlauf ist beendet – vielen Dank, dass Sie als Sponsor*in dabei waren!</p>
+
+        <p>Sie haben {{ Amount }} Läufer*innen unterstützt. Hier sind die Details:</p>
+
         {% for value in data %}
             <table>
-                <tr>
-                    <th>Vorname: </th>
-                    <td>{{ value.firstname }}</td>
-                </tr>
-                <tr>
-                    <th>Nachname: </th>
-                    <td>{{ value.lastname }}</td>
-                </tr>
-                <tr>
-                    <th>Gelaufene Kilometer: </th>
-                    <td>{{ value.kilometer }}</td>
-                </tr>
-                {% if value.FixedDonation%}
-                    <tr>
-                        <th>Feste Spende: </th>
-                        <td>{{ value.Donation }} €</td>
-                    </tr>
-                {%  else %}
-                <tr>
-                    <th>Spende pro Kilometer: </th>
-                    <td>{{ value.Donation }} €</td>
-                </tr>
-                {%  endif %}
-                <th>______________________</th>
-                <tr>
-                    <th>Betrag: </th>
-                    <td>{{ value.DonationTotal }} €</td>
-                </tr>
+                <tr><th>Vorname:</th><td>{{ value.firstname }}</td></tr>
+                <tr><th>Nachname:</th><td>{{ value.lastname }}</td></tr>
+                <tr><th>Gelaufene Kilometer:</th><td>{{ value.kilometer }} km</td></tr>
+                {% if value.FixedDonation %}
+                    <tr><th>Feste Spende:</th><td>{{ value.Donation }} €</td></tr>
+                {% else %}
+                    <tr><th>Spende pro Kilometer:</th><td>{{ value.Donation }} €</td></tr>
+                {% endif %}
+                <tr><th>Gesamtbetrag:</th><td><strong>{{ value.DonationTotal }} €</strong></td></tr>
             </table>
         {% endfor %}
 
-        <h4>Insgesamt: {{ Total }} €</h4>
-        <h4>Insgesamt gelaufene Kilometer: {{ TotalKilometers }} km</h4>
+        <h4 class="total">Gesamtsumme: {{ Total }} €</h4>
+        <h4 class="total">Insgesamt gelaufene Kilometer: {{ TotalKilometers }} km</h4>
 
         <hr>
-        <!-- Aufforderung  -->
-        <h3>Spendenanschrift:</h3>
+
+        <h3>Spendeninformationen</h3>
+        <p>Bitte überweisen Sie den Betrag von <strong>{{ Total }} €</strong> bis zum <em><strong>**Hier Datum einfügen**</strong></em> an:</p>
+
         <table>
-            <tr>
-                <th>IBAN: </th>
-                <td>DE02100500000054540402</td>
-            </tr>
-            <tr>
-                <th>Bank: </th>
-                <td>LANDESBANK BERLIN</td>
-            </tr>
-            <tr>
-                <th>BIC: </th>
-                <td>BELADEBE</td>
-            </tr>
+            <tr><th>IBAN:</th><td>DE02100500000054540402</td></tr>
+            <tr><th>Bank:</th><td>LANDESBANK BERLIN</td></tr>
+            <tr><th>BIC:</th><td>BELADEBE</td></tr>
         </table>
 
-        <p>Spenden Sie den Betrag von <i>{{ Total }} €</i> bitte bis zum <i>**Hier Datum einfügen**</i></p>
-        <div>
-            <p>Sollten Sie nicht Spenden können oder die Frist verfehlen melden Sie sich unter: </p>
-            <p><i>example@mail.de</i> oder bei den Spendenlauf verantworlichen</p>
-        </div>
-            
+        <p>Falls Sie die Frist nicht einhalten können oder Fragen haben, kontaktieren Sie uns bitte unter <strong>example@mail.de</strong> oder wenden Sie sich direkt an die Hungerlauf-Verantwortlichen.</p>
 
-        <a href="https://youtu.be/dQw4w9WgXcQ?si=PatBcehocbhGib2A" class="button">Mehr Informationen</a>
+        <a href="https://www.evangelischegemeinschaftluetzel.de/unser-hungerlauf/" class="button">Mehr Informationen</a>
     </div>
 </body>
 </html>

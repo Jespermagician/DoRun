@@ -26,11 +26,14 @@ def sendUserVerifyMail(request, UserID, frontendDomain):
     
     mail = MailSender()     # Connect to Mail-Server and init class 
 
+    mailtext_html, mailtext_plain = views.UserAuth(request=request, user=user, frontendDomain=frontendDomain) # HTML und Plain Text laden
+
     # Absendung der Mail initiieren
     mail.SendMail(
         pReceiver=user.email, 
-        pSubject="Läuferanmeldung Spendenlauf | Hungerlauf 2025", # hier später vars einfügen welche sich durch eine config ändern lassen global 
-        pMailText=views.UserAuth(request=request, UserID=UserID, user=user, frontendDomain=frontendDomain), 
+        pSubject="Läuferanmeldung Hungerlauf 2025", # hier später vars einfügen welche sich durch eine config ändern lassen global 
+        pMailText=mailtext_html, 
+        pPlainText=mailtext_plain,
         # pAttachement=""
         )
     
@@ -45,12 +48,14 @@ def sendDonationVerifyMail(request, UserID, DonationId, frontendDomain):
 
     mail = MailSender()      # Verbindung zum Mail-Server erstellen
 
+    mailtext_html, mailtext_plain = views.DonRecAuth(request=request, UserID=UserID, user=user, DonRecID=DonationId,DonRec=donRec, frontendDomain=frontendDomain)
     # Absendung der Mail initiieren
     mail.SendMail(
         pReceiver=donRec.email, 
-        pSubject=f"Sponsorenanmeldung für {user.lastname}, {user.firstname} | Hungerlauf 2025", 
+        pSubject=f"Hungerlauf 2025 | Regestrierung als Sponsor*in: {user.firstname}", 
         # pIsAttachement=False, 
-        pMailText=views.DonRecAuth(request=request, UserID=UserID, user=user, DonRecID=DonationId,DonRec=donRec, frontendDomain=frontendDomain), 
+        pMailText=mailtext_html,
+        pPlainText=mailtext_plain, 
         # pAttachement=""
         )
     
@@ -169,7 +174,7 @@ def sendSponsorInfo(request):
     for eMail in eMailArr:
         mail.SendMail(
             pReceiver=eMail, 
-            pSubject="Spendenlauf Spenden Informationen", 
+            pSubject="Hungerlauf 2025 | Spendenlauf Spenden Informationen", 
             # pIsAttachement=False, 
             pMailText=loadSponsorInfo(request=request, DonRecEmail=eMail, users=users),  # 
             # pAttachement=""
@@ -287,7 +292,7 @@ def sendForgotPwd(request, email, frontendDomain):
     # Absendung der Mail initiieren
     mail.SendMail(
         pReceiver=email, 
-        pSubject="Anmeldung Spendenlauf", 
+        pSubject="Hungerlauf 2025 | Nutzeranmeldung", 
         pMailText=views.ForgotPwd_MailBody(request=request, user=user, frontendDomain=frontendDomain, email=email), 
         # pAttachement=""
         )

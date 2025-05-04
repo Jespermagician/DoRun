@@ -1,110 +1,122 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Django Daten Beispiel</title>
+    <title>Spendenlauf – Zusammenfassung</title>
     <style>
         body {
-            background-color: #f0e68c; /*Hintergrund farbe*/
+            background-color: #fff8dc;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 40px 15px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            margin-top: 15%;
-            margin-bottom: 15%;
         }
         .container {
+            background-color: #ffffff;
+            padding: 30px;
             max-width: 600px;
+            width: 100%;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
         }
-        h2 {
-            color: #333;
+        h1, h2, h3, h4 {
+            color: #1e3a8a;
+            margin-bottom: 10px;
         }
         p {
             color: #555;
-            margin: 20px 0;
+            font-size: 16px;
+            line-height: 1.6;
         }
         table {
-            margin-bottom: 5%;
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
         }
-        tr {
+        th, td {
             text-align: left;
-            border-color: black;
-            border-radius: 5px;
+            padding: 8px 0;
+            color: #333;
         }
         th {
-            padding-right: 15px;
+            width: 45%;
+            font-weight: normal;
         }
-        td {
-            margin: 5%;   
+        hr {
+            border: 0;
+            height: 1px;
+            background-color: #ccc;
+            margin: 30px 0;
         }
         .button {
             display: inline-block;
-            padding: 10px 20px;
-            background-color: #4caf50; /*Hintergrund farbe button */
+            margin-top: 25px;
+            padding: 12px 25px;
+            background-color: #4caf50;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 16px;
             transition: background-color 0.3s;
         }
         .button:hover {
-            background-color: #45a049; /* Button-Farbe beim Hover */
+            background-color: #45a049;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Begrüßung  -->
-        <h2>Hallo, {{ name }}</h2> 
-        <h3>Der Spendenlauf ist zu ende!</h3> 
-        <p>Wir sind Ihnen sehr dankbar, für Ihre Teilnahme!</p>
-        <p>Insgesamt sind  {{ RunnerAmount }} Läufer*innen  {{ EventKilometers }} km gelaufen und haben {{ EventTotal }} € erlaufen!</p>
+        <h1>Vielen Dank, {{ name }}!</h1>
+        <h2>Der Spendenlauf ist beendet</h2>
+
+        <p>Wir danken dir herzlich für deine Teilnahme!</p>
+        <p>Insgesamt sind <strong>{{ RunnerAmount }}</strong> Läufer*innen <strong>{{ EventKilometers }} km</strong> gelaufen und haben <strong>{{ EventTotal }} €</strong> gesammelt.</p>
 
         <hr>
-        <p>Sie selbst sind {{ RunnerKilometers }} km gelaufen</p> 
-        <p>Und haben {{ RunnerTotal }} € gesammelt</p> 
 
-        <p>Ihre {{ SponsorAmount }} Sponsor*innen:</p> 
+        <p>Du persönlich bist <strong>{{ RunnerKilometers }} km</strong> gelaufen<br>
+        und hast dabei <strong>{{ RunnerTotal }} €</strong> Spenden gesammelt.</p>
+
+        <p>Du wurdest von <strong>{{ SponsorAmount }}</strong> Sponsor*innen unterstützt:</p>
 
         {% for value in data %}
             <table>
                 <tr>
-                    <th>Vorname: </th>
+                    <th>Vorname:</th>
                     <td>{{ value.firstname }}</td>
                 </tr>
                 <tr>
-                    <th>Nachname: </th>
+                    <th>Nachname:</th>
                     <td>{{ value.lastname }}</td>
                 </tr>
                 {% if value.FixedDonation %}
                     <tr>
-                        <th>Feste Spende: </th>
+                        <th>Feste Spende:</th>
                         <td>{{ value.Donation }} €</td>
                     </tr>
-                {%  else %}
+                {% else %}
                     <tr>
-                        <th>Spende pro Kilometer: </th>
+                        <th>Spende pro Kilometer:</th>
                         <td>{{ value.Donation }} €</td>
                     </tr>
-                {%  endif %}
-                <th>______________________</th>
+                {% endif %}
                 <tr>
-                    <th>Betrag: </th>
+                    <th>Gesamtbetrag:</th>
                     <td>{{ value.DonationTotal }} €</td>
                 </tr>
             </table>
         {% endfor %}
 
-        <h4>Insgesamt: {{ RunnerTotal }} €</h4>
+        <h4>Gesamtsumme: {{ RunnerTotal }} €</h4>
 
         <hr>
-        
-        <p>Ihr Sponsor*innen wurden ebnso bereits informiert!</p> 
 
-        <a href="https://youtu.be/dQw4w9WgXcQ?si=PatBcehocbhGib2A" class="button">Mehr Informationen</a>
+        <p>Deine Sponsor*innen wurden ebenfalls informiert.</p>
+
+        <a href="https://www.evangelischegemeinschaftluetzel.de/unser-hungerlauf/" class="button">Mehr Informationen</a>
     </div>
 </body>
 </html>
