@@ -26,7 +26,7 @@ def sendUserVerifyMail(request, UserID, frontendDomain):
     
     mail = MailSender()     # Connect to Mail-Server and init class 
 
-    mailtext_html, mailtext_plain = views.UserAuth(request=request, user=user, frontendDomain=frontendDomain) # HTML und Plain Text laden
+    mailtext_html, mailtext_plain = views.UserAuth(request=request, UserID=UserID, user=user, frontendDomain=frontendDomain) # HTML und Plain Text laden
 
     # Absendung der Mail initiieren
     mail.SendMail(
