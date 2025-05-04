@@ -26,7 +26,7 @@ def sendUserVerifyMail(request, UserID, frontendDomain):
     
     mail = MailSender()     # Connect to Mail-Server and init class 
 
-    mailtext_html, mailtext_plain = views.UserAuth(request=request, user=user, frontendDomain=frontendDomain) # HTML und Plain Text laden
+    mailtext_html, mailtext_plain = views.UserAuth(request=request, UserID=UserID, user=user, frontendDomain=frontendDomain) # HTML und Plain Text laden
 
     # Absendung der Mail initiieren
     mail.SendMail(
@@ -177,6 +177,7 @@ def sendSponsorInfo(request):
             pSubject="Hungerlauf 2025 | Spendenlauf Spenden Informationen", 
             # pIsAttachement=False, 
             pMailText=loadSponsorInfo(request=request, DonRecEmail=eMail, users=users),  # 
+            pPlainText="",
             # pAttachement=""
             )
 
@@ -275,6 +276,7 @@ def sendRunnerInfo(request):
                                      EventTotal=EventTotal, 
                                      RunnerAmount=RunnerAmount, 
                                      EventKilometers=EventKilometers), 
+            pPlainText="",
             # pAttachement=""
             )
 
@@ -294,6 +296,7 @@ def sendForgotPwd(request, email, frontendDomain):
         pReceiver=email, 
         pSubject="Hungerlauf 2025 | Nutzeranmeldung", 
         pMailText=views.ForgotPwd_MailBody(request=request, user=user, frontendDomain=frontendDomain, email=email), 
+        pPlainText="",
         # pAttachement=""
         )
     

@@ -7,7 +7,7 @@ from api.models import Users, donationrecord
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from . import mail_handle
 from datetime import datetime
-
+import json
 
 # The base directory for the "DoRun" project
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
@@ -219,7 +219,10 @@ def verify_donRec(requst, UserID, DonRecID, token):
 
     
 @csrf_protect
-def send_new_pwd(request, email, frontendDomain):
+def send_new_pwd(request):
+    json_data = json.loads(request.body)
+    email = json_data["email"]
+    frontendDomain = json_data["frontendDomain"]
     if request.method == 'POST':
         try:
             mail_handle.sendForgotPwd(request=request, email=email, frontendDomain=frontendDomain)

@@ -18,12 +18,13 @@ const HandleForgotPwd = ({ isOpen, onClose }) => {
     // Get CSRF-Token and cookie 
       const csrfToken = await getCsrfToken();
       const backEndDomain = await getBackEndDomain();
-      const response = await fetch(`${backEndDomain}/mail/send-new-pwd/${email}/${domain}`, {
+      const response = await fetch(`${backEndDomain}/mail/send-new-pwd`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "X-CSRFToken": csrfToken, // Füge das CSRF-Token als Header hinzu
         },
+        body: JSON.stringify({ email: email, frontendDomain: domain }), // Sende die E-Mail-Adresse im Body der Anfrage
         credentials: "include", // Cookies mit einbeziehen
       });
 
