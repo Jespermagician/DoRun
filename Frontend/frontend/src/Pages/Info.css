@@ -1,109 +1,146 @@
-/* ⬛ Äußerer Wrapper: Voller Bildschirm, kein globales Scrollen */
+/* Basis-Setup (nur in deiner Info-Komponente wirksam, KEINE globalen body/html Änderungen!) */
+.info-wrapper-root {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Äußerer Wrapper: begrenzt Höhe, lässt Kind scrollen */
 .info-container-outer {
-    position: relative;
-    height: 100vh;
-    max-height: 100vh;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-  
-  /* ⬜ Innerer scrollbarer Bereich */
-  .info-container {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    padding: 20px;
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
-    width: 100%;
-    box-sizing: border-box;
-    border-radius: 8px;
-    text-align: left;
-  }
-  
-  /* 🟦 Haupttitel */
+  flex: 1 1 auto;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.back-btn-wrapper {
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.btn-back-from-info {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+  width: 15rem;
+}
+
+.btn-back-from-info:hover {
+  background-color: #2980b9;
+}
+
+/* Innerer Bereich: scrollbar */
+.info-container {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 8px;
+  text-align: left;
+}
+
+/* Haupttitel */
+.info-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #2c3e50;
+}
+
+/* Unterüberschriften */
+.info-container h2 {
+  text-align: left;
+  font-size: 1.75rem;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  color: #1e3a8a;
+  border-left: 5px solid #1e3a8a;
+  background-color: #e0e7ff;
+  padding: 10px 15px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Absätze */
+.text-paragraph {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  line-height: 1.8;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Wichtige Hervorhebung */
+.important-text {
+  font-weight: bold;
+  color: #e74c3c;
+}
+
+/* Hinweis-Block */
+.special-note {
+  background-color: #ecf0f1;
+  border-left: 5px solid #2980b9;
+  padding: 10px 20px;
+  margin: 20px 0;
+  font-style: italic;
+}
+
+/* Optionaler Button */
+.btn-primary {
+  background-color: #2980b9;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #3498db;
+}
+
+/* Bild-Anpassung */
+.info-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  display: block;
+}
+
+/* Mobile Optimierung */
+@media (max-width: 768px) {
   .info-container h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    text-align: center;
-    color: #2c3e50;
+    font-size: 2rem;
   }
-  
-  /* 🔷 Unterüberschriften (h2) */
+
   .info-container h2 {
-    text-align: left;
-    font-size: 1.75rem;
-    margin-top: 30px;
-    margin-bottom: 15px;
-    color: #1e3a8a;
-    border-left: 5px solid #1e3a8a;
-    background-color: #e0e7ff;
-    padding: 10px 15px;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    font-size: 1.5rem;
   }
-  
-  /* 📄 Absätze */
-  .info-container p {
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-    line-height: 1.8;
-    display: inline-block;
-    vertical-align: middle;
+
+  .text-paragraph {
+    font-size: 1rem;
   }
-  
-  /* ❗ Hervorhebungen */
-  .info-container strong {
-    font-weight: bold;
-    color: #e74c3c;
+
+  .btn-primary {
+    width: 100%;
+    font-size: 1rem;
   }
-  
-  /* 💬 Hinweis-Blöcke */
-  .info-container .special-note {
-    background-color: #ecf0f1;
-    border-left: 5px solid #2980b9;
-    padding: 10px 20px;
-    margin: 20px 0;
-    font-style: italic;
-  }
-  
-  /* 🔘 Button (optional) */
-  .info-container .btn-primary {
-    background-color: #2980b9;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    transition: background-color 0.3s ease;
-  }
-  
-  .info-container .btn-primary:hover {
-    background-color: #3498db;
-  }
-  
-  /* 📱 Mobile Optimierung */
-  @media (max-width: 768px) {
-    .info-container h1 {
-      font-size: 2rem;
-    }
-  
-    .info-container h2 {
-      font-size: 1.5rem;
-    }
-  
-    .info-container p {
-      font-size: 1rem;
-    }
-  
-    .info-container .btn-primary {
-      width: 100%;
-      font-size: 1rem;
-    }
-  }
-  
+}
