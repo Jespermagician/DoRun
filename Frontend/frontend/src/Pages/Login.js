@@ -128,6 +128,8 @@ function Login() {
               <a className="impressum-login-link" title="impressum" onClick={() => navigate("/impressum")}>Impressum</a>
               &nbsp;|&nbsp; 
               <a className="impressum-login-link" title="datenschutz" onClick={() => navigate("/datenschutz")}>Datenschutz</a>
+              &nbsp;|&nbsp; 
+              <a className="impressum-login-link" title="info" onClick={() => navigate("/info")}>Info</a>
             </div>
           </form>
           <br/>

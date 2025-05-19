@@ -6,62 +6,127 @@
     <title>Hungerlauf – Spendenübersicht</title>
     <style>
         body {
-            background-color: #f9f9dc;
-            font-family: Arial, sans-serif;
+            background-color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 40px 15px;
             display: flex;
             justify-content: center;
         }
+
         .container {
-            background-color: #fff;
-            padding: 30px;
-            max-width: 700px;
+            background-color: #ffffff;
+            padding: 40px;
+            max-width: 720px;
             width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
-        h1, h2, h3, h4 {
-            color: #333;
+
+        h1 {
+            color: #1a202c;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        h2, h3, h4 {
+            color: #2d3748;
+            margin-top: 30px;
             margin-bottom: 10px;
         }
+
         p {
-            color: #555;
-            line-height: 1.6;
+            color: #4a5568;
+            line-height: 1.7;
+            margin-bottom: 16px;
         }
+
         table {
             width: 100%;
-            margin-top: 20px;
+            margin: 20px 0;
             border-collapse: collapse;
+            background-color: #fdfdfd;
+            border-radius: 8px;
+            overflow: hidden;
         }
+
         th, td {
             text-align: left;
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
         }
+
+        th {
+            background-color: #f7fafc;
+            color: #2d3748;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
         .total {
             font-weight: bold;
+            font-size: 18px;
+            color: #1a202c;
             margin-top: 20px;
         }
+
         .button {
             display: inline-block;
             margin-top: 30px;
-            padding: 12px 20px;
-            background-color: #4caf50;
+            padding: 14px 24px;
+            background-color: #38a169;
             color: white;
             text-decoration: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 16px;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s ease;
         }
+
         .button:hover {
-            background-color: #45a049;
+            background-color: #2f855a;
         }
+
+        a {
+            color: #2b6cb0;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
         hr {
             margin: 40px 0 20px;
             border: none;
-            border-top: 1px solid #ccc;
+            border-top: 1px solid #e2e8f0;
         }
+
+        em {
+            color: #c53030;
+            font-style: normal;
+            font-weight: bold;
+        }
+
+        .donation-button {
+            display: inline-block;
+            background-color: #38a169;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 10px;
+            transition: background-color 0.3s ease, transform 0.2s;
+            box-shadow: 0 4px 8px rgba(56, 161, 105, 0.2);
+        }
+        .donation-button:hover {
+            background-color: #2f855a;
+            transform: translateY(-2px);
+        }
+
     </style>
 </head>
 <body>
@@ -71,19 +136,19 @@
         <h2>Hallo {{ name }},</h2>
         <p>der Spendenlauf ist beendet – vielen Dank, dass Sie als Sponsor*in dabei waren!</p>
 
-        <p>Sie haben {{ Amount }} Läufer*innen unterstützt. Hier sind die Details:</p>
+        <p>Sie haben <strong>{{ Amount }}</strong> Läufer*innen unterstützt. Hier sind die Details:</p>
 
         {% for value in data %}
             <table>
-                <tr><th>Vorname:</th><td>{{ value.firstname }}</td></tr>
-                <tr><th>Nachname:</th><td>{{ value.lastname }}</td></tr>
-                <tr><th>Gelaufene Kilometer:</th><td>{{ value.kilometer }} km</td></tr>
+                <tr><th>Vorname</th><td>{{ value.firstname }}</td></tr>
+                <tr><th>Nachname</th><td>{{ value.lastname }}</td></tr>
+                <tr><th>Gelaufene Kilometer</th><td>{{ value.kilometer }} km</td></tr>
                 {% if value.FixedDonation %}
-                    <tr><th>Feste Spende:</th><td>{{ value.Donation }} €</td></tr>
+                    <tr><th>Feste Spende</th><td>{{ value.Donation }} €</td></tr>
                 {% else %}
-                    <tr><th>Spende pro Kilometer:</th><td>{{ value.Donation }} €</td></tr>
+                    <tr><th>Spende pro Kilometer</th><td>{{ value.Donation }} €</td></tr>
                 {% endif %}
-                <tr><th>Gesamtbetrag:</th><td><strong>{{ value.DonationTotal }} €</strong></td></tr>
+                <tr><th>Gesamtbetrag</th><td><strong>{{ value.DonationTotal }} €</strong></td></tr>
             </table>
         {% endfor %}
 
@@ -93,17 +158,25 @@
         <hr>
 
         <h3>Spendeninformationen</h3>
-        <p>Bitte überweisen Sie den Betrag von <strong>{{ Total }} €</strong> bis zum <em><strong>**Hier Datum einfügen**</strong></em> an:</p>
-
+        <p>Bitte überweisen Sie den Betrag von <strong>{{ Total }} €</strong> bis zum <em>**Hier Datum einfügen**</em>:</p>
+        
+        <p>Online über die Website der Allianz Mission e.V.:</p>
+        <p><a href="https://spenden.twingle.de/allianz-mission-e-v/hungerlauf-2025/tw682638edb6575/page?tr=hunger" target="_blank" class="donation-button">Allianz Mission | Hungerlauf Spende</a></p>
+        <p>Dort können Sie auch eine Spendenbescheinigung anfordern.</p>
+ 
+        <hr>
+        <p>Alternativ per Überweisung auf folgendes Konto:</p>
         <table>
-            <tr><th>IBAN:</th><td>DE02100500000054540402</td></tr>
-            <tr><th>Bank:</th><td>LANDESBANK BERLIN</td></tr>
-            <tr><th>BIC:</th><td>BELADEBE</td></tr>
+            <tr><th>Kontoinhaber</th><td>Allianz-Mission e. V.</td></tr>
+            <tr><th>IBAN</th><td>DE86452604750009110900</td></tr>
+            <tr><th>Bank</th><td>Spar- und Kreditbank Witten</td></tr>
+            <tr><th>BIC</th><td>GENODEM1BFG</td></tr>
         </table>
+        <p>Bitte mit dem Betreff <strong>"Hungerlauf"</strong> und Ihrem Namen!</p>
+        <hr>
+        <p>Bei Fragen oder wenn Sie die Frist nicht einhalten können, schreiben Sie uns an <a href="mailto:example@mail.de">info@hungerlauf.de</a> oder wenden Sie sich direkt an die Hungerlauf-Verantwortlichen.</p>
 
-        <p>Falls Sie die Frist nicht einhalten können oder Fragen haben, kontaktieren Sie uns bitte unter <strong>example@mail.de</strong> oder wenden Sie sich direkt an die Hungerlauf-Verantwortlichen.</p>
-
-        <a href="https://www.evangelischegemeinschaftluetzel.de/unser-hungerlauf/" class="button">Mehr Informationen</a>
+        <p><a href="https://www.evangelischegemeinschaftluetzel.de/unser-hungeqrlauf/" target="_blank">Weitere Informationen zum Hungerlauf</a></p>
     </div>
 </body>
 </html>

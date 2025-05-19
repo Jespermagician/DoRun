@@ -52,7 +52,7 @@ def sendDonationVerifyMail(request, UserID, DonationId, frontendDomain):
     # Absendung der Mail initiieren
     mail.SendMail(
         pReceiver=donRec.email, 
-        pSubject=f"Hungerlauf 2025 | Regestrierung als Sponsor*in: {user.firstname}", 
+        pSubject=f"Hungerlauf 2025 | Registrierung als Sponsor*in: {user.firstname}", 
         # pIsAttachement=False, 
         pMailText=mailtext_html,
         pPlainText=mailtext_plain, 

@@ -133,6 +133,13 @@
   margin-left: 10px;
 }
 
+.verify-message {
+  color: #ba4949;
+  font-size: 14px;
+  margin-top: 10px;
+  
+}
+
 /* Anpassungen für mobile Geräte */
 @media (max-width: 768px) {
   /* Container auf mobilen Geräten */
@@ -204,6 +211,10 @@
     margin: 0; /* Kein Abstand mehr */
     margin-inline-end: 25px;
     margin-left: 3px;
+  }
+
+  .verify-message {
+    width: 200%;
   }
 
   .entry-info .entry-details {

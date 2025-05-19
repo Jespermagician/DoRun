@@ -129,6 +129,9 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntryApi, handleAddEn
         <div className="entry-details">
           <span className="span-indent">Festbetrag Insgesamt: {totalFixed.toFixed(2)} €</span>
           <span className="span-indent">Pro KM Insgesamt: {totalPerKm.toFixed(2)} €</span>
+          {!entries.every(entry => entry.verified) && (
+            <span className="span-indent verify-message">Einträge müssen verifiziert werden!</span>
+          )}
         </div>
       </li>
       <div className="button-format-dash">
