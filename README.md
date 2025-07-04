@@ -1,3 +1,6 @@
+This spicific branch is the state of the project during the Hungerlauf Event 2025. With all of the informations and sides ike the data proteciton. Its not the production code, the prd has an altered settings.py and other files.
+
+
 # DoRun
 
 - DoRun is a web-based software to manage a charity run, created in a project as preparation for the final apprenticeship project by 4 developer.
