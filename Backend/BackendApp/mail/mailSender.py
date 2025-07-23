@@ -11,7 +11,7 @@ from django.db.models import Sum
 from BackendApp.settings import logger
 
 ##########################################################################
-# please read in the doku, how to set up the mail server connection !!!!!#
+# Please refer to the documentation on how to set up the mail server connection!
 ##########################################################################
 
 class getServerData:
@@ -19,58 +19,60 @@ class getServerData:
     password: str
     smtp_server: str
     smtp_port: int
+
     def __init__(self):
-        _getData = pd.read_json(f"{views.BASE_DIR}\Backend\CustomData\MailConfig.json", typ="series")
+        _getData = pd.read_json(f"{views.BASE_DIR}\\Backend\\CustomData\\MailConfig.json", typ="series")
         set.logger.print(_getData)
-        # the attributes behind _getData have to match the json
+        # The attribute names in _getData must match those in the JSON file
         self.sender_email = _getData.sender_email
         self.password = _getData.password
         self.smtp_server = _getData.smtp_server
         self.smtp_port = _getData.smtp_port 
-        
 
-# Main class which handles the main 
+
+# Main class that handles mail operations
 class MailSender():
-    Server = None  # SMTP-Verbindung zum Mail-Server
-    SD = None      # Objekt, das Serverdaten wie Host, Port und Login-Daten enthält
+    Server = None  # SMTP connection to the mail server
+    SD = None      # Object containing server data like host, port, and login credentials
 
     def __init__(self): 
-        self.SD = getServerData()       # Funktion, die Serverdaten zurückgibt (nicht definiert im Code)
+        self.SD = getServerData()  # Function to fetch server configuration (defined above)
         self.ConnectToServer()
         set.logger.print("Server Started")
 
-    def ConnectToServer(self):          # Stellt eine Verbindung zum SMTP-Server her
+    def ConnectToServer(self):  # Establishes connection to the SMTP server
         self.Server = smtplib.SMTP(host=self.SD.smtp_server, port=self.SD.smtp_port)
-        self.Server.starttls()                                                          # Aktiviert den TLS-Schlüssel
-        self.Server.login(user=self.SD.sender_email, password=self.SD.password)         # Authentifizierung
+        self.Server.starttls()  # Enables TLS encryption
+        self.Server.login(user=self.SD.sender_email, password=self.SD.password)  # Authentication
 
     def SendMail(self, pReceiver: str, pSubject: str, pMailText: str, pPlainText: str, pAttachement=None):
-        msg = MIMEMultipart()                               # Erstellt eine  Nachricht 
-        msg['Subject'] = pSubject                           # Betreff
-        msg['From'] = self.SD.sender_email                  # Absenderadresse
-        msg['To'] = pReceiver                               # Empfängeradresse
+        msg = MIMEMultipart()  # Create an email message
+        msg['Subject'] = pSubject            # Subject line
+        msg['From'] = self.SD.sender_email   # Sender address
+        msg['To'] = pReceiver                # Recipient address
         
-        # HTML-Version
-        msg.attach(MIMEText(pMailText, 'html', 'utf-8'))    # Fügt den HTML-Nachrichtentext hinzu
+        # HTML version of the email
+        msg.attach(MIMEText(pMailText, 'html', 'utf-8'))  # Attach HTML content
         
-        # Text-Version
+        # Plain text version (currently disabled)
         # msg.attach(MIMEText(pPlainText, 'plain', 'utf-8'))  
-        
-        # Überprüfen, ob Anhänge gesetzt sind
-        if pAttachement != None:
+
+        # Check if attachment is set
+        if pAttachement is not None:
             logger.print("There is an attachment set. But no action will follow!")
 
-        # Sende die vorbereitete Nachricht
+        # Send the composed email
         try:
-            self.Server.sendmail(self.SD.sender_email, pReceiver, msg.as_string())  # Sendet die E-Mail
-            set.logger.print("Mail sent")  # Rückgabe bei Erfolg
+            self.Server.sendmail(self.SD.sender_email, pReceiver, msg.as_string())  # Send the email
+            set.logger.print("Mail sent")  # Success message
         except:
-            set.logger.print("Unexpected error occurred while sending Mail!")  # Fehlerbehandlung 
+            set.logger.print("Unexpected error occurred while sending Mail!")  # Error handling
 
-    # Beendet die Verbindung zum Mail-Server
+    # Terminates the connection to the mail server
     def CloseConnection(self):
         self.Server.quit()
         set.logger.print("Disconnected from Mail Server")
+
 
 
 ###########Create Mail Interface############

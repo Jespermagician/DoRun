@@ -41,5 +41,8 @@ To run DoRun you need to set up the DBMS Interface. To set up the Database you n
     - create the file `...\DoRun\Backend\BackendApp\mail\MailConfig.json`
     - how? read: `...\DoRun\Backend\BackendApp\mail\interface.py`
 
+>  A Release for Windows will be released soon, which includes an installer
+
+
 <hr>
  <i>Contributors Fabian, Jannik, Jesper, Nico</i>

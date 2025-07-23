@@ -8,63 +8,71 @@ from BackendApp import settings as set
 from django.http import HttpResponse
 from api.models import Users, donationrecord
 from django.db.models import Sum
-# Project class:
 from BackendApp.settings import logger
-from .mailSender import  MailSender
+from .mailSender import MailSender
 
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 
 
+# Implement interface for mail here
 
-# implement interface for mail here
-
-# then implement class implemented by the interface
+# Then implement class implemented by the interface
 @csrf_protect
 def sendUserVerifyMail(request, UserID, frontendDomain):
-    user = get_object_or_404(Users, iduser=UserID)      # Bekomme einzelnen User anhand der ID
+    user = get_object_or_404(Users, iduser=UserID)  # Get single user by ID
 
-    
-    mail = MailSender()     # Connect to Mail-Server and init class 
+    mail = MailSender()  # Connect to mail server and initialize class
 
-    mailtext_html, mailtext_plain = views.UserAuth(request=request, UserID=UserID, user=user, frontendDomain=frontendDomain) # HTML und Plain Text laden
+    mailtext_html, mailtext_plain = views.UserAuth(
+        request=request,
+        UserID=UserID,
+        user=user,
+        frontendDomain=frontendDomain
+    )  # Load HTML and plain text
 
-    # Absendung der Mail initiieren
+    # Initiate sending the mail
     mail.SendMail(
-        pReceiver=user.email, 
-        pSubject="Läuferanmeldung Hungerlauf 2025", # hier später vars einfügen welche sich durch eine config ändern lassen global 
-        pMailText=mailtext_html, 
+        pReceiver=user.email,
+        pSubject="Runner Registration - Charity Run",  # Later insert configurable variables here
+        pMailText=mailtext_html,
         pPlainText=mailtext_plain,
-        # pAttachement=""
-        )
-    
-    mail.CloseConnection()      # Disconnect Server connection
+    )
 
-    return HttpResponse(f"Mail send to {user.lastname}, {user.firstname}")          # Http-Anwtort senden
+    mail.CloseConnection()  # Disconnect server connection
+
+    return HttpResponse(f"Mail sent to {user.lastname}, {user.firstname}")  # Send HTTP response
+
 
 @csrf_protect
 def sendDonationVerifyMail(request, UserID, DonationId, frontendDomain):
-    user = get_object_or_404(Users, iduser=UserID)      # Bekomme einzelnen User anhand der ID
-    donRec = get_object_or_404(donationrecord, donationrecid=DonationId)        # Bekomme einzelnen Spendeneintrag anhand der ID
+    user = get_object_or_404(Users, iduser=UserID)  # Get single user by ID
+    donRec = get_object_or_404(donationrecord, donationrecid=DonationId)  # Get single donation record by ID
 
-    mail = MailSender()      # Verbindung zum Mail-Server erstellen
+    mail = MailSender()  # Connect to mail server
 
-    mailtext_html, mailtext_plain = views.DonRecAuth(request=request, UserID=UserID, user=user, DonRecID=DonationId,DonRec=donRec, frontendDomain=frontendDomain)
-    # Absendung der Mail initiieren
+    mailtext_html, mailtext_plain = views.DonRecAuth(
+        request=request,
+        UserID=UserID,
+        user=user,
+        DonRecID=DonationId,
+        DonRec=donRec,
+        frontendDomain=frontendDomain
+    )
+
+    # Initiate sending the mail
     mail.SendMail(
-        pReceiver=donRec.email, 
-        pSubject=f"Hungerlauf 2025 | Registrierung als Sponsor*in: {user.firstname}", 
-        # pIsAttachement=False, 
+        pReceiver=donRec.email,
+        pSubject=f"Charity Run 2025 | Sponsor Registration: {user.firstname}",
         pMailText=mailtext_html,
-        pPlainText=mailtext_plain, 
-        # pAttachement=""
-        )
-    
-    mail.CloseConnection()      # Verbindung zum Server abbrechen
+        pPlainText=mailtext_plain,
+    )
 
-    return HttpResponse(f"Mail send to {user.lastname}, {user.firstname}")       # Bekomme einzelnen Spendeneintrag anhand der ID
+    mail.CloseConnection()  # Disconnect server connection
+
+    return HttpResponse(f"Mail sent to {user.lastname}, {user.firstname}")  # Send HTTP response
 
 
-# Vorlage für ein Listen Objekt zum Speichern der 
+# Template for a list object to store sponsor data
 class SponsData:
     firstname: str
     lastname: str
@@ -72,183 +80,168 @@ class SponsData:
     FixedDonation: bool
     Donation: float
     DonationTotal: float
+
     def __init__(self, pFirstname, pLastname, pKm, pFixedDon, pDon):
         self.firstname = pFirstname
         self.lastname = pLastname
         self.kilometer = pKm
         self.FixedDonation = pFixedDon
         self.Donation = pDon
-        # Check if its fixed or not
-        if(pFixedDon):
-            # if it is fixed, then the the runner needs at least one km to earn the money
+
+        # Check if it's a fixed donation
+        if pFixedDon:
+            # If it's fixed, the runner must run at least 1 km to receive the donation
             self.DonationTotal = 0
-            if(pKm > 0):
+            if pKm > 0:
                 self.DonationTotal = pDon
         else:
             self.DonationTotal = pDon * pKm
-        
 
-# Binary Search für das Userobjekt
+
+# Binary search for user object
+# can be deleted in future, bc the orm has a method for this
 def BinarySearchUsers(users, id):
     min = 0
     max = len(users)
     while min + 1 < max:
         index = min + (max - min) // 2
         val = users[index].iduser
-        if(val == id):
+        if val == id:
             return index
-        if(val < id):
+        if val < id:
             min = index
         else:
             max = index
-    return -1;
+    return -1
 
 
-# normal
+# Load sponsor information
 def loadSponsorInfo(request, DonRecEmail, users):
-    donRec = donationrecord.objects.filter(email=DonRecEmail) # Ziehe alle Spendeneinträge mir der E-Mail
+    donRec = donationrecord.objects.filter(email=DonRecEmail)  # Get all donation records with the email
 
     set.logger.print(donRec)
-    # Implementiere alle Variablen
+
+    # Initialize variables
     mail = None
-    TotalDonation: float
-    TotalDonation = 0
+    TotalDonation: float = 0
     TotalKilometers = 0
     data = []
 
-    # Iteriere die Spendeneinträge, um Daten der Läufer zusammeln
+    # Iterate over donation entries to gather runner data
     for val in donRec:
-
-        # Later implement the ORM function to get the user - but now it works (never change a running system)
+        # Binary search user list to find user
         usersIndex = BinarySearchUsers(users, val.iduser)
         if usersIndex < 0:
-            logger.print(f"Warning: User Id {val.iduser} doesn't exist")
+            logger.print(f"Warning: User ID {val.iduser} doesn't exist")
             continue
 
-
-
         Kilometers = users[usersIndex].kilometers
-        # Erstelle den Daten eintrag
+
+        # Create data entry
         dataRec = SponsData(
-            pFirstname=users[usersIndex].firstname, 
-            pLastname=users[usersIndex].lastname, 
-            pKm=Kilometers, 
-            pFixedDon=val.fixedamount, 
-            pDon=val.donation)
-        
-        # Berechne die Kilometer Anzahl und Spendensumme aller Läufer des Sponsors
+            pFirstname=users[usersIndex].firstname,
+            pLastname=users[usersIndex].lastname,
+            pKm=Kilometers,
+            pFixedDon=val.fixedamount,
+            pDon=val.donation
+        )
+
+        # Calculate total donations and total kilometers of all sponsored runners
         TotalDonation += dataRec.DonationTotal
         TotalKilometers += Kilometers
-
         data.append(dataRec)
 
-    # Lädt die generierten Daten in ein JSON Format
+    # Prepare JSON-like data for rendering
     context = {
-            'name': f"{donRec[0].firstname} {donRec[0].lastname}",
-            'Amount': len(donRec),
-            'data': data,
-            'Total': TotalDonation,
-            'TotalKilometers': TotalKilometers,
-        }
+        'name': f"{donRec[0].firstname} {donRec[0].lastname}",
+        'Amount': len(donRec),
+        'data': data,
+        'Total': TotalDonation,
+        'TotalKilometers': TotalKilometers,
+    }
 
     set.logger.print(context)
-    
-    # Gibt die Daten, request und das Template  weiter -> erstellt den EMAIL inhalt
+
+    # Pass data, request, and template to generate the email content
     return views.RenderMailText(context=context, request=request, template_name="SponsorInfo.html")
 
 
-
-
-# Senden der Informationsmaails an alle Sponsoren
+# Send sponsor info emails to all sponsors
 def sendSponsorInfo(request):
-    users = Users.objects.order_by("iduser")        # Ziehe alle Nutzer, Sortiert nach der ID (für die Binary Search)
+    users = Users.objects.order_by("iduser")  # Get all users sorted by ID (for binary search)
 
-    # Ziehe jede E-Mail-Adr. einmal
+    # Get distinct email addresses
     eMailArr = donationrecord.objects.values_list('email', flat=True).distinct()
-    
+
     set.logger.print(users)
 
-    mail = MailSender()     # Verbingung zum Mail-Server
+    mail = MailSender()  # Connect to mail server
 
-    # Iteriert durch die gezogenen Mail-Adressen
+    # Iterate over email addresses
     for eMail in eMailArr:
         mail.SendMail(
-            pReceiver=eMail, 
-            pSubject="Hungerlauf 2025 | Spendenlauf Spenden Informationen", 
-            # pIsAttachement=False, 
-            pMailText=loadSponsorInfo(request=request, DonRecEmail=eMail, users=users),  # 
-            pPlainText="",
-            # pAttachement=""
-            )
+            pReceiver=eMail,
+            pSubject="Charity Run 2025 | Sponsor Donation Overview",
+            pMailText=loadSponsorInfo(request=request, DonRecEmail=eMail, users=users),
+            pPlainText=""
+        )
 
-    mail.CloseConnection()  # Schließe die Verbindung zu Server
+    mail.CloseConnection()  # Disconnect from mail server
 
-    return HttpResponse("Mails send!")      # Gebe eine HTTP-Anwtwort
+    return HttpResponse("Mails sent!")  # Send HTTP response
 
 
-
-
-
-
-
-# Laden der Läufer Informations Mails
+# Load runner information emails
 def loadRunnerInfo(request, donRecs, user, RunnerAmount, EventKilometers, EventTotal):
-    # Variablen implementieren
     mail = None
     Kilometers = user.kilometers
     SponsorAmount = donRecs.filter(iduser=user.iduser).count()
     data = []
-    RunnerTotal: float
-    RunnerTotal = 0
+    RunnerTotal: float = 0
 
-    # Iterieren der Spendeneinträge mit nutzer id
+    # Iterate over donation records with user ID
     for val in donRecs.filter(iduser=user.iduser):
-        # Erstellt die Einräge der Sponsor Daten
+        # Create sponsor data entry
         dataRec = SponsData(
-            pFirstname=val.firstname, 
-            pLastname=val.lastname, 
-            pKm=Kilometers, 
-            pFixedDon=val.fixedamount, 
-            pDon=val.donation)
-        
-        RunnerTotal += dataRec.DonationTotal        # Zählt die Läufer Spendeneinahmen
-        
-        data.append(dataRec)        # Übergibt den Spendeneintrag in die Liste
+            pFirstname=val.firstname,
+            pLastname=val.lastname,
+            pKm=Kilometers,
+            pFixedDon=val.fixedamount,
+            pDon=val.donation
+        )
 
-    # Laden der Daten in das JSON Format
+        RunnerTotal += dataRec.DonationTotal  # Add runner’s donation income
+        data.append(dataRec)  # Add donation record to list
+
+    # Prepare context data for template
     context = {
-            'name': f"{user.firstname} {user.lastname}",
-            'RunnerKilometers': Kilometers,
-            'RunnerAmount': RunnerAmount,
-            'SponsorAmount': SponsorAmount,
-            'EventKilometers': EventKilometers,
-            'EventTotal': EventTotal,
-            'RunnerTotal': RunnerTotal,
-            'data': data,
-        }
+        'name': f"{user.firstname} {user.lastname}",
+        'RunnerKilometers': Kilometers,
+        'RunnerAmount': RunnerAmount,
+        'SponsorAmount': SponsorAmount,
+        'EventKilometers': EventKilometers,
+        'EventTotal': EventTotal,
+        'RunnerTotal': RunnerTotal,
+        'data': data,
+    }
 
     set.logger.print(context)
-    # Gibt die Daten, request und das Template  weiter -> erstellt den EMAIL inhalt
+
+    # Pass context to generate HTML mail body
     return views.RenderMailText(context=context, request=request, template_name="RunnerInfo.html")
 
 
-
-
-
 def sendRunnerInfo(request):
-    # Get only the runners (roleid == 3) which are verified
-    users = Users.objects.filter(verified=True, roleid=3)
+    users = Users.objects.filter(verified=True, roleid=3)  # Get verified runners (roleid == 3)
     donRecs = donationrecord.objects.all()
-    #  get amount of runner
 
-    
-    RunnerAmount = users.count()    # Anzahl der Läufer
-    # Kilometer aller Läufer
-    EventKilometers = users.aggregate(total_km=Sum('kilometers'))['total_km'] or 0
-    # Erlaufendes Geld aller Läufer
+    RunnerAmount = users.count()  # Total number of runners
+    EventKilometers = users.aggregate(total_km=Sum('kilometers'))['total_km'] or 0  # Total km of all runners
     EventTotal = 0
+
     set.logger.print("test")
-    # usersSortet = users.order_by("iduser")
+
+    # Calculate total donation amount
     for donRec in donRecs.filter(verified=True):
         if donRec.fixedamount:
             EventTotal += donRec.donation
@@ -256,8 +249,6 @@ def sendRunnerInfo(request):
             set.logger.print(donRec.iduser)
             km = 0
             try:
-                # set.logger.printLog("filter")
-                # set.logger.printLog(users.filter(iduser=donRec.iduser)[0].kilometers)
                 km = users.get(iduser=donRec.iduser).kilometers
             except Exception as es:
                 set.logger.print("error ", es)
@@ -267,41 +258,38 @@ def sendRunnerInfo(request):
     mail = MailSender()
     for usr in users:
         mail.SendMail(
-            pReceiver=usr.email, 
-            pSubject="Spendenlauf Spenden Informationen", 
-            # pIsAttachement=False, 
-            pMailText=loadRunnerInfo(request=request, 
-                                     user=usr, 
-                                     donRecs=donRecs, 
-                                     EventTotal=EventTotal, 
-                                     RunnerAmount=RunnerAmount, 
-                                     EventKilometers=EventKilometers), 
-            pPlainText="",
-            # pAttachement=""
-            )
+            pReceiver=usr.email,
+            pSubject="Charity Run Donation Overview",
+            pMailText=loadRunnerInfo(
+                request=request,
+                user=usr,
+                donRecs=donRecs,
+                EventTotal=EventTotal,
+                RunnerAmount=RunnerAmount,
+                EventKilometers=EventKilometers
+            ),
+            pPlainText=""
+        )
 
-    mail.CloseConnection() 
+    mail.CloseConnection()
 
-    return HttpResponse("Mail send!")
-
-
+    return HttpResponse("Mails sent!")
 
 
 def sendForgotPwd(request, email, frontendDomain):
-    mail = MailSender()  # Connect to Mail-Server and init class
+    mail = MailSender()  # Connect to mail server and initialize class
 
-    # Konvertiere Email zu lowercase für case-insensitive Vergleich
+    # Convert email to lowercase for case-insensitive matching
     user = get_object_or_404(Users, email__iexact=email)
 
-    # Absendung der Mail initiieren
+    # Initiate sending the mail
     mail.SendMail(
         pReceiver=email,
-        pSubject="Hungerlauf 2025 | Nutzeranmeldung",
+        pSubject="Charity Run 2025 | User Login",
         pMailText=views.ForgotPwd_MailBody(request=request, user=user, frontendDomain=frontendDomain, email=email),
-        pPlainText="",
-        # pAttachement=""
+        pPlainText=""
     )
 
-    mail.CloseConnection()  # Disconnect Server connection
+    mail.CloseConnection()  # Disconnect server connection
 
-    return HttpResponse(f"Mail sent to email: {email} to change pwd")
+    return HttpResponse(f"Mail sent to email: {email} to change password")
