@@ -13,12 +13,11 @@ const Info = () => {
             <button className="btn-back-from-info" onClick={() => navigate(-1)}>Zurück</button>
           </div>          
           
-          <h1 className="title">🏃‍♂️ Hungerlauf 2025 am 24. Mai</h1>
+          <h1 className="title">🏃‍♂️ Spendenlauf am 30. Februar 2026</h1>
 
           <p className="text-paragraph">
-            Dieses Jahr findet der Hungerlauf <strong className="important-text">digital</strong> statt. 🌐
+            Dieses Spendenlauf findet <strong className="important-text">digital</strong> statt. 🌐
           </p>
-
 
           <p className="text-paragraph">
             Diese Webseite dient als dein digitaler <strong className="important-text">Laufzettel</strong> zur Anmeldung. ✅
@@ -40,12 +39,6 @@ const Info = () => {
             Achte darauf, ihre <strong className="important-text">Adresse korrekt</strong> einzutragen. 🏠
           </p>
 
-          <h2 className="subtitle">Anmeldung vor Ort</h2>
-          <p className="text-paragraph">
-            Die Anmeldung auf der Webseite ist <strong className="important-text">nicht automatisch</strong> für den Hungerlauf gültig. 
-            Du musst am 24. Mai persönlich vorbeikommen, um dich zu registrieren und deine <strong className="important-text">Startnummer</strong> zu erhalten. 🎟️
-          </p>
-
           <h2 className="subtitle">Kilometer sammeln</h2>
           <p className="text-paragraph">
             Du kannst dann deine <strong className="important-text">Kilometer</strong> laufen und am Ende bei der Anmeldung die gelaufenen Kilometer angeben. 
@@ -58,7 +51,7 @@ const Info = () => {
           </p>
 
           <p className="text-paragraph">
-            Auch deine Sponsor*innen bekommen eine E-Mail, in der sie direkt die <strong className="important-text">IBAN-Adresse</strong> finden und direkt an die Allianz Mission spenden können. 💸
+            Auch deine Sponsor*innen bekommen eine E-Mail, in der sie direkt die <strong className="important-text">IBAN-Adresse</strong> finden und direkt spenden können. 💸
           </p>
 
           <h2 className="subtitle">Festbetrag / Pro Kilometer</h2>
@@ -68,7 +61,7 @@ const Info = () => {
             <img src="button-don.png" alt="Festbetrag oder pro Kilometer" className="info-image" />
           </p>
 
-          <h2 className="subtitle">Was mache ich wenn ein*e Sponsor*in keine E-Mail-Adresse besitzt</h2>
+          <h2 className="subtitle">Was mache ich wenn ein*e Sponsor*in keine E-Mail-Adresse besitzt?</h2>
           <p className="text-paragraph">
             Leider gibt es dafür keine extra Lösung. Im besten Fall musst du deine Eigene E-Mail-Adresse angeben und nach dem Lauf die Spende einsammeln bzw. den/die Sponsor*in informieren.
           </p>
@@ -83,18 +76,14 @@ const Info = () => {
             Wir freuen uns schon auf den Lauf und wünschen dir <strong className="important-text">viel Erfolg</strong>! ✨
           </p>
 
-          <p className="text-paragraph">
-            Dein Hungerlauf Team 🙌
-          </p>
-
           
           <h2 className="subtitle">Weiteres</h2>
           <p className="text-paragraph">
-            Mehr Informationen findest du auf der Webseite <a href="https://www.evangelischegemeinschaftluetzel.de/unser-hungerlauf/" target="_blank" rel="noopener noreferrer">EV-Gemeinde Lützel</a>.
+            Mehr Informationen findest du auf der Webseite <a href="https://youtu.be/dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer">dieser Domain</a>.
           </p>
           <br />
           <p className="text-paragraph">
-            Bei weiteren Fragen kannst du dich gerne an <a href="mailto:info@hungerlauf.de">info@hungerlauf.de</a> wenden
+            Bei weiteren Fragen kannst du dich gerne an <a href="mailto:info@hungerlauf.de">test@test.de</a> wenden
           </p>
           
       </div>
