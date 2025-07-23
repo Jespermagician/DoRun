@@ -83,7 +83,7 @@ const Info = () => {
           </p>
           <br />
           <p className="text-paragraph">
-            Bei weiteren Fragen kannst du dich gerne an <a href="mailto:info@hungerlauf.de">test@test.de</a> wenden
+            Bei weiteren Fragen kannst du dich gerne an <a href="mailto:test@Spendenlauf.de">test@test.de</a> wenden
           </p>
           
       </div>
