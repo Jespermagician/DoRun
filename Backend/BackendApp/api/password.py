@@ -3,8 +3,7 @@ from multiprocessing import connection
 import random
 import string
 import re
-
-from Backend.BackendApp.api.models import Users
+from . import models
 
 
 
@@ -48,7 +47,7 @@ class pwd():
                 return Status, Message
         print("Password is valid")
         try:
-            salt = Users.objects.get(iduser=iduser).salt
+            salt = models.Users.objects.get(iduser=iduser).salt
             print("salt: ", salt)
             Password_hash = pwd.PasswordSetJustPassword(password=Password, salt=salt)
 
@@ -115,6 +114,7 @@ class pwd():
         password = ''.join(random.choice(characters) for _ in range(length))
         return password
 
+    
     def CheckPassword(EnteredPwd, password, salt):                          
         EnteredPwdHash = sha256((EnteredPwd + salt.hex()).encode('utf-8')).digest() # Bildet den Hash nach
         is_valid = EnteredPwdHash == password                                       # Vergleicht den Gespeicherten und Neu generierten Hash
