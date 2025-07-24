@@ -16,7 +16,8 @@ from django.middleware.csrf import get_token
 
 
 #Rest
-from .models import Users, donationrecord, CheckPassword, Generate_secure_password, PasswordHashing, convertSaltAndHash
+from .models import Users, donationrecord
+from .password import pwd # pwd.CheckPassword, Generate_secure_password, PasswordHashing, convertSaltAndHash
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 from .serializers import UserSerializer
@@ -188,7 +189,7 @@ def resetUserPasswort(request):
 
     try:
         user = Users.objects.all().get(iduser=iduser)
-        if CheckPassword(EnteredPwd=oldPwd_entry, salt=user.salt, password=user.password_hash) == False:
+        if pwd.CheckPassword(EnteredPwd=oldPwd_entry, salt=user.salt, password=user.password_hash) == False:
             return JsonResponse(status=401, data={"message":"Das alte Passwort ist falsch!"})
         Status, Message = Users.SetJustPasswordWith_iduser(iduser, newPwd)
     except:
@@ -474,11 +475,11 @@ def generate_pwd(request):
             user.verified = True
 
         # Generate new secure password
-        new_pwd = Generate_secure_password(9)
-        new_pwd_hash, salt = PasswordHashing(new_pwd)
+        new_pwd = pwd.Generate_secure_password(9)
+        new_pwd_hash, salt = pwd.PasswordHashing(new_pwd)
 
         # Store updated hash and salt
-        user.salt, user.password_hash = convertSaltAndHash(salt, new_pwd_hash)
+        user.salt, user.password_hash = pwd.convertSaltAndHash(salt, new_pwd_hash)
         user.logintrys = 0
         user.save()
 

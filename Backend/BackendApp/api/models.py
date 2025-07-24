@@ -1,4 +1,4 @@
-from password import pwd
+from .password import pwd
 from django.db import models
 from datetime import date
 from django.shortcuts import redirect
