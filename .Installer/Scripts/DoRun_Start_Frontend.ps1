@@ -1,4 +1,4 @@
 cd..
 Set-Location Frontend\frontend
 
-npm start
+npm start 

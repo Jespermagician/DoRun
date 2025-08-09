@@ -7,7 +7,7 @@
 	pause
 	goto :Conf_Backend
 	pause
-EXIT
+EXIT 
 
 :check_deependencys
 	set "NodeJs_exist=false"

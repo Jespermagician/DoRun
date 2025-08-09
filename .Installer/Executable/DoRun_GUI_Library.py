@@ -771,4 +771,4 @@ class ProgressBar:
 
     def hide(self):
         """Blendet den Ladebalken aus."""
-        self.frame.grid_forget()
+        self.frame.grid_forget() 

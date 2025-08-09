@@ -20,3 +20,4 @@ Set-Location -Path backendPath
 #Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 py -m pip install -r requirements.txt
+ 

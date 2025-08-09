@@ -9,4 +9,4 @@ Set-Location -Path $frontendPath
 
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 npm install
-npm update
+npm update 

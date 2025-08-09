@@ -6,4 +6,4 @@ python manage.py runserver
 
 # Start Database
 $PSQL = Get-Service "postgresql*"
-Start-Service -Name $PSQL
+Start-Service -Name $PSQL 
