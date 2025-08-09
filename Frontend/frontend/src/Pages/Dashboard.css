@@ -8,6 +8,8 @@
 }
 
 /* Flexbox für das Hauptlayout des Dashboards */
+
+
 .dashboard-wrapper {
   display: flex;
   gap: 20px;  /* Abstand zwischen den Bereichen */
@@ -80,6 +82,20 @@
   max-width: 50%;
 }
 
+
+.impressum {
+  text-align: center;
+  font-size: small;
+  margin: 0px;
+}
+.impressum-link:hover {
+  cursor: pointer;
+  text-decoration: underline; /* Unterstreichen beim Hover */
+  color: #d9dde1; /* Farbe ändern beim Hover */
+  transition: color 0.3s ease; /* Für sanfte Übergänge */
+}
+
+
 .form-section {
   color: black;
   button {
@@ -126,6 +142,23 @@
 
 /* Anpassen des Layouts bei kleinen Bildschirmen */
 @media (max-width: 768px) {
+  .dashboard-wrapper-outer-outer {
+    overflow-x: hidden;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .dashboard-wrapper-outer {
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+  }
+  
+
+  
   .pwd-change-section {
     max-width: 100%; /* Vollständige Breite auf mobilen Geräten */
   }

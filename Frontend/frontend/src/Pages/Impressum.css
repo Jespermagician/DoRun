@@ -1,0 +1,76 @@
+.impressum-wrapper {
+    height: 100vh; /* volle Viewport-Höhe */
+    overflow-y: auto; /* innerhalb des Wrappers scrollen */
+    -webkit-overflow-scrolling: touch; /* für iOS smooth scroll */
+  }
+
+.impressum-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+  }
+  
+  .impressum-container h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #004080;
+    border-bottom: 2px solid #004080;
+    padding-bottom: 0.5rem;
+  }
+  
+  .impressum-container h2 {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+    color: #004080;
+  }
+  
+  .impressum-container h3 {
+    margin-top: 1.5rem;
+    font-size: 1.2rem;
+    color: #0055aa;
+  }
+  
+  .impressum-container p {
+    margin: 0.4rem 0;
+  }
+  
+  .impressum-container a {
+    color: #0055aa;
+    text-decoration: none;
+  }
+  
+  .impressum-container a:hover {
+    text-decoration: underline;
+  }
+  
+
+  .impressum-header {
+    display: flex;
+    justify-content: space-around; /* linksbündig */
+    gap: 1rem; /* Abstand zwischen den Buttons */
+    margin-bottom: 2rem; /* Abstand zum restlichen Inhalt */
+  }
+  
+  .impressum-header button {
+    max-width: 15rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    background-color: #004080;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .impressum-header button:hover {
+    background-color: #0066cc;
+  }
+  

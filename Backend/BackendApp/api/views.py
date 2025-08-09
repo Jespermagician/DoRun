@@ -16,7 +16,8 @@ from django.middleware.csrf import get_token
 
 
 #Rest
-from .models import Users, donationrecord, CheckPassword, Generate_secure_password, PasswordHashing, convertSaltAndHash
+from .models import Users, donationrecord
+from .password import pwd # pwd.CheckPassword, Generate_secure_password, PasswordHashing, convertSaltAndHash
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 from .serializers import UserSerializer
@@ -98,7 +99,7 @@ def cust_login(request):
         try:
             if (user.verified == False):
                 status = 400
-                message = "Der User ist noch nicht verifiziert!"
+                message = "Der User ist noch nicht verifiziert! Bitte überprüfen Sie Ihre E-Mails. Oder ändern Sie Ihr Passwort!"
             elif (user.verified == True):
                 message = "Login erfolgreich"
             else:
@@ -110,7 +111,7 @@ def cust_login(request):
                 return JsonResponse(status=200, data={"userid": -99,"UserIsAuth": False, 'message': 'Login nicht erfolgreich', "Role": False})
             elif (user == -100):
                 status=400
-                message = "Zu viele Fehlversuche. Benutzer wurde gesperrt!"
+                message = "Zu viele Fehlversuche. Benutzer wurde gesperrt! Passwort zurücksetzen!"
                 return JsonResponse({'message': message}, status=401)
             else:
                 message = "Unbekannter User"
@@ -188,7 +189,7 @@ def resetUserPasswort(request):
 
     try:
         user = Users.objects.all().get(iduser=iduser)
-        if CheckPassword(EnteredPwd=oldPwd_entry, salt=user.salt, password=user.password_hash) == False:
+        if pwd.CheckPassword(EnteredPwd=oldPwd_entry, salt=user.salt, password=user.password_hash) == False:
             return JsonResponse(status=401, data={"message":"Das alte Passwort ist falsch!"})
         Status, Message = Users.SetJustPasswordWith_iduser(iduser, newPwd)
     except:
@@ -237,6 +238,7 @@ def UpdateDonations(request):
         DonoAmount = entry.get("DonoAmount")
         FixedAmount = entry.get("FixedAmount")
         frontendDomain = entry.get("frontendDomain")
+        isCertReq = entry.get("iscertreq")
 
         if FixedAmount == "true" or FixedAmount == True:
             FixedAmount = True
@@ -268,7 +270,8 @@ def UpdateDonations(request):
                                               donation = float(DonoAmount),
                                               fixedamount = bool(FixedAmount),
                                             #   createdat = CreatedAt,
-                                              verified = False)
+                                              verified = False,
+                                              iscertreq = isCertReq)
                 # donationrecord.add(newDonRec)
                 print("tessdfsdf")
                 newDonRec.save()
@@ -292,6 +295,7 @@ def UpdateDonations(request):
                 donRec.donation = DonoAmount or donRec.donation
                 donRec.fixedamount = FixedAmount if FixedAmount is not None else donRec.fixedamount
                 donRec.verified = False  # Mark as unverified after any update
+                donRec.iscertreq = isCertReq
                 donRec.save()
 
             except Exception as e:
@@ -471,11 +475,11 @@ def generate_pwd(request):
             user.verified = True
 
         # Generate new secure password
-        new_pwd = Generate_secure_password(9)
-        new_pwd_hash, salt = PasswordHashing(new_pwd)
+        new_pwd = pwd.Generate_secure_password(9)
+        new_pwd_hash, salt = pwd.PasswordHashing(new_pwd)
 
         # Store updated hash and salt
-        user.salt, user.password_hash = convertSaltAndHash(salt, new_pwd_hash)
+        user.salt, user.password_hash = pwd.convertSaltAndHash(salt, new_pwd_hash)
         user.logintrys = 0
         user.save()
 

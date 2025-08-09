@@ -63,6 +63,7 @@ CREATE TABLE api_donationrecord
     fixedamount boolean default false,
     createdat timestamp without time zone DEFAULT NOW(),
     verified boolean default false,
+    isCertReq boolean default false,
     CONSTRAINT fk_User
         FOREIGN KEY(iduser)
             REFERENCES api_users(IDUser)

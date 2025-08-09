@@ -110,8 +110,8 @@ DATABASES = {
          "ENGINE": "django.db.backends.postgresql",
          "NAME": "DoRun",
          "USER": "admin",
-         "PASSWORD": "SupersicheresPasswort!1",
-        #  "PASSWORD": "ZyZLeG331Bqfoo9ClIQD", 
+        #  "PASSWORD": "SupersicheresPasswort!1",
+         "PASSWORD": "ZyZLeG331Bqfoo9ClIQD", 
          "HOST": "localhost",
          "PORT": "5432",
      }
@@ -120,7 +120,7 @@ DATABASES = {
     #        "NAME": BASE_DIR / "db.sqlite3",
     #}
 }
-
+# test
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

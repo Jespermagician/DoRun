@@ -14,6 +14,7 @@ function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [infoPopUp, setInfoPopUp] = useState({isopen: false, message: ""})
+  const [is_agb_accepted, setIs_agb_accepted] = useState(false)
   const navigate = useNavigate();
 
 
@@ -27,6 +28,10 @@ function Register() {
     e.preventDefault();
     if (email === "" || password === "" || confirmPassword === "") {
       setError("Bitte alle Felder ausfüllen.");
+      return;
+    }
+    if(is_agb_accepted == false) {
+      setError("Aktzeptiere bitte die AGB")
       return;
     }
     if (password !== confirmPassword) {
@@ -139,10 +144,27 @@ function Register() {
                 required
               />
             </div>
+            <div className="check-agb"> 
+              <input type="checkbox" id="agb-check"  
+                checked={is_agb_accepted}
+                onChange={(e) => setIs_agb_accepted(e.target.checked)}
+                required
+              />
+              <label htmlFor="agb-check">Akzeptieren Sie bitte die&nbsp;
+                <a className="agb-link" href="https://www.ev-jugend-westfalen.de/footer-menu-fullsize/rechtliches-infos-material-shop/agb-mit-kundeninformationen/" title="agb">AGB!</a> 
+              </label>
+            </div>
             <button type="submit">Registrieren</button>
             <p className="switch-text">
               Bereits ein Konto? <span onClick={handleLogin}>Anmelden</span>
             </p>
+            <div className="impressum-login">
+              <a className="impressum-login-link" title="impressum" onClick={() => navigate("/impressum")}>Impressum</a>
+                &nbsp;|&nbsp; 
+              <a className="impressum-login-link" title="datenschutz" onClick={() => navigate("/datenschutz")}>Datenschutz</a>
+                &nbsp;|&nbsp; 
+              <a className="impressum-login-link" title="info" onClick={() => navigate("/info")}>Info</a>
+            </div>
           </form>
         </div>
       </div>
@@ -154,7 +176,7 @@ function Register() {
             navigate("/");
           }}
           />
-    </div>
+      </div>
   );
 }
 

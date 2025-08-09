@@ -103,6 +103,26 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.button-format-dash {
+  justify-content: left;
+  display: flex;
+}
+
+.extra-info-btn {
+  width: 3rem;
+  display: block;
+  margin-left: 10px;
+  padding: 10px 16px;
+  font-size: 14px;
+  background-color: #3367b6;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .add-entry-btn:hover {
@@ -111,6 +131,13 @@
 
 .span-indent {
   margin-left: 10px;
+}
+
+.verify-message {
+  color: #ba4949;
+  font-size: 14px;
+  margin-top: 10px;
+  
 }
 
 /* Anpassungen für mobile Geräte */
@@ -184,6 +211,10 @@
     margin: 0; /* Kein Abstand mehr */
     margin-inline-end: 25px;
     margin-left: 3px;
+  }
+
+  .verify-message {
+    width: 200%;
   }
 
   .entry-info .entry-details {

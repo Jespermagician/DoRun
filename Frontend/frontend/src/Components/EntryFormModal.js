@@ -12,16 +12,20 @@ const EntryFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
     houseNr: "",
     Plz: "",
     DonoAmount: "",
-    FixedAmount: false,
-    DonoID: -1
+    FixedAmount: true,
+    DonoID: -1,
+    iscertreq: false
   }
   const [formData, setFormData] = useState(initialData || empty_data);
   const [infoMessage, setInfoMessage] = useState("");
+  const [is_cert_checked_temp, SetIs_cert_checked_temp] = useState(false);
 
   // Update formData whenever the modal is opened
   useEffect(() => {
     if (isOpen) {
+
       setFormData(initialData || empty_data);
+      SetIs_cert_checked_temp(initialData ? initialData.iscertreq: false)
     }
   }, [isOpen, initialData]);
 
@@ -40,11 +44,23 @@ const EntryFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
   }
 
   const handleSubmit = (e) => {
+    console.log("iscertreq")
+    console.log("iscertreq")
+    console.log(is_cert_checked_temp)
+    if(is_cert_checked_temp) {
+      console.log("cert angefordert!")
+      if(formData.street.trim() == "" || formData.houseNr.trim() == ""  || formData.Plz.trim() == "") {
+          setInfoMessage("Die Adresse wird für die Spendenbescheinigung benötigt!")
+          return;
+        }
+    }
+
     // The button is inverted, so the value has to be flipped
     formData.FixedAmount = !formData.FixedAmount 
     e.preventDefault();
-    console.log("formData")
-    console.log(formData)
+    let temp_formData = formData;
+    temp_formData.iscertreq = is_cert_checked_temp;
+    setFormData(temp_formData)
     onSubmit(formData);
     changeInfoMessage(formData.FixedAmount);
     handleClose();
@@ -86,18 +102,18 @@ const EntryFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
               <label>E-Mail* <input type="email" name="email" placeholder="E-Mail-Adresse eingeben" value={formData.email} onChange={handleChange} required /></label>
             </div>
             <div className="form-group">
-              <label>Straße: <input type="text" name="street" placeholder="Straße eingeben" value={formData.street} onChange={handleChange} /></label>
+              <label>Straße: <input type="text" name="street" placeholder="Straße eingeben" value={formData.street} onChange={handleChange} required={is_cert_checked_temp} /></label>
             </div>
             <div className="form-group">
-              <label>Hausnummer: <input type="text" name="houseNr" placeholder="Hausnummer eingeben" value={formData.houseNr} onChange={handleChange} /></label>
+              <label>Hausnummer: <input type="text" name="houseNr" placeholder="Hausnummer eingeben" value={formData.houseNr} onChange={handleChange} required={is_cert_checked_temp} /></label>
             </div>
             <div className="form-group">
-              <label>PLZ: <input type="text" name="Plz" placeholder="Postleitzahl eingeben" value={formData.Plz} onChange={handleChange} /></label>
+              <label>PLZ: <input type="text" name="Plz" placeholder="Postleitzahl eingeben" value={formData.Plz} onChange={handleChange} required={is_cert_checked_temp} /></label>
             </div>
 
             {/* Betrag + Toggle in einer Zeile */}
             <div className="form-group">
-              <label>Betrag*</label>
+              <label>*Betrag (Eingeben und Art auswählen)</label>
               <div className="form-group horizontal">
                 <input
                   type="number"
@@ -133,6 +149,16 @@ const EntryFormModal = ({ isOpen, onClose, onSubmit, initialData }) => {
               <p>{infoMessage}</p>
             </div>
 
+            <div className="check-don-cert"> 
+              <input
+                type="checkbox" id="check-don-cert"
+                checked={is_cert_checked_temp}
+                onChange={(e) => SetIs_cert_checked_temp(e.target.checked)}
+              />
+              <label htmlFor="check-don-cert" >
+                Ja, mein*e Sponor*in möchte eine Spendenbescheinigung erhalten
+              </label>
+            </div>
             {/* Buttons */}
             <div className="modal-buttons">
               <button className="btn-left" type="submit">Speichern</button>
