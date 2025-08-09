@@ -1,0 +1,16 @@
+{
+    "comment": "This file is used to configure the application. The file will be modfied by the installer. Only change if you know what you are doing.",
+    "colour_gray_10": "gray10",
+    "colour_gray_15": "gray15",
+    "colour_gray_30": "gray30",
+    "colour_gray_40": "gray40",
+    "colour_light_blue": "#ADD8E6",
+    "colour_white": "#FFFFFF",
+    "colour_ligth_gray": "#F0F0F0",
+    "colour_gray": "#D3D3D3",
+    "colour_black": "#000000",
+    "progress_bg": "#D3D3D3",
+    "progress_light": "#009F1B",
+    "progress_dark": "#00961B",
+    "services": []
+} 
