@@ -251,6 +251,10 @@ class DoRunInstaller(GUI.DoRun_Frame):
             return
 
         try:
+            print(f"[DEBUG] Installer batch path {installer_bat_path}")
+            print(f"[DEBUG] Installer batch path {final_install_dir}")
+            print(f"[DEBUG] Installer batch path {os.path.dirname(installer_bat_path)}")
+
             process = Popen([installer_bat_path, final_install_dir],
                             cwd=os.path.dirname(installer_bat_path),
                             stdout=PIPE, stderr=PIPE, shell=True,
