@@ -23,10 +23,8 @@ class DoRunMetadata:
     DoRunBackendRoot = str( str(DoRunRoot) + "\\Backend\\BackendApp")
     DoRunFrontendRoot = str( str(DoRunRoot) + "\\Frontend\\frontend")
     DoRunLogo = str(str(DoRunRoot) + "\\.Installer\\Executable\\Icons\\DoRun_Logo.png")
-    DoRunIco = str(str(DoRunRoot) + "\\.Installer\\Executable\\Icons\\laufen.ico")
     DoRunInstallerVenvPython = str(str(DoRunRoot) + "\\venv_installer\\Scripts\\python.exe")
     DoRunVenvPython = str(str(DoRunRoot) + "\\venv\\Scripts\\python.exe")
-    StartDoRun = str(str(DoRunRoot) + "\\.Installer\\Scripts\\StartDoRun.bat")
 
 # ------------------------------------------------------------------------
 # DoRun_Json_Manager
@@ -253,7 +251,7 @@ class DoRun_Service:
 #    :param icon_path: Optional path to the icon-file (.ico, .exe, .dll).
 # ------------------------------------------------------------------------
 class Windows_Communication:
-    def create_desktop_shortcut(target_path, shortcut_name, description="", icon_path=""):
+    def create_desktop_shortcut(self, target_path, shortcut_name, description="", icon_path=""):
         try:
             # Path of the desktop
             desktop = os.path.join(os.environ['USERPROFILE'], 'Desktop')

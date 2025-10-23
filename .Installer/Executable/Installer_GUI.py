@@ -10,10 +10,19 @@ import time
 import DoRun_GUI_Library as GUI
 
 title = "DoRun SetUp GUI"
-version = "1.0.0.Beta"
+version = sys.argv[1]
 
 WindowName = title + " " + version
 WindowSize = "700x350"
+
+#------------------------------------------------------
+# IMPORTANT: DONT'T USER PRINT COMMAND!!!
+# This script is run by pythonw.exe not python.exe
+# so cmd is supressed 
+# For Debug run the script with python by yourself
+# and activate Debug_Mode
+#------------------------------------------------------
+Debug_Mode = False
 
 # Custom stdout/stderr writer to redirect print statements to a Tkinter Text widget
 class ConsoleRedirector:
@@ -57,6 +66,7 @@ class DoRunInstaller(GUI.DoRun_Frame):
         self.project_dir_name = "DoRun"
         self.desktop_link_value = tk.BooleanVar(value=True)
         self.Debug = False  # Set to True for debugging output
+        self.DoRunRoot = ""
 
         # General configuration for DoRun GUI
         super().__init__(root, img_path=img_path, Theme=DoRunTheme)
@@ -185,7 +195,7 @@ class DoRunInstaller(GUI.DoRun_Frame):
         self.Info.config(state=tk.DISABLED) # Start as disabled
         self.Info.grid(row=0, column=0, sticky="ew", padx=(0,0)) # Info in Spalte 0
 
-        if self.Debug == False:
+        if Debug_Mode == False:
             self.Info.grid_remove()
 
         # Add a scrollbar to the Info Text widget
@@ -194,7 +204,7 @@ class DoRunInstaller(GUI.DoRun_Frame):
         self.Info_scrollbar.grid(row=0, column=1, sticky="ns") 
         self.Info.config(yscrollcommand=self.Info_scrollbar.set)
 
-        if self.Debug == False:
+        if Debug_Mode == False:
             self.Info_scrollbar.grid_remove()
 
         button_frame = tk.Frame(self.menu_frame, bg=self.DoRunTheme.colour1)
@@ -286,6 +296,8 @@ class DoRunInstaller(GUI.DoRun_Frame):
             # Start reading the batch output in seperated thread so the gui don't get blocked
             output_reader_thread = threading.Thread(target=read_output_lines, daemon=True)
             output_reader_thread.start()
+            #self.update_status("Moving files for you.", 20)
+
 
             # Check if the batch is still running
             def check_process_status():
@@ -293,10 +305,16 @@ class DoRunInstaller(GUI.DoRun_Frame):
                     self.master.after(100, check_process_status)
                 else: # Process is finsihed
                     print("DEBUG: Batch process finished.")
+                    
+                    self.quit_button.config(state=tk.DISABLED)
+                    self.update_status("Installation successfull", 100)
+
                     # Create desktop link
                     if self.desktop_link_value:
                         WinCom = GUI.Windows_Communication()
-                        WinCom.create_desktop_shortcut(target_path=GUI.DoRunMetadata.StartDoRun, shortcut_name="DoRun", description="Start DoRun", icon_path=GUI.DoRunMetadata.DoRunIco)
+                        start = os.path.join(str(self.DoRunRoot), ".Installer", "Scripts", "Start_DoRun.bat")
+                        ico   = os.path.join(str(self.DoRunRoot), ".Installer","Executable","Icons","laufen.ico")
+                        WinCom.create_desktop_shortcut(start, "DoRun","Start DoRun", ico)
                     # Ensure that all results are shown
                     remaining_stdout = process.stdout.read().decode('utf-8', errors='ignore').strip()
                     remaining_stderr = process.stderr.read().decode('utf-8', errors='ignore').strip()
@@ -326,7 +344,10 @@ class DoRunInstaller(GUI.DoRun_Frame):
                         print(f'\nInstallation failed with return code: {retcode}')
                         self.update_status("Installation failed.", 0)
                         messagebox.showerror("Installation Error", f"Installation of '{self.project_name}' failed.\n\nReturn Code: {retcode}\n\nDetails:\n{error_detail}")
-                    
+
+                        time.sleep(5)
+                        root.destroy()
+
                     self.back_button.config(state=tk.DISABLED) # Ensure it stays disabled
                     self.continue_button.config(state=tk.NORMAL)
                     self.quit_button.config(state=tk.NORMAL)
@@ -355,6 +376,7 @@ class DoRunInstaller(GUI.DoRun_Frame):
         )
         if selected_directory:
             self.installationsverzeichnis_var.set(selected_directory)
+            self.DoRunRoot = os.path.join(str(os.path.join(selected_directory, "DoRun")), str("DoRun-" + str(version)))
             print(f"Selected installation directory: {selected_directory}")
 
     def update_wraplength(self, event=None):
@@ -372,6 +394,10 @@ class DoRunInstaller(GUI.DoRun_Frame):
                 self.text_label.config(wraplength=max(1, self.main_frame.winfo_width() - 160))
 
 def main():
+
+    if not Debug_Mode:
+        sys.stdout = NullWrite()
+
     DoRunTheme = GUI.DoRun_Theme_Default()
     global root
     root = tk.Tk()
@@ -397,6 +423,11 @@ def main():
     DoRunInstance.update_wraplength()
 
     root.mainloop()
+
+# Supress output / Just ignore
+class NullWrite():
+    def write(self, *args, **kwargs):
+        pass
 
 if __name__ == "__main__":
     main() 

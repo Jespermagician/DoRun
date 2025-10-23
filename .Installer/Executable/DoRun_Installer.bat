@@ -115,8 +115,8 @@ if "%Controlled%" EQU "false" (
         "!VENV_PYTHON!" -m pip install psutil
         "!VENV_PYTHON!" -m pip install pywin32
 
-        echo Starting python GUI with venv interpreter: "!VENV_PYTHON!"
-        start /wait /b "%extract_dir%\%github_repo%-%folder_name%\.Installer\Executable\StartPython_No_Console.bat" "%VENV_PYTHON_W%" "%extract_dir%\%github_repo%-%folder_name%\.Installer\Executable\Installer_GUI.py"
+        echo Starting python GUI with venv interpreter: "!VENV_PYTHON_W!"
+        start /b "%extract_dir%\%github_repo%-%folder_name%\.Installer\Executable\StartPython_No_Console.bat" "!VENV_PYTHON!" "%extract_dir%\%github_repo%-%folder_name%\.Installer\Executable\Installer_GUI.py" "%folder_name%"
         EXIT 1
     ) else (
         echo Python was not found. Opening the download page...
