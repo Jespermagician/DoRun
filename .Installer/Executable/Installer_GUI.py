@@ -5,7 +5,7 @@ from subprocess import Popen, PIPE
 import os
 import sys
 import threading # Import für das Threading
-
+import time
 
 import DoRun_GUI_Library as GUI
 
@@ -53,8 +53,9 @@ class DoRunInstaller(GUI.DoRun_Frame):
         self.installationsverzeichnis_var = tk.StringVar(value="C:\\Program Files\\DoRun")
         self.DoRunTheme = DoRunTheme
         self.project_name = "DoRun"
-        self.project_venv_name = "DoRun_Venv"
+        self.project_venv_name = "venv"
         self.project_dir_name = "DoRun"
+        self.desktop_link_value = tk.BooleanVar(value=True)
         self.Debug = False  # Set to True for debugging output
 
         # General configuration for DoRun GUI
@@ -73,17 +74,13 @@ class DoRunInstaller(GUI.DoRun_Frame):
         sys.stdout = ConsoleRedirector(self.Info, do_print_to_console=True)
         sys.stderr = ConsoleRedirector(self.Info, do_print_to_console=True)
 
-
     def load_main_widgets(self):
         self.create_page_frame()
         self.create_status_and_progress_widgets()
         self.create_menu()
 
-        # TEST: Überprüfen, ob der Redirector funktioniert. Dieser Text sollte sofort erscheinen.
-        print('Redirector test: This message should appear in the Info box.\n')
         print('Initializing DoRun SetUp GUI...\n') # Added newline for better formatting
         self.master.bind("<Configure>", self.update_wraplength)
-
 
     def create_page_frame(self):
         self.page_frame = tk.Frame(self.main_frame, bg=self.DoRunTheme.colour1)
@@ -126,16 +123,23 @@ class DoRunInstaller(GUI.DoRun_Frame):
         self.text_label.grid(row=0, column=1, padx=20, pady=(60, 0), sticky="nw")
 
         lower_frame = tk.Frame(self.page_frame, bg=self.DoRunTheme.colour1)
-        lower_frame.grid(row=1, column=0, columnspan=2, sticky="ew", padx=20, pady=10)
+        lower_frame.grid(row=2, column=0, columnspan=2, sticky="ew", padx=20, pady=10)
         lower_frame.columnconfigure(0, weight=0)
         lower_frame.columnconfigure(1, weight=1)
         lower_frame.columnconfigure(2, weight=0)
+        lower_frame.columnconfigure(3, weight=0)
+
+        desktop_link = tk.Checkbutton( lower_frame,
+                                        text='Add a desktop link',
+                                        variable=self.desktop_link_value)
+        desktop_link.grid(row = 0, column= 0)
+        desktop_link.config(bg=self.DoRunTheme.colour1, fg=self.DoRunTheme.text_colour, activebackground=self.DoRunTheme.colour2, activeforeground=self.DoRunTheme.colour0, selectcolor=self.DoRunTheme.colour0 )
 
         label_verzeichnis = tk.Label(lower_frame, text="Installation Path:", bg=self.DoRunTheme.colour1, fg=self.DoRunTheme.text_colour, anchor="w")
-        label_verzeichnis.grid(row=0, column=0, padx=0, pady=0, sticky="w")
+        label_verzeichnis.grid(row=1, column=0, padx=0, pady=0, sticky="w")
 
         entry_verzeichnis = tk.Entry(lower_frame, textvariable=self.installationsverzeichnis_var, bg=self.DoRunTheme.colour2, fg=self.DoRunTheme.text_colour, insertbackground=self.DoRunTheme.text_colour)
-        entry_verzeichnis.grid(row=0, column=1, padx=5, pady=0, sticky="ew")
+        entry_verzeichnis.grid(row=1, column=1, padx=5, pady=0, sticky="ew")
 
         button_waehlen = tk.Button(
             lower_frame,
@@ -147,7 +151,7 @@ class DoRunInstaller(GUI.DoRun_Frame):
             activebackground=self.DoRunTheme.colour4,
             activeforeground=self.DoRunTheme.text_colour
         )
-        button_waehlen.grid(row=0, column=2, padx=5, pady=0, sticky="e")
+        button_waehlen.grid(row=1, column=2, padx=5, pady=0, sticky="e")
 
     def create_status_and_progress_widgets(self):
         # This is the status label *above* the progress bar
@@ -172,7 +176,7 @@ class DoRunInstaller(GUI.DoRun_Frame):
         self.menu_frame = tk.Frame(self.main_frame, bg=self.DoRunTheme.colour1)
         self.menu_frame.grid(row=3, column=0, sticky="ew", padx=20, pady=10)
         
-        # Neu: Konfigurieren Sie die Spalten des menu_frame
+        # New: Configure the column of the menu_frame
         self.menu_frame.columnconfigure(0, weight=1) # Für das Info-Textfeld (soll sich ausdehnen)
         self.menu_frame.columnconfigure(1, weight=0) # Für die Scrollbar
         self.menu_frame.columnconfigure(2, weight=0) # Für den Button-Frame
@@ -192,7 +196,7 @@ class DoRunInstaller(GUI.DoRun_Frame):
 
         if self.Debug == False:
             self.Info_scrollbar.grid_remove()
-        
+
         button_frame = tk.Frame(self.menu_frame, bg=self.DoRunTheme.colour1)
         # Button frame jetzt in Spalte 2
         button_frame.grid(row=0, column=2, sticky="e") 
@@ -237,12 +241,12 @@ class DoRunInstaller(GUI.DoRun_Frame):
         self.continue_button.config(state=tk.DISABLED)
         self.quit_button.config(state=tk.DISABLED)
 
-        # WICHTIG: Sicherstellen, dass die Batch-Datei im richtigen Pfad ist.
+        # Important: Ensure, that the batch is in the correct path.
         installer_bat_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "DoRun_Installer.bat")
 
-        print(f"DEBUG: Checking for installer at: {installer_bat_path}") # Debugging-Ausgabe
+        print(f"DEBUG: Checking for installer at: {installer_bat_path}") # Debugging-Output
         if not os.path.exists(installer_bat_path):
-            print(f"ERROR: Installer batch file not found at: {installer_bat_path}") # Debugging-Ausgabe
+            print(f"ERROR: Installer batch file not found at: {installer_bat_path}") # Debugging-Output
             messagebox.showerror("Error", f"Installer batch file not found:\n{installer_bat_path}\nPlease ensure 'DoRun_Installer.bat' is in the 'Executable' directory next to the GUI file.")
             self.update_status("Installation failed.", 0)
             self.back_button.config(state=tk.DISABLED) 
@@ -254,7 +258,8 @@ class DoRunInstaller(GUI.DoRun_Frame):
             print(f"[DEBUG] Installer batch path {installer_bat_path}")
             print(f"[DEBUG] Installer batch path {final_install_dir}")
             print(f"[DEBUG] Installer batch path {os.path.dirname(installer_bat_path)}")
-
+            
+            #Start batch for robocopy 
             process = Popen([installer_bat_path, final_install_dir],
                             cwd=os.path.dirname(installer_bat_path),
                             stdout=PIPE, stderr=PIPE, shell=True,
@@ -267,7 +272,7 @@ class DoRunInstaller(GUI.DoRun_Frame):
                     decoded_line = line.decode('utf-8', errors='ignore').strip()
                     if decoded_line:
                         print(f"BATCH_OUT: {decoded_line}")
-                        # Aktualisiere den Fortschrittsbalken und Status-Label
+                        # Update the progressbar and the status-label
                         current_progress = self.progress_bar['value'] + 5
                         if current_progress > 95: current_progress = 95
                         self.update_status(f"Installation: {decoded_line}", current_progress)
@@ -278,18 +283,21 @@ class DoRunInstaller(GUI.DoRun_Frame):
                         print(f"BATCH_ERR: {decoded_line}")
                         self.update_status(f"ERROR: {decoded_line}", self.progress_bar['value'])
 
-            # Starten Sie das Lesen des Outputs in einem separaten Thread,
-            # um die GUI nicht zu blockieren.
+            # Start reading the batch output in seperated thread so the gui don't get blocked
             output_reader_thread = threading.Thread(target=read_output_lines, daemon=True)
             output_reader_thread.start()
 
-            # Überprüfen Sie regelmäßig, ob der Batch-Prozess beendet wurde.
+            # Check if the batch is still running
             def check_process_status():
-                if process.poll() is None: # Prozess läuft noch
+                if process.poll() is None: # Process is still running
                     self.master.after(100, check_process_status)
-                else: # Prozess beendet
+                else: # Process is finsihed
                     print("DEBUG: Batch process finished.")
-                    # Stellen Sie sicher, dass alle verbleibenden Ausgaben gelesen wurden
+                    # Create desktop link
+                    if self.desktop_link_value:
+                        WinCom = GUI.Windows_Communication()
+                        WinCom.create_desktop_shortcut(target_path=GUI.DoRunMetadata.StartDoRun, shortcut_name="DoRun", description="Start DoRun", icon_path=GUI.DoRunMetadata.DoRunIco)
+                    # Ensure that all results are shown
                     remaining_stdout = process.stdout.read().decode('utf-8', errors='ignore').strip()
                     remaining_stderr = process.stderr.read().decode('utf-8', errors='ignore').strip()
 
@@ -304,6 +312,12 @@ class DoRunInstaller(GUI.DoRun_Frame):
                         print(f'\nInstallation of {self.project_name} successful!')
                         self.update_status("Installation complete.", 100)
                         messagebox.showinfo("Success", f"'{self.project_name}' has been successfully installed in:\n{final_install_dir}")
+                        # Cleanup -> we need to deleate the tmp folder
+                        # The Problem ist that this GUI is hosted by the files
+                        messagebox.INFO("We are now going to cleanup our temporary directory in the backround. You can continue working! This Window will close after 5 Seconds.")
+                        # Script finished here kill the GUI so the batch can start the cleanup
+                        time.sleep(5)
+                        root.destroy()
                     else:
                         error_detail = remaining_stderr if remaining_stderr else "No specific error message from batch."
                         if not error_detail and remaining_stdout:
@@ -320,14 +334,14 @@ class DoRunInstaller(GUI.DoRun_Frame):
             self.master.after(50, check_process_status) # Start checking process status
 
         except FileNotFoundError:
-            print(f"ERROR: Installer batch file not found in try block: '{installer_bat_path}'") # Debugging-Ausgabe
+            print(f"ERROR: Installer batch file not found in try block: '{installer_bat_path}'") # Debugging-Output
             messagebox.showerror("Error", f"The installer could not be found: '{installer_bat_path}'\nPlease check the path.")
             self.update_status("Installation failed.", 0)
             self.back_button.config(state=tk.DISABLED)
             self.continue_button.config(state=tk.NORMAL)
             self.quit_button.config(state=tk.NORMAL)
         except Exception as e:
-            print(f"ERROR: An unexpected error occurred during batch execution: {e}") # Debugging-Ausgabe
+            print(f"ERROR: An unexpected error occurred during batch execution: {e}") # Debugging-Output
             messagebox.showerror("Error", f"An unexpected error occurred: {e}")
             self.update_status("Installation failed.", 0)
             self.back_button.config(state=tk.DISABLED)
@@ -359,7 +373,7 @@ class DoRunInstaller(GUI.DoRun_Frame):
 
 def main():
     DoRunTheme = GUI.DoRun_Theme_Default()
-
+    global root
     root = tk.Tk()
     root.title(WindowName)
     root.geometry(WindowSize)

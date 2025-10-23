@@ -8,6 +8,7 @@ import os
 import psutil
 import socket
 import platform
+from win32com.client import Dispatch
 
 # ------------------------------------------------------------------------
 # DoRunMetadata
@@ -22,6 +23,10 @@ class DoRunMetadata:
     DoRunBackendRoot = str( str(DoRunRoot) + "\\Backend\\BackendApp")
     DoRunFrontendRoot = str( str(DoRunRoot) + "\\Frontend\\frontend")
     DoRunLogo = str(str(DoRunRoot) + "\\.Installer\\Executable\\Icons\\DoRun_Logo.png")
+    DoRunIco = str(str(DoRunRoot) + "\\.Installer\\Executable\\Icons\\laufen.ico")
+    DoRunInstallerVenvPython = str(str(DoRunRoot) + "\\venv_installer\\Scripts\\python.exe")
+    DoRunVenvPython = str(str(DoRunRoot) + "\\venv\\Scripts\\python.exe")
+    StartDoRun = str(str(DoRunRoot) + "\\.Installer\\Scripts\\StartDoRun.bat")
 
 # ------------------------------------------------------------------------
 # DoRun_Json_Manager
@@ -232,6 +237,57 @@ class DoRun_Service:
 
     def __str__(self):
         return f"Name: {self.name}, Display Name: {self.display_name}, Path: {self.path}, Version: {self.version}, Data Directory: {self.data_dir}, Port: {self.port}, Status: {self.status}"
+# ------------------------------------------------------------------------
+#    DE/Erstellt eine Desktop-Verknüpfung (.lnk) für das angegebene Ziel.
+#    EN/Create a desktop-shortcut (.lnk) for the entered origion.
+#    
+#    DE/
+#    :param target_path: Der vollständige Pfad zur ausführbaren Datei oder Skript.
+#    :param shortcut_name: Der Name der Verknüpfung (ohne .lnk Endung).
+#    :param description: Optionale Beschreibung für die Verknüpfung.
+#    :param icon_path: Optionaler Pfad zur Icon-Datei (.ico, .exe, .dll).
+#    EN/
+#    :param target_path: The entire path to the file which should be executed.
+#    :param shortcut_name: The name of the desktop-link (without .lnk ending).
+#    :param description: Optional comment for the desktop-link.
+#    :param icon_path: Optional path to the icon-file (.ico, .exe, .dll).
+# ------------------------------------------------------------------------
+class Windows_Communication:
+    def create_desktop_shortcut(target_path, shortcut_name, description="", icon_path=""):
+        try:
+            # Path of the desktop
+            desktop = os.path.join(os.environ['USERPROFILE'], 'Desktop')
+            
+            # The entire path to the .lnk-file
+            path_link = os.path.join(desktop, f'{shortcut_name}.lnk')
+
+            # Create shell-object
+            shell = Dispatch('WScript.Shell')
+            shortcut = shell.CreateShortCut(path_link)
+
+            # Ziel und Arbeitsverzeichnis festlegen
+            shortcut.Targetpath = target_path
+            # Das Arbeitsverzeichnis ist wichtig für die korrekte Ausführung relativer Pfade
+            shortcut.WorkingDirectory = os.path.dirname(target_path) 
+            
+            shortcut.Description = description
+            
+            # --- NEU: Icon festlegen ---
+            if icon_path and os.path.exists(icon_path):
+                # Icons können aus .ico, .exe oder .dll Dateien geladen werden.
+                shortcut.IconLocation = icon_path 
+            # ---------------------------
+
+            # Verknüpfung speichern
+            shortcut.Save()
+            
+            print(f"Desktop-Verknüpfung '{shortcut_name}.lnk' erfolgreich erstellt.")
+            
+        except Exception as e:
+            print(f"Fehler beim Erstellen der Verknüpfung: {e}")
+            # Wenn der Fehler "ModuleNotFoundError: No module named 'win32com'" auftritt, 
+            # wurde pywin32 nicht richtig installiert.
+
 # ------------------------------------------------------------------------
 # DoRun_Service_Manager
 # This class manages all services used by DoRun.
