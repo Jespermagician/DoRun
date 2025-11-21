@@ -1,6 +1,17 @@
 @echo off
 
-REM *** Konfiguration ***
+REM Call-Stack for installation is as follow:
+REM 1.  DoRun_Installer.bat
+REM 2.  Installer_GUI.py ( Choose final destination to store the project)
+REM 3.1 DoRun_Installer.bat ( In Controlled mode the original bat is the the host prozess )
+REM     This moves the files and start the setup prozess (create virtual enviroments etc.)
+REM     Afterwards Return to Stack 2.
+REM 3.2 Kill installer 
+REM Cleanup works as follow:
+REM At the start of DoRun the application is searching for DoRun_TMP from the installation
+REM and deletes the folder (This process only happens at the first startup)
+
+REM *** Configuration ***
 set "github_user=Jespermagician"
 set "github_repo=DoRun"
 set "release_tag=v0.9.3-beta"
@@ -14,7 +25,6 @@ set "Python_exist=false"
 set "TMP_Del=%cd%DoRun_TMP"
 set "project_venv_name=venv"
 set "installer_venv_name=venv_installer"
-
 set "INSTALLER_BASE_DIR=%~dp0"
 
 if "%extract_dir%" == "" (
@@ -115,14 +125,27 @@ if "%Controlled%" EQU "false" (
         "!VENV_PYTHON!" -m pip install psutil
         "!VENV_PYTHON!" -m pip install pywin32
 
-        echo Starting python GUI with venv interpreter: "!VENV_PYTHON_W!"
-        start /b "%extract_dir%\%github_repo%-%folder_name%\.Installer\Executable\StartPython_No_Console.bat" "!VENV_PYTHON!" "%extract_dir%\%github_repo%-%folder_name%\.Installer\Executable\Installer_GUI.py" "%folder_name%"
-        EXIT 1
+        echo Starting python GUI with venv interpreter: "!VENV_PYTHON!"
+        start /wait /b "%extract_dir%\%github_repo%-%folder_name%\.Installer\Executable\StartPython_No_Console.bat" "!VENV_PYTHON!" "%extract_dir%\%github_repo%-%folder_name%\.Installer\Executable\Installer_GUI.py" "%folder_name%"
+        REM start /wait "!VENV_PYTHON!" "%extract_dir%\%github_repo%-%folder_name%\.Installer\Executable\Installer_GUI.py" "%folder_name%"
+        
+        echo Closed Python process!
+
+        REM set "READ_VALUE="
+        REM if exist "%extract_dir%\NEW_PATH_TMP.txt" (
+            REM delims= stellt sicher, dass die gesamte Zeile gelesen wird, unabhaengig von Leerzeichen.
+            REM for /f "usebackq delims=" %%V in ("%TEMP_FILE%\NEW_PATH_TMP.txt") do (
+                REM set "READ_VALUE=%%V"
+            REM )
+        REM )        
+        REM echo !READ_VALUE!
+        REM start /b "!READ_VALUE!\.Installer\Scripts\CleanUp.bat" "!TMP_Del!"
+        REM EXIT 1
     ) else (
         echo Python was not found. Opening the download page...
         start https://www.python.org/downloads/
         echo -----------------------------------------------------------------------------
-        echo Error:    Python is not found. Please install Python to continue.
+        echo Error:    Python not found. Please install Python to continue.
         echo Solution: Download Python from the opened page and restart the installer afterwards.
         echo -----------------------------------------------------------------------------
         pause
@@ -152,7 +175,7 @@ if "%Controlled%" EQU "false" (
     set "TMP_SOURCE_DIR=!ParentPath!"
     if exist "!TMP_SOURCE_DIR!" (
         echo "Moving files from temporary directory '!TMP_SOURCE_DIR!' to installation directory: '!extract_dir!'"
-        robocopy !TMP_SOURCE_DIR! !extract_dir! /E /MOVE /MIR /XD
+        robocopy !TMP_SOURCE_DIR! !extract_dir! /E /MIR /XD
         if %errorlevel% geq 8 (
             echo Error during robocopy.
             exit 1
@@ -188,7 +211,6 @@ if "%Controlled%" EQU "false" (
             "!VENV_PYTHON!" -m pip install -r "!extract_dir!\DoRun-%folder_name%\Backend\requirements.txt"
 
             echo Virtual Environment and modules successfully set up in installation directory.
-            start /b "!extract_dir!\DoRun-%folder_name%\.Installer\Scripts\CleanUp.bat" "!TMP_SOURCE_DIR!"
             exit 1
         ) else (
             echo Error: Python not found for venv creation in controlled mode.

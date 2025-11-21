@@ -4,8 +4,7 @@ from PIL import ImageTk, Image
 from subprocess import Popen, PIPE
 import os
 import sys
-import threading # Import für das Threading
-import time
+import threading
 
 import DoRun_GUI_Library as GUI
 
@@ -16,7 +15,7 @@ WindowName = title + " " + version
 WindowSize = "700x350"
 
 #------------------------------------------------------
-# IMPORTANT: DONT'T USER PRINT COMMAND!!!
+# IMPORTANT: DONT'T USE THE PRINT COMMAND!!!
 # This script is run by pythonw.exe not python.exe
 # so cmd is supressed 
 # For Debug run the script with python by yourself
@@ -25,11 +24,13 @@ WindowSize = "700x350"
 Debug_Mode = False
 
 # Custom stdout/stderr writer to redirect print statements to a Tkinter Text widget
+
 class ConsoleRedirector:
-    def __init__(self, text_widget, do_print_to_console=True): # do_print_to_console standardmäßig auf True setzen
+    def __init__(self, text_widget, do_print_to_console=True, id=""): # do_print_to_console standardmäßig auf True setzen
         self.text_widget = text_widget
         self.do_print_to_console = do_print_to_console
         self.stdout = sys.__stdout__ # Keep a reference to the original stdout
+        self.id = id
 
     def write(self, message):
         # Wenn do_print_to_console True ist, wird auch in die Systemkonsole geschrieben.
@@ -40,16 +41,18 @@ class ConsoleRedirector:
         # Sicherstellen, dass die GUI-Operationen im Hauptthread ausgeführt werden
         # Dies ist entscheidend, wenn print() von einem anderen Thread aufgerufen wird (z.B. im Batch-Leseprozess)
         def _insert_message():
+            if not self.text_widget.winfo_exists():
+                return
+            
             self.text_widget.config(state=tk.NORMAL)
             self.text_widget.insert(tk.END, message)
             self.text_widget.see(tk.END) # Scroll to the end
             self.text_widget.config(state=tk.DISABLED)
-            # self.text_widget.update_idletasks() # Entweder hier oder am Ende der Schleife im Leseprozess
 
         # root.after ist die sichere Methode, um GUI-Operationen von einem Nicht-GUI-Thread aus aufzurufen
-        if self.text_widget.winfo_exists(): # Nur aktualisieren, wenn das Widget noch existiert
-            self.text_widget.after(0, _insert_message)
-
+        if self.text_widget.winfo_exists():
+            root_widget = self.text_widget.winfo_toplevel()
+            root_widget.after(0, _insert_message)
 
     def flush(self):
         # This method is required for file-like objects
@@ -67,6 +70,7 @@ class DoRunInstaller(GUI.DoRun_Frame):
         self.desktop_link_value = tk.BooleanVar(value=True)
         self.Debug = False  # Set to True for debugging output
         self.DoRunRoot = ""
+        self.current = 0
 
         # General configuration for DoRun GUI
         super().__init__(root, img_path=img_path, Theme=DoRunTheme)
@@ -229,8 +233,19 @@ class DoRunInstaller(GUI.DoRun_Frame):
         # messagebox.showinfo("Info", "Back function not yet implemented.") # This message will now also print to Info field
 
     def update_status(self, message, progress=0):
-        # This updates the status label (above the progress bar)
-        self.status_var.set(message)
+        # This updates the status label (above the progress bar)        
+        match self.current:
+            case 0:
+                new_message = str( message + "/" )
+                self.current = 1 
+            case 1:
+                new_message = str( message + "-" )
+                self.current = 2
+            case 2:
+                new_message = str( message + "\\" )
+                self.current = 0
+        
+        self.status_var.set(new_message)
         self.progress_bar['value'] = progress
         self.master.update_idletasks()
 
@@ -276,38 +291,48 @@ class DoRunInstaller(GUI.DoRun_Frame):
                             creationflags=0x08000000 
                            )
 
-            def read_output_lines():
-                # Read line by line from stdout and stderr
-                for line in iter(process.stdout.readline, b''):
-                    decoded_line = line.decode('utf-8', errors='ignore').strip()
-                    if decoded_line:
-                        print(f"BATCH_OUT: {decoded_line}")
-                        # Update the progressbar and the status-label
-                        current_progress = self.progress_bar['value'] + 5
-                        if current_progress > 95: current_progress = 95
-                        self.update_status(f"Installation: {decoded_line}", current_progress)
-                
-                for line in iter(process.stderr.readline, b''):
-                    decoded_line = line.decode('utf-8', errors='ignore').strip()
-                    if decoded_line:
-                        print(f"BATCH_ERR: {decoded_line}")
-                        self.update_status(f"ERROR: {decoded_line}", self.progress_bar['value'])
+            def read_output_lines(stop_event):
+                if not stop_event.is_set():
+                    print("Thread ongoing")
+                    # Read line by line from stdout and stderr
+                    for line in iter(process.stdout.readline, b''):
+                        decoded_line = line.decode('utf-8', errors='ignore').strip()
+                        if decoded_line:
+                            print(f"BATCH_OUT: {decoded_line}")
+                            # Update the progressbar and the status-label
+                            current_progress = self.progress_bar['value'] + 5
+                            if current_progress > 95: current_progress = 95
+                            self.update_status(f"Installation: {decoded_line}", current_progress)
+                    
+                    for line in iter(process.stderr.readline, b''):
+                        decoded_line = line.decode('utf-8', errors='ignore').strip()
+                        if decoded_line:
+                            print(f"BATCH_ERR: {decoded_line}")
+                            self.update_status(f"ERROR: {decoded_line}", self.progress_bar['value'])
+                else:
+                    print("Thread ending now")
 
             # Start reading the batch output in seperated thread so the gui don't get blocked
-            output_reader_thread = threading.Thread(target=read_output_lines, daemon=True)
+            stop_event = threading.Event()
+            output_reader_thread = threading.Thread(target=read_output_lines, args=(stop_event,), daemon=True)
             output_reader_thread.start()
-            #self.update_status("Moving files for you.", 20)
 
+            self.update_status("Thinking up excuses for why it takes so long to load", self.progress_bar['value'])
 
             # Check if the batch is still running
             def check_process_status():
                 if process.poll() is None: # Process is still running
+                    self.update_status("Thinking up excuses for why it takes so long to load", self.progress_bar['value'])
                     self.master.after(100, check_process_status)
                 else: # Process is finsihed
+                    process.terminate()
                     print("DEBUG: Batch process finished.")
                     
-                    self.quit_button.config(state=tk.DISABLED)
                     self.update_status("Installation successfull", 100)
+
+                    self.back_button.config(state=tk.DISABLED) # Ensure it stays disabled
+                    self.continue_button.config(state=tk.NORMAL)
+                    self.quit_button.config(state=tk.NORMAL)
 
                     # Create desktop link
                     if self.desktop_link_value:
@@ -316,41 +341,52 @@ class DoRunInstaller(GUI.DoRun_Frame):
                         ico   = os.path.join(str(self.DoRunRoot), ".Installer","Executable","Icons","laufen.ico")
                         WinCom.create_desktop_shortcut(start, "DoRun","Start DoRun", ico)
                     # Ensure that all results are shown
-                    remaining_stdout = process.stdout.read().decode('utf-8', errors='ignore').strip()
-                    remaining_stderr = process.stderr.read().decode('utf-8', errors='ignore').strip()
-
-                    if remaining_stdout:
-                        print(f"BATCH_OUT (final): {remaining_stdout}")
-                    if remaining_stderr:
-                        print(f"BATCH_ERR (final): {remaining_stderr}")
+                    #remaining_stdout = process.stdout.read().decode('utf-8', errors='ignore').strip()
+                    #remaining_stderr = process.stderr.read().decode('utf-8', errors='ignore').strip()
 
                     retcode = process.returncode
+                    print (retcode)
 
-                    if retcode == 0:
+                    if retcode == 1:
                         print(f'\nInstallation of {self.project_name} successful!')
                         self.update_status("Installation complete.", 100)
                         messagebox.showinfo("Success", f"'{self.project_name}' has been successfully installed in:\n{final_install_dir}")
                         # Cleanup -> we need to deleate the tmp folder
                         # The Problem ist that this GUI is hosted by the files
-                        messagebox.INFO("We are now going to cleanup our temporary directory in the backround. You can continue working! This Window will close after 5 Seconds.")
+                        script_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "NEW_PATH_TMP.txt")
+                        
+                        try:
+                            # Changed: Using built-in open() function with 'w' mode
+                            with open(str(script_path), 'w', encoding="utf-8") as f:
+                                f.write(self.DoRunRoot)
+                                f.close()
+                            
+                        except Exception as e:
+                            # In case of permission errors
+                            print(f"ERROR writing file: {e}")
+                            stop_event.set()
+                            output_reader_thread.join()
+                            sudo_stop_process()
+                        
+                        messagebox.showinfo("Information","We are now going to cleanup our temporary directory in the backround. You can continue working! After pressing 'Ok' the Window will close itself.")
                         # Script finished here kill the GUI so the batch can start the cleanup
-                        time.sleep(5)
-                        root.destroy()
+                        stop_event.set()
+                        print("Joining thread")
+                        #output_reader_thread.join()
+                        print("Joining thread done")
+                        sudo_stop_process()
                     else:
-                        error_detail = remaining_stderr if remaining_stderr else "No specific error message from batch."
-                        if not error_detail and remaining_stdout:
-                            error_detail = "Batch output (if any):\n" + remaining_stdout
+                        #error_detail = remaining_stderr if remaining_stderr else "No specific error message from batch."
+                        #if not error_detail and remaining_stdout:
+                        #    error_detail = "Batch output (if any):\n" + remaining_stdout
                         
                         print(f'\nInstallation failed with return code: {retcode}')
                         self.update_status("Installation failed.", 0)
-                        messagebox.showerror("Installation Error", f"Installation of '{self.project_name}' failed.\n\nReturn Code: {retcode}\n\nDetails:\n{error_detail}")
+                        messagebox.showerror("Installation Error", f"Installation of '{self.project_name}' failed.\n\nReturn Code: {retcode}\n")
 
-                        time.sleep(5)
-                        root.destroy()
-
-                    self.back_button.config(state=tk.DISABLED) # Ensure it stays disabled
-                    self.continue_button.config(state=tk.NORMAL)
-                    self.quit_button.config(state=tk.NORMAL)
+                        stop_event.set()
+                        output_reader_thread.join()
+                        sudo_stop_process()
 
             self.master.after(50, check_process_status) # Start checking process status
 
@@ -392,6 +428,13 @@ class DoRunInstaller(GUI.DoRun_Frame):
             except Exception as e:
                 print(f"Error during wraplength calculation: {e}")
                 self.text_label.config(wraplength=max(1, self.main_frame.winfo_width() - 160))
+    
+def sudo_stop_process():
+    print("Killing process!")
+    #root.after_cancel(sys.stdout.id)
+    #root.after_cancel(sys.stderr.id)
+    #print("After calls killed!")
+    root.quit()
 
 def main():
 
@@ -423,6 +466,7 @@ def main():
     DoRunInstance.update_wraplength()
 
     root.mainloop()
+    print("Process finsihed!!!")
 
 # Supress output / Just ignore
 class NullWrite():

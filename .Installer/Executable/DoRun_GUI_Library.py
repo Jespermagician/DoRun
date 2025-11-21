@@ -252,40 +252,32 @@ class DoRun_Service:
 # ------------------------------------------------------------------------
 class Windows_Communication:
     def create_desktop_shortcut(self, target_path, shortcut_name, description="", icon_path=""):
-        try:
-            # Path of the desktop
-            desktop = os.path.join(os.environ['USERPROFILE'], 'Desktop')
-            
-            # The entire path to the .lnk-file
-            path_link = os.path.join(desktop, f'{shortcut_name}.lnk')
+        # Path of the desktop
+        desktop = os.path.join(os.environ['USERPROFILE'], 'Desktop')
+        
+        # The entire path to the .lnk-file
+        path_link = os.path.join(desktop, f'{shortcut_name}.lnk')
 
-            # Create shell-object
-            shell = Dispatch('WScript.Shell')
-            shortcut = shell.CreateShortCut(path_link)
+        # Create shell-object
+        shell = Dispatch('WScript.Shell')
+        shortcut = shell.CreateShortCut(path_link)
 
-            # Ziel und Arbeitsverzeichnis festlegen
-            shortcut.Targetpath = target_path
-            # Das Arbeitsverzeichnis ist wichtig für die korrekte Ausführung relativer Pfade
-            shortcut.WorkingDirectory = os.path.dirname(target_path) 
-            
-            shortcut.Description = description
-            
-            # --- NEU: Icon festlegen ---
-            if icon_path and os.path.exists(icon_path):
-                # Icons können aus .ico, .exe oder .dll Dateien geladen werden.
-                shortcut.IconLocation = icon_path 
-            # ---------------------------
+        # Ziel und Arbeitsverzeichnis festlegen
+        shortcut.Targetpath = target_path
+        # Das Arbeitsverzeichnis ist wichtig für die korrekte Ausführung relativer Pfade
+        shortcut.WorkingDirectory = os.path.dirname(target_path) 
+        
+        shortcut.Description = description
+        
+        # --- NEU: Icon festlegen ---
+        if icon_path and os.path.exists(icon_path):
+            # Icons können aus .ico, .exe oder .dll Dateien geladen werden.
+            shortcut.IconLocation = icon_path 
+        # ---------------------------
 
-            # Verknüpfung speichern
-            shortcut.Save()
+        # Verknüpfung speichern
+        shortcut.Save()
             
-            print(f"Desktop-Verknüpfung '{shortcut_name}.lnk' erfolgreich erstellt.")
-            
-        except Exception as e:
-            print(f"Fehler beim Erstellen der Verknüpfung: {e}")
-            # Wenn der Fehler "ModuleNotFoundError: No module named 'win32com'" auftritt, 
-            # wurde pywin32 nicht richtig installiert.
-
 # ------------------------------------------------------------------------
 # DoRun_Service_Manager
 # This class manages all services used by DoRun.
