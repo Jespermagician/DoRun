@@ -81,19 +81,28 @@ if "%Controlled%" EQU "false" (
     set "Python_path="
 
     REM 1. Suche im PATH
-    where python >nul 2>&1
-    if not errorlevel 1 (
-        for /f "delims=" %%i in ('where python') do set "Python_path=%%i"
-        set "Python_exist=true"
-    )
+    REM where python >nul 2>&1
+    REM if not errorlevel 1 (
+    REM     for /f "delims=" %%i in ('where python') do set "Python_path=%%i"
+    REM     set "Python_exist=true"
+    REM )
 
     REM 2. Falls nicht im PATH, suche auf Systempartition
-    if /i "!Python_exist!"=="false" (
-        for /R "%SystemDrive%\" %%f in (python.exe) do (
-            set "Python_path=%%f"
-            set "Python_exist=true"
-            goto :found_python
-        )
+    REM if /i "!Python_exist!"=="false" (
+    REM     for /R "%SystemDrive%\" %%f in (python.exe) do (
+    REM         set "Python_path=%%f"
+    REM         set "Python_exist=true"
+    REM         goto :found_python
+    REM     )
+    REM )
+
+    REM Pfad über Python Launcher (py.exe) ermitteln
+    REM 'py -c' führt Python-Code aus, der seinen eigenen Pfad druckt.
+    set "Python_exist=false"
+    for /f "delims=" %%i in ('py -c "import sys; print(sys.executable)" 2^>nul') do (
+        set "Python_path=%%i"
+        set "Python_exist=true"
+        goto :found_python
     )
 
     :found_python
@@ -203,7 +212,7 @@ if "%Controlled%" EQU "false" (
             
             set "VENV_PYTHON=!TARGET_VENV_PATH!\Scripts\python.exe"
             
-            start /B "!TARGET_VENV_PATH!\Scripts\activate.bat" 
+            REM start /B "!TARGET_VENV_PATH!\Scripts\activate.bat" 
 
             echo Installing pip in venv...
             "!VENV_PYTHON!" -m pip install --upgrade pip
