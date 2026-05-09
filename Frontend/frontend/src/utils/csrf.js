@@ -20,7 +20,7 @@ import { getBackEndDomain } from "../utils/backend-domain";
         credentials: 'include',
       });
     const data = await response.json();
-    var csrfToken = getCookie('csrftoken'); // Get the cookie from django
+    const csrfToken = getCookie('csrftoken'); // Get the cookie from django
     document.cookie = "csrfToken="+csrfToken; // Set the cookie in the browser
     return data.csrftoken; //Return the CSRF-Token
   };
