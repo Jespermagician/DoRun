@@ -29,7 +29,6 @@ class Users(models.Model):
         # Password validation
         validation = pwd.checkPwdConstraints(password)
         if (validation != 1):
-            print("Password is not valid")
             return None
         
         #1. Set UserID
@@ -40,9 +39,8 @@ class Users(models.Model):
             CheckForDoubleUser = Users.objects.raw("Select * From api_users Where email = %s", [email])
             for p in CheckForDoubleUser:
                 double = True
-        except:
+        except Exception:
             double = False
-        print("double " + str(double))
         try:
             if (double == False):
                 #Get current highest iduser
@@ -58,10 +56,9 @@ class Users(models.Model):
                         UserID = UserID + 1
                     elif (p.iduser == None):
                         UserID = 1
-                print("test " + str(test))
                 
-        except:
-            print("Unexpected error ocurred!")
+        except Exception:
+            pass
         
         #2. Password hashing
         if (password != None):
@@ -78,11 +75,7 @@ class Users(models.Model):
         VerifiedUser = False
         
         NewUser = None
-        #Creat new DB entry if values are filled    
-        print("UserID")
-        print(UserID)
         if (UserID != None and first_name != None and last_name != None and email != None and Password_hash != None and Salt != None and CreatedAt != None and RoleID != None):
-            print("Creating new User with ID: " + str(UserID))
             NewUser = Users.objects.create(
                 iduser=UserID, 
                 firstname=first_name,
@@ -99,7 +92,6 @@ class Users(models.Model):
             # except:
             #     print("Error, user can't be added to DB!")
         else:
-            print("Not all requirements are fulfilled to create a user")
         
         # if the process was denied, no NewUser is created
         return None
@@ -117,8 +109,6 @@ class Users(models.Model):
                 test = str(b'')
                 #If init password eq user password then trigger reset
                 if (str(p.password_hash) == test):
-                    print(p.password_hash, test)
-                    print("No password for User")
                     return -101
                 
                 # Enter the entered password encrypt it with the salt and compare it with the pwhash from the db
@@ -161,8 +151,7 @@ class Users(models.Model):
                     except:
                         return -101
                     
-        except:
-            print("Error")
+        except Exception:
     
     
 
@@ -215,8 +204,7 @@ class donationrecord(models.Model):
                     else:
                         TotalDonations += (row.donation * kilometers)
             
-        except:
-            print("Can't calculate without data")
+        except Exception:
         
         data = []
         #Safe evaluation

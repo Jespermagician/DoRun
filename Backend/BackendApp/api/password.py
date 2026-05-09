@@ -13,7 +13,6 @@ class pwd():
         Status = 401
         try:
             Password_hash, Salt = pwd.PasswordHashing(Password)
-            print(Password_hash, Salt)
             
             # SQL-Abfrage
             sql = "UPDATE api_users SET password_hash = %s, salt = %s WHERE email = %s"
@@ -45,13 +44,10 @@ class pwd():
                 Message = "Password muss mindestens 8 Zeichen lang sein!"
                 Status = 401
                 return Status, Message
-        print("Password is valid")
         try:
             salt = models.Users.objects.get(iduser=iduser).salt
-            print("salt: ", salt)
             Password_hash = pwd.PasswordSetJustPassword(password=Password, salt=salt)
 
-            print("Password_hash: ", Password_hash)
             # SQL-Abfrage
             sql = "UPDATE api_users SET password_hash = %s WHERE iduser = %s"
             # Parameter

@@ -87,8 +87,6 @@ MIDDLEWARE = [
 # hier caps rein gehauen
 ROOT_URLCONF = "BackendApp.urls"
 
-print("suub dir")
-print(os.path.join(BASE_DIR, 'CustomData'))
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",

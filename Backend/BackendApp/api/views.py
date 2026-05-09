@@ -50,12 +50,9 @@ def register(request):
         #Erstelle neuen Benutzer auf der Datenbank
             # Send Verification Mail
 
-        print("first_name,last_name,email,password")
-        print(first_name,last_name,email,password)
         NewUser = Users.RegisterUser(first_name, last_name, email,password)
         # Check if the User is created
         if NewUser == None:
-            print("Process interupted. Try Again!")
             # return HttpResponse(content="User couldn't be created!", status=200)
             return JsonResponse(data={}, status=400)
         
@@ -104,9 +101,7 @@ def cust_login(request):
                 message = "Login erfolgreich"
             else:
                 message = "Login nicht erfolgreich"
-        except:
-            print("user")
-            print(user)
+        except Exception as e:
             if (user == -99):
                 return JsonResponse(status=200, data={"userid": -99,"UserIsAuth": False, 'message': 'Login nicht erfolgreich', "Role": False})
             elif (user == -100):
@@ -276,9 +271,7 @@ def UpdateDonations(request):
                                               verified = False,
                                               iscertreq = isCertReq)
                 # donationrecord.add(newDonRec)
-                print("tessdfsdf")
                 newDonRec.save()
-                print("tessdfsdf")
                 Status = 200
                 Message = "Neuer Datensatz angelegt"
             except Exception as e:
@@ -305,10 +298,6 @@ def UpdateDonations(request):
                 return JsonResponse({"message": f"Failed to update record: {str(e)}"}, status=500)
             
         try:
-            print("mail sender")
-            print(int(UserID))
-            print(int(donationid))
-            print(frontendDomain)
             mail_handle.sendDonationVerifyMail(request, int(UserID), int(donationid), frontendDomain)
         except:
             return JsonResponse({"message": "Donations updated successfully, but the mail wasnt send"}, status=200)
@@ -425,7 +414,6 @@ def DelDonoRec(request):
     # Über die Liste in der JSON-Datenstruktur iterieren
     for entry in data:
         donoid = entry.get("donoid")
-        print("donoid löschen:  ", donoid)
         donationrecord.objects.filter(donationrecid=donoid).delete()
 
     

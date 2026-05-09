@@ -12,7 +12,5 @@ class UserSerializer(serializers.ModelSerializer):
 
     # Überschreibt die Methode zum Erstellen eines Benutzers
     def create(self, validated_data):
-        print(validated_data)  #
-        # Erstellt einen neuen Benutzer mit der create_user-Methode (inkl. Passwort-Hashing)
         user = User.objects.create_user(**validated_data)
         return user
