@@ -23,6 +23,7 @@ class Users(models.Model):
     verified = models.BooleanField()
     logintrys = models.IntegerField(default=0)
     
+    @staticmethod
     def RegisterUser(first_name,last_name,email,password):
 
         # Password validation
@@ -105,6 +106,7 @@ class Users(models.Model):
  
     # end def
 
+    @staticmethod
     def LoginUser(email,password):
         #%s is to prevent SQL-injection
         try:
@@ -181,6 +183,7 @@ class donationrecord(models.Model):
     verified = models.BooleanField(null=True)
     iscertreq = models.BooleanField(null=False)
     
+    @staticmethod
     def GetUserStats(Userid):
         #Get Userdata for Welcome Screen 
         UserName = Users.objects.raw("Select iduser, firstname, lastname, email From api_users Where iduser = %s", [Userid])
@@ -246,6 +249,7 @@ class donationrecord(models.Model):
         #return JSON 
         return data
     
+    @staticmethod
     def GetAdminStats(Userid):
         #vars
         Message = "Permission denied"
