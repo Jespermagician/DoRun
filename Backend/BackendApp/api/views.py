@@ -32,7 +32,7 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-#Handels the registration page
+#Handles the registration page
 @csrf_protect
 def register(request):
     if request.method == 'POST':
@@ -365,7 +365,7 @@ def UpdateUsers(request):
                 cursor.execute(sql, values)
             Status = 200
             Message= "Daten wurden geupdated"
-        except e:
+        except Exception as e:
             Message = "Der SQL-Befehl liefert folgendes zurueck: " + str(e)
         
     return JsonResponse({"message": Message}, status=Status)
