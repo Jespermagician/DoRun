@@ -246,6 +246,9 @@ def UpdateDonations(request):
             FixedAmount = False
 
 
+        if donationid is None:
+            return JsonResponse({"error": "Missing donation ID"}, status=400)
+
         donationid = int(donationid)
         # Create a new donation record if no ID was provided
         if (donationid == -1):
