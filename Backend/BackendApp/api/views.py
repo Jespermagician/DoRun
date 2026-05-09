@@ -32,7 +32,7 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-#Handles the registration page
+# Handles the registration page
 @csrf_protect
 def register(request):
     if request.method == 'POST':
