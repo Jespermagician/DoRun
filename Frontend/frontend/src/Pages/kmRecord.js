@@ -128,7 +128,7 @@ const KmRecord = () => {
     return (
         <>
             <div>
-                <button className="home-btn" onClick={() => navigate("/admin")}>
+                <button className="home-btn" aria-label="Zurück zum Admin" onClick={() => navigate("/admin")}>
                     <IoHomeOutline /> Home
                 </button>
             </div>

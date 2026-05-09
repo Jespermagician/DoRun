@@ -11,3 +11,22 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Accessible link-styled button — looks like a link but is keyboard-focusable */
+.link-button {
+  background: none;
+  border: none;
+  color: #2c5282;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  padding: 0;
+  text-decoration: underline;
+}
+.link-button:hover {
+  color: #1a365d;
+}
+.link-button:focus {
+  outline: 2px solid #4299e1;
+  outline-offset: 2px;
+}

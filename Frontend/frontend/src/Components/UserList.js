@@ -25,8 +25,8 @@ const UserList = ({ entries, handleEditEntry, handleDeleteEntry, handleAddEntry 
                   {/* <span>{entry.fixedamount}</span> */}
                 </div>
                 <div className="entry-actions">
-                  <button className="edit-btn" onClick={() => handleEditEntry(entry)}><FaEdit/></button>
-                  <button className="delete-btn" onClick={() => handleDeleteEntry(entry.id)}><FaTrash/></button>
+                  <button className="edit-btn" aria-label="Benutzer bearbeiten" onClick={() => handleEditEntry(entry)}><FaEdit/></button>
+                  <button className="delete-btn" aria-label="Benutzer löschen" onClick={() => handleDeleteEntry(entry.id)}><FaTrash/></button>
                 </div>
               </li>
             ))

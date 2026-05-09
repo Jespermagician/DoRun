@@ -6,12 +6,12 @@ import { useNavigate } from 'react-router-dom';
 const Info = () => {
   const navigate = useNavigate();
   return (
-    <div className="info-wrapper-root">
+    <main className="info-wrapper-root">
       <div className="info-container-outer">
-        <div className="info-container">
-          <div className="back-btn-wrapper">
+        <article className="info-container">
+          <nav className="back-btn-wrapper">
             <button className="btn-back-from-info" onClick={() => navigate(-1)}>Zurück</button>
-          </div>          
+          </nav>          
           
           <h1 className="title">🏃‍♂️ Spendenlauf am 30. Februar 2026</h1>
 
@@ -86,9 +86,9 @@ const Info = () => {
             Bei weiteren Fragen kannst du dich gerne an <a href="mailto:test@Spendenlauf.de">test@test.de</a> wenden
           </p>
           
+      </article>
       </div>
-      </div>
-    </div>
+    </main>
   );
 };
 

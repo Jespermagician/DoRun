@@ -119,17 +119,17 @@ function Login() {
                 required
               />
             </div>
-            <p className="pwd-forget" onClick={handleForgorPwd}><span>Passwort vergessen?</span></p>
+            <p className="pwd-forget"><button className="link-button" onClick={handleForgorPwd}>Passwort vergessen?</button></p>
             <button className="login-button" type="submit">Anmelden</button>
             <p className="switch-text">
-              Noch kein Konto? <span onClick={handleRegister}>Registrieren</span>
+              Noch kein Konto? <button className="link-button" onClick={handleRegister}>Registrieren</button>
             </p>
             <div className="impressum-login">
-              <a className="impressum-login-link" title="impressum" onClick={() => navigate("/impressum")}>Impressum</a>
+              <button className="impressum-login-link link-button" title="Impressum" onClick={() => navigate("/impressum")}>Impressum</button>
               &nbsp;|&nbsp; 
-              <a className="impressum-login-link" title="datenschutz" onClick={() => navigate("/datenschutz")}>Datenschutz</a>
+              <button className="impressum-login-link link-button" title="Datenschutz" onClick={() => navigate("/datenschutz")}>Datenschutz</button>
               &nbsp;|&nbsp; 
-              <a className="impressum-login-link" title="info" onClick={() => navigate("/info")}>Info</a>
+              <button className="impressum-login-link link-button" title="Info" onClick={() => navigate("/info")}>Info</button>
             </div>
           </form>
           <br/>

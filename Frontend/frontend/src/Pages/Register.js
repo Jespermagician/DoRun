@@ -156,14 +156,14 @@ function Register() {
             </div>
             <button type="submit">Registrieren</button>
             <p className="switch-text">
-              Bereits ein Konto? <span onClick={handleLogin}>Anmelden</span>
+              Bereits ein Konto? <button className="link-button" onClick={handleLogin}>Anmelden</button>
             </p>
             <div className="impressum-login">
-              <a className="impressum-login-link" title="impressum" onClick={() => navigate("/impressum")}>Impressum</a>
+              <button className="impressum-login-link link-button" title="Impressum" onClick={() => navigate("/impressum")}>Impressum</button>
                 &nbsp;|&nbsp; 
-              <a className="impressum-login-link" title="datenschutz" onClick={() => navigate("/datenschutz")}>Datenschutz</a>
+              <button className="impressum-login-link link-button" title="Datenschutz" onClick={() => navigate("/datenschutz")}>Datenschutz</button>
                 &nbsp;|&nbsp; 
-              <a className="impressum-login-link" title="info" onClick={() => navigate("/info")}>Info</a>
+              <button className="impressum-login-link link-button" title="Info" onClick={() => navigate("/info")}>Info</button>
             </div>
           </form>
         </div>

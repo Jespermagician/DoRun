@@ -113,12 +113,12 @@ const EntryList = ({ entries, handleEditEntry, handleDeleteEntryApi, handleAddEn
                 </div>
                 <div className="entry-actions">
                   {!entry.verified && isCooldownActive(entry.donoid) && (
-                    <button className="edit-btn" onClick={() => handleRemind(entry)} title="Verifizierung neu senden">
+                    <button className="edit-btn" aria-label="Verifizierung neu senden" onClick={() => handleRemind(entry)} title="Verifizierung neu senden">
                       <MdMailOutline />
                     </button>
                   )}
-                  <button className="edit-btn"  title="Eintrag bearbeiten" onClick={() => handleEditEntry(entry)}><FaEdit/></button>
-                  <button className="delete-btn" title="Eintrag löschen" onClick={() => handleDelEntry(entry)}><FaTrash/></button>
+                  <button className="edit-btn" aria-label="Eintrag bearbeiten" title="Eintrag bearbeiten" onClick={() => handleEditEntry(entry)}><FaEdit/></button>
+                  <button className="delete-btn" aria-label="Eintrag löschen" title="Eintrag löschen" onClick={() => handleDelEntry(entry)}><FaTrash/></button>
                 </div>
               </li>
             ))
