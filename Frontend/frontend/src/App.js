@@ -20,6 +20,7 @@ import DataSec from "./Pages/datasec";
 function App() {
   return (
       <Router>
+        <main>
         <Routes>
           <Route path="/" element={<Login />}/>
           <Route path="/register" element={<Register />}/>

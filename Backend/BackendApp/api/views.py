@@ -196,6 +196,41 @@ def resetUserPasswort(request):
         Status = 401
         Message = "Error, cant change password!"
     return JsonResponse(status=Status, data={"message":Message})
+
+@csrf_protect
+def update_profile(request):
+    if request.method != 'POST':
+        return JsonResponse({"message": "Only POST requests are allowed"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({"message": "Invalid JSON"}, status=400)
+
+    iduser = data.get("iduser")
+    firstname = data.get("firstname")
+    lastname = data.get("lastname")
+
+    if not iduser:
+        return JsonResponse({"message": "User ID is required"}, status=400)
+
+    try:
+        iduser = int(iduser)
+    except (ValueError, TypeError):
+        return JsonResponse({"message": "Invalid user ID"}, status=400)
+
+    try:
+        user = Users.objects.get(iduser=iduser)
+        if firstname:
+            user.firstname = firstname
+        if lastname:
+            user.lastname = lastname
+        user.save()
+        return JsonResponse({"message": "Name erfolgreich geändert!"}, status=200)
+    except Users.DoesNotExist:
+        return JsonResponse({"message": "User not found"}, status=404)
+    except Exception as e:
+        return JsonResponse({"message": f"Error updating profile: {str(e)}"}, status=500)
         
 @csrf_protect
 def adminhome(request):

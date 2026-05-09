@@ -15,6 +15,7 @@ function Register() {
   const [error, setError] = useState("");
   const [infoPopUp, setInfoPopUp] = useState({isopen: false, message: ""})
   const [is_agb_accepted, setIs_agb_accepted] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
 
@@ -49,6 +50,10 @@ function Register() {
 
     try {
 
+    // Clear previous errors and set loading state
+    setError("");
+    setIsLoading(true);
+
     // Get CSRF-Token and cookie 
     const csrfToken = await getCsrfToken();
     const backEndDomain = await getBackEndDomain();
@@ -68,11 +73,12 @@ function Register() {
         throw new Error(data.message || "Fehler bei der Anmeldung");
       }
 
-      // Weiterleitung zum Dashboard
-
+      // Show success popup before redirect
       setInfoPopUp({isopen: true, message: `E-Mail zur Verifizierung wurde an ${email} gesendet. Diese muss vor der Anmeldung bestätigt werden!`})
     } catch (error) {
       setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -154,7 +160,9 @@ function Register() {
                 <a className="agb-link" href="https://www.ev-jugend-westfalen.de/footer-menu-fullsize/rechtliches-infos-material-shop/agb-mit-kundeninformationen/" title="agb">AGB!</a> 
               </label>
             </div>
-            <button type="submit">Registrieren</button>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? "Registrierung läuft..." : "Registrieren"}
+            </button>
             <p className="switch-text">
               Bereits ein Konto? <span onClick={handleLogin}>Anmelden</span>
             </p>
