@@ -308,11 +308,6 @@ class donationrecord(models.Model):
         return data
     # end def
             
-def roles():
-    roleid = models.IntegerField(primary_key=True,null=False)
-    rolename = models.TextField(null=False)
-
-
 class CustomBackend(BaseBackend):
     def get_user(self, user_id):
         return Users(id=user_id, username='benutzername')
