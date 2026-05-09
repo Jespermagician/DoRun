@@ -402,6 +402,10 @@ def DelUser(request):
 
             if (iduser != None):
                 Users.objects.filter(iduser=iduser).delete()
+                Status = 200
+                Message = "User deleted successfully"
+        
+    return JsonResponse({"message": Message}, status=Status)
         
 @csrf_protect
 def DelDonoRec(request):
