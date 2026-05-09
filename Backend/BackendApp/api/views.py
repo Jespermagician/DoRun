@@ -401,8 +401,7 @@ def DelUser(request):
             iduser = Users.objects.raw("Select iduser From api_users Where email = %s",[email])    
 
             if (iduser != None):
-                # raw funktioniert scheinbar nur für select statements
-                Users.objects.raw("Delete From api_users Where iduser = %s", [iduser])
+                Users.objects.filter(iduser=iduser).delete()
         
 @csrf_protect
 def DelDonoRec(request):
