@@ -42,6 +42,9 @@ if SECRET_KEY.startswith("django-insecure"):
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("true", "1", "yes")
 
+# WARNING: "*" allows all hosts. Restrict this in production via ALLOWED_HOSTS env var.
+# WARNING: ALLOWED_HOSTS=["*"] allows any host to access this server.
+# In production, restrict to specific domains or use an environment variable.
 ALLOWED_HOSTS = ["*"]
 
 REST_FRAMEWORK = {
@@ -84,7 +87,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
 ]
 
-# hier caps rein gehauen
+# Django project URL configuration
 ROOT_URLCONF = "BackendApp.urls"
 
 TEMPLATES = [
