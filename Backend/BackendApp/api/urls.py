@@ -16,4 +16,5 @@ urlpatterns = [
     path('csrf-token/',views.csrf_token_view),
     path('get-users', views.get_users, name='get-users'), # get all details
     path('generate-pwd', views.generate_pwd, name='generate-pwd'), # get all details
+    path('update-profile', views.update_profile, name='update-profile'),
 ]

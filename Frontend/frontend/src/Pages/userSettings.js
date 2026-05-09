@@ -11,6 +11,10 @@ const UserSettings = () => {
   const [oldPwd, setOldPwd] = useState("");
   const [newPwd, setNewPwd] = useState("");
   const [nwdPwd2, setNewPwd2] = useState("");
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [nameMessage, setNameMessage] = useState("");
+  const [nameMessageSuccess, setNameMessageSuccess] = useState("");
   const [message, setMessage] = useState(""); // State for the message
   const [message_success, setMessage_sucess] = useState(""); // State for the message
   const navigate = useNavigate();
@@ -59,6 +63,49 @@ const UserSettings = () => {
   };
   
 
+  const handleNameChange = async (e) => {
+    e.preventDefault();
+    setNameMessage("");
+    setNameMessageSuccess("");
+
+    if (!firstname.trim() && !lastname.trim()) {
+      setNameMessage("Bitte geben Sie einen Vor- oder Nachnamen ein.");
+      return;
+    }
+
+    try {
+      const csrfToken = await getCsrfToken();
+      const backEndDomain = await getBackEndDomain();
+      const response = await fetch(backEndDomain + "/api/update-profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          iduser: userid,
+          firstname: firstname,
+          lastname: lastname,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setNameMessage(data.message || "Fehler beim Ändern des Namens!");
+        return;
+      }
+
+      setNameMessageSuccess(data.message || "Name erfolgreich geändert!");
+      setFirstname("");
+      setLastname("");
+    } catch (error) {
+      console.error("Fehler beim Ändern des Namens:", error);
+      setNameMessage("Fehler beim Ändern des Namens!");
+    }
+  };
+
   const handlePasswordChange = async (e) => {
     setMessage(""); // Clear the message if everything is fine
     setMessage_sucess(""); // Clear the message if everything is fine
@@ -102,6 +149,35 @@ const UserSettings = () => {
 
       <div className="dashboard-container">
         <PageHeader title={"Einstellungen"} />
+
+        <div className="pwd-change-section">
+          <div className="form-section">
+            <h3>Name ändern</h3>
+            <form className="form-change-pwd" onSubmit={handleNameChange}>
+              <div>
+                <label className="form-label">Vorname:</label>
+                <input 
+                  type="text"
+                  value={firstname}
+                  onChange={(e) => setFirstname(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="form-label">Nachname:</label>
+                <input 
+                  type="text"
+                  value={lastname}
+                  onChange={(e) => setLastname(e.target.value)}
+                />
+              </div>
+              {message && <p className="message">{message}</p>}
+              {message_success && <p className="message-success">{message_success}</p>}
+              <button className="pwd-submit-button" type="submit">Ändern</button>
+            </form>
+          </div>
+          <div className="entry-list-section">
+          </div>
+        </div>
 
         <div className="pwd-change-section">
           <div className="form-section">
