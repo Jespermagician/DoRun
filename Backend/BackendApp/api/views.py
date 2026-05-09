@@ -21,8 +21,6 @@ from .password import pwd # pwd.CheckPassword, Generate_secure_password, Passwor
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 from .serializers import UserSerializer
-from django.http import JsonResponse  # Importiere JsonResponse
-from django.http import HttpResponse  # Importiere HttpResponse
 from django.db.models import Max
 
 from django.shortcuts import get_object_or_404
