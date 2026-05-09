@@ -8,6 +8,7 @@ from . import models
 
 
 class pwd():
+    @staticmethod
     def SetPassword(email,Password):
         Message = ""
         Status = 401
@@ -31,6 +32,7 @@ class pwd():
         return Status, Message
     
 
+    @staticmethod
     def SetJustPasswordWith_iduser(iduser,Password):
         Message = ""
         Status = 401
@@ -66,19 +68,24 @@ class pwd():
     
 
     # Method to create string of random chars
+    @staticmethod
     def RandChars(size=30, chars=string.ascii_uppercase + string.digits):
         return ''.join(random.choice(chars) for _ in range(size))
 
+    @staticmethod
     def PasswordHashing(password):
         SaltText = pwd.RandChars()                                              # Generiert zufällige Zeichenabfolge   
         Salt = sha256(SaltText.encode('utf-8')).digest().hex()              # Erstellt den Hash des Salts
         Password_Hash = sha256((password + Salt).encode('utf-8')).digest()  # Verschlüsselung des Passwords und Salt
         return Password_Hash.hex(), Salt                                    # Rückgabe
 
+    @staticmethod
     def convertSaltAndHash(salt, hash):
         return bytearray.fromhex(salt), bytearray.fromhex(hash) 
 
     # Sets only the password not the salt
+    @staticmethod
+    @staticmethod
     def PasswordSetJustPassword(password, salt):
         original_hex_string = salt.hex()
         Password_Hash = sha256((password + original_hex_string).encode('utf-8')).digest() 
@@ -86,6 +93,10 @@ class pwd():
 
 
 
+    @staticmethod
+
+
+    @staticmethod
     def checkPwdConstraints(input_string):
         # 1 = valid, 0 = to short, -1 = missing later/digit/special char
         if len(input_string) < 8:
@@ -101,6 +112,10 @@ class pwd():
             return -1
         
 
+    @staticmethod
+
+
+    @staticmethod
     def Generate_secure_password(length):
         if length < 8:
             raise ValueError("Passwortlänge sollte mindestens 8 Zeichen betragen.")
@@ -111,7 +126,11 @@ class pwd():
         return password
 
     
-    def CheckPassword(EnteredPwd, stored_hash, salt):                          
+    @staticmethod
+
+
+    @staticmethod
+    def CheckPassword(EnteredPwd, stored_hash, salt):
         EnteredPwdHash = sha256((EnteredPwd + salt.hex()).encode('utf-8')).digest()
         is_valid = EnteredPwdHash == stored_hash
         return is_valid
