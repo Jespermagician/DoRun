@@ -129,7 +129,7 @@ class Users(models.Model):
                         try:
                             with connection.cursor() as cursor:
                                 cursor.execute(sql, values)
-                        except:
+                        except Exception:
                             return -101
                         return p
                     else:
@@ -148,7 +148,7 @@ class Users(models.Model):
                         if (logintrys > 5):
                             return -100
                         return -101
-                    except:
+                    except Exception:
                         return -101
                     
         except Exception:

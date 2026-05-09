@@ -112,7 +112,7 @@ def cust_login(request):
         # Get Userid
         try:
             userid = user.iduser
-        except:
+        except Exception:
             User_Data = {
                 "userid": None,
                 "UserIsAuth": False,
@@ -166,7 +166,7 @@ def resetpassword(request):
         Status, Message = Users.SetPassword(email,Password)
         return JsonResponse(status=Status, data={"message":Message})
         
-    except:
+    except Exception:
         Status = 401
         Message = "Error, cant change password!"
         return JsonResponse(status=Status, data={"message":Message})
@@ -182,10 +182,10 @@ def resetUserPasswort(request):
 
     try:
         user = Users.objects.all().get(iduser=iduser)
-        if pwd.CheckPassword(EnteredPwd=oldPwd_entry, salt=user.salt, password=user.password_hash) == False:
+        if pwd.CheckPassword(EnteredPwd=oldPwd_entry, salt=user.salt, stored_hash=user.password_hash) == False:
             return JsonResponse(status=401, data={"message":"Das alte Passwort ist falsch!"})
         Status, Message = Users.SetJustPasswordWith_iduser(iduser, newPwd)
-    except:
+    except Exception:
         Status = 401
         Message = "Error, cant change password!"
     return JsonResponse(status=Status, data={"message":Message})
@@ -297,7 +297,7 @@ def UpdateDonations(request):
             
         try:
             mail_handle.sendDonationVerifyMail(request, int(UserID), int(donationid), frontendDomain)
-        except:
+        except Exception:
             return JsonResponse({"message": "Donations updated successfully, but the mail wasnt send"}, status=200)
         return JsonResponse({"message": "Donations updated successfully"}, status=200)
 

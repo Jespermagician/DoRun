@@ -25,7 +25,7 @@ class pwd():
                 
             Message = "Password changed succesfully"
             Status = 200
-        except:
+        except Exception:
             Message = "Cant set password!"
             
         return Status, Message
@@ -59,7 +59,7 @@ class pwd():
                 
             Message = "Password changed succesfully"
             Status = 200
-        except:
+        except Exception:
             Message = "Cant set password!"
             
         return Status, Message
