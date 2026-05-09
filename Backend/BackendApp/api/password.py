@@ -85,7 +85,6 @@ class pwd():
 
     # Sets only the password not the salt
     @staticmethod
-    @staticmethod
     def PasswordSetJustPassword(password, salt):
         original_hex_string = salt.hex()
         Password_Hash = sha256((password + original_hex_string).encode('utf-8')).digest() 
