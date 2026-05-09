@@ -34,48 +34,54 @@ class CreateUserView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [AllowAny]
 
-#Handels the registration page
+# Handles the registration page
 @csrf_protect
 def register(request):
-    if request.method == 'POST':
-        #Read data
+    if request.method != 'POST':
+        return JsonResponse({"message": "Only POST requests are allowed"}, status=405)
+
+    try:
         data = json.loads(request.body)
-        first_name = data.get("firstname")
-        last_name = data.get("lastname")
-        email = data.get("email")
-        password = data.get("password")
-        domain = data.get("domain")
+    except json.JSONDecodeError:
+        return JsonResponse({"message": "Invalid JSON in request body"}, status=400)
 
-        # try:
-        #Erstelle neuen Benutzer auf der Datenbank
-            # Send Verification Mail
+    first_name = data.get("firstname")
+    last_name = data.get("lastname")
+    email = data.get("email")
+    password = data.get("password")
+    domain = data.get("domain")
 
-        print("first_name,last_name,email,password")
-        print(first_name,last_name,email,password)
-        NewUser = Users.RegisterUser(first_name, last_name, email,password)
-        # Check if the User is created
-        if NewUser == None:
-            print("Process interupted. Try Again!")
-            # return HttpResponse(content="User couldn't be created!", status=200)
-            return JsonResponse(data={}, status=400)
-        
-        
-        mail_handle.sendUserVerifyMail(request=request, UserID=int(NewUser.iduser), frontendDomain=domain)
-        # except : 
-        # #Bei Fehler return error an Frontend
-        #     print("Error occured: ")
-            # return JsonResponse(data={"userid": None, "UserIsAuth": False,'message': 'Registrierung nicht erfolgreich'}, status=401)
-        
-        #Convert Userid
-        NewUserID = int(NewUser.iduser)
+    try:
+        NewUser, error = Users.RegisterUser(first_name, last_name, email, password)
+    except Exception as e:
+        return JsonResponse(
+            {"message": f"Registration failed: {str(e)}", "UserIsAuth": False},
+            status=500
+        )
 
-        User_Data = {
-             "userid": NewUserID,
-             "UserIsAuth": False,
-             "message": 'Registrierung erfolgreich'
-            }
-            
-        return JsonResponse(data=User_Data, status=200)
+    if error:
+        return JsonResponse(
+            {"message": error, "UserIsAuth": False},
+            status=400
+        )
+
+    try:
+        mail_handle.sendUserVerifyMail(
+            request=request, UserID=int(NewUser.iduser), frontendDomain=domain
+        )
+    except Exception:
+        # User was created but verification email failed — still return success
+        return JsonResponse({
+            "userid": int(NewUser.iduser),
+            "UserIsAuth": False,
+            "message": "Registration successful, but verification email could not be sent. Please contact support."
+        }, status=200)
+
+    return JsonResponse({
+        "userid": int(NewUser.iduser),
+        "UserIsAuth": False,
+        "message": "Registration successful. Please check your email to verify your account."
+    }, status=200)
 
 #Login user
 @csrf_protect

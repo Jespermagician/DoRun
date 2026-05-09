@@ -23,65 +23,61 @@ class Users(models.Model):
     verified = models.BooleanField()
     logintrys = models.IntegerField(default=0)
     
+    @staticmethod
     def RegisterUser(first_name,last_name,email,password):
+        """Register a new user. Returns (user, None) on success, (None, error_message) on failure."""
+        # Validate required fields
+        if not all([first_name, last_name, email, password]):
+            return None, "Missing required fields: firstname, lastname, email, or password"
 
         # Password validation
         validation = pwd.checkPwdConstraints(password)
-        if (validation != 1):
-            print("Password is not valid")
-            return None
+        if validation == 0:
+            return None, "Password must be at least 8 characters long"
+        if validation == -1:
+            return None, "Password must contain a letter, a digit, and a special character"
         
-        #1. Set UserID
-        #Check if email already exists
+        # Check if email already exists
         double = False
-        UserID = None
         try:
-            CheckForDoubleUser = Users.objects.raw("Select * From api_users Where email = "+ "'" + email + "'")
+            CheckForDoubleUser = Users.objects.raw(
+                "SELECT * FROM api_users WHERE email = %s", [email]
+            )
             for p in CheckForDoubleUser:
                 double = True
-        except:
-            double = False
-        print("double " + str(double))
-        try:
-            if (double == False):
-                #Get current highest iduser
-                query = "Select iduser From api_users Where iduser = (Select Max(iduser) From api_users)"
-                user = Users.objects.raw(query)
+        except Exception:
+            return None, "Database error while checking for existing email"
 
-                #Chech if the new user is the first then id = 1 else max id + 1
-                test = False
-                for p in user:
-                    test = True
-                    if (p.iduser != None):
-                        UserID = p.iduser
-                        UserID = UserID + 1
-                    elif (p.iduser == None):
-                        UserID = 1
-                print("test " + str(test))
-                
-        except:
-            print("Unexpected error ocurred!")
+        if double:
+            return None, "A user with this email address already exists"
         
-        #2. Password hashing
-        if (password != None):
+        # Get next user ID
+        UserID = 1
+        try:
+            query = "SELECT iduser FROM api_users WHERE iduser = (SELECT MAX(iduser) FROM api_users)"
+            user = Users.objects.raw(query)
+            for p in user:
+                if p.iduser is not None:
+                    UserID = p.iduser + 1
+        except Exception:
+            return None, "Database error while generating user ID"
+        
+        # Password hashing
+        if password is not None:
             Password_hash, Salt = pwd.PasswordHashing(password)
+        else:
+            return None, "Password is required"
             
-        #3. Set current date 
+        # Set current date 
         CreatedAt = date.today()
         
-        #4. Set RoleID = 3 aka User
-        RoleID = 3 
-        
-        #5. Set user-validation validation set by Link to true
+        # Set defaults
+        RoleID = 3
         Kilometers = 0
         VerifiedUser = False
         
-        NewUser = None
-        #Creat new DB entry if values are filled    
-        print("UserID")
-        print(UserID)
-        if (UserID != None and first_name != None and last_name != None and email != None and Password_hash != None and Salt != None and CreatedAt != None and RoleID != None):
-            print("Creating new User with ID: " + str(UserID))
+        # Create new DB entry
+        try:
             NewUser = Users.objects.create(
                 iduser=UserID, 
                 firstname=first_name,
@@ -92,16 +88,11 @@ class Users(models.Model):
                 createdat=CreatedAt,
                 roleid=RoleID,
                 verified=VerifiedUser, 
-                kilometers=Kilometers)
-            return NewUser
-            # try:
-            # except:
-            #     print("Error, user can't be added to DB!")
-        else:
-            print("Not all requirements are fulfilled to create a user")
-        
-        # if the process was denied, no NewUser is created
-        return None
+                kilometers=Kilometers
+            )
+            return NewUser, None
+        except Exception as e:
+            return None, f"Failed to create user in database: {str(e)}"
  
     # end def
 
