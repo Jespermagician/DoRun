@@ -115,7 +115,7 @@ class pwd():
         return password
 
     
-    def CheckPassword(EnteredPwd, password, salt):                          
-        EnteredPwdHash = sha256((EnteredPwd + salt.hex()).encode('utf-8')).digest() # Bildet den Hash nach
-        is_valid = EnteredPwdHash == password                                       # Vergleicht den Gespeicherten und Neu generierten Hash
-        return is_valid                                                             # Gibt einen Boolschen Wert zurück
+    def CheckPassword(EnteredPwd, stored_hash, salt):                          
+        EnteredPwdHash = sha256((EnteredPwd + salt.hex()).encode('utf-8')).digest()
+        is_valid = EnteredPwdHash == stored_hash
+        return is_valid
