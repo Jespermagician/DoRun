@@ -23,44 +23,39 @@ class Users(models.Model):
     verified = models.BooleanField()
     logintrys = models.IntegerField(default=0)
     
+    @staticmethod
     def RegisterUser(first_name,last_name,email,password):
 
         # Password validation
         validation = pwd.checkPwdConstraints(password)
         if (validation != 1):
-            print("Password is not valid")
             return None
         
-        #1. Set UserID
+        #1. Set UserID — default to 1 for first user in empty database
         #Check if email already exists
         double = False
-        UserID = None
+        UserID = 1
         try:
-            CheckForDoubleUser = Users.objects.raw("Select * From api_users Where email = "+ "'" + email + "'")
+            CheckForDoubleUser = Users.objects.raw(
+                "SELECT * FROM api_users WHERE email = %s", [email]
+            )
             for p in CheckForDoubleUser:
                 double = True
-        except:
+        except Exception:
             double = False
-        print("double " + str(double))
+
         try:
             if (double == False):
                 #Get current highest iduser
-                query = "Select iduser From api_users Where iduser = (Select Max(iduser) From api_users)"
+                query = "SELECT iduser FROM api_users WHERE iduser = (SELECT MAX(iduser) FROM api_users)"
                 user = Users.objects.raw(query)
 
-                #Chech if the new user is the first then id = 1 else max id + 1
-                test = False
+                #Check if the new user is the first then id = 1 else max id + 1
                 for p in user:
-                    test = True
-                    if (p.iduser != None):
-                        UserID = p.iduser
-                        UserID = UserID + 1
-                    elif (p.iduser == None):
-                        UserID = 1
-                print("test " + str(test))
-                
-        except:
-            print("Unexpected error ocurred!")
+                    if (p.iduser is not None):
+                        UserID = p.iduser + 1
+        except Exception:
+            pass
         
         #2. Password hashing
         if (password != None):
@@ -77,11 +72,10 @@ class Users(models.Model):
         VerifiedUser = False
         
         NewUser = None
-        #Creat new DB entry if values are filled    
-        print("UserID")
-        print(UserID)
-        if (UserID != None and first_name != None and last_name != None and email != None and Password_hash != None and Salt != None and CreatedAt != None and RoleID != None):
-            print("Creating new User with ID: " + str(UserID))
+        #Create new DB entry if values are filled
+        if (UserID is not None and first_name is not None and last_name is not None
+                and email is not None and Password_hash is not None and Salt is not None
+                and CreatedAt is not None and RoleID is not None):
             NewUser = Users.objects.create(
                 iduser=UserID, 
                 firstname=first_name,
