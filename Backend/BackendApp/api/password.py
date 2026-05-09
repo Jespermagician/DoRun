@@ -1,5 +1,5 @@
 from hashlib import sha256
-from multiprocessing import connection
+from django.db import connection
 import random
 import string
 import re
