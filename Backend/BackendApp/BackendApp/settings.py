@@ -40,7 +40,7 @@ if SECRET_KEY.startswith("django-insecure"):
     )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() in ("true", "1", "yes")
 
 ALLOWED_HOSTS = ["*"]
 
