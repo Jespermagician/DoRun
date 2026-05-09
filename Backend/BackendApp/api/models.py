@@ -36,7 +36,7 @@ class Users(models.Model):
         double = False
         UserID = None
         try:
-            CheckForDoubleUser = Users.objects.raw("Select * From api_users Where email = "+ "'" + email + "'")
+            CheckForDoubleUser = Users.objects.raw("Select * From api_users Where email = %s", [email])
             for p in CheckForDoubleUser:
                 double = True
         except:
